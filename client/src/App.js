@@ -1,6 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import SyncTesting from './pages/synchTesting';
+
 
 function App() {
   const [data, setData] = React.useState(null);
@@ -12,6 +15,7 @@ function App() {
   }, []);
 
   return (
+    <>
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -19,6 +23,8 @@ function App() {
 
       </header>
     </div>
+
+    </>
   );
 }
 
