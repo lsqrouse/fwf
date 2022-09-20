@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import SyncTesting from './pages/synchTesting';
+import Home from './pages/Home';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,6 +13,7 @@ root.render(
       <Routes>
         <Route exact path="/" element={<App/>}></Route>
         <Route exact path="/sync" element={<SyncTesting/>}/>
+        <Route exact path="/home" element={<Home/>}/>
       </Routes>
     </Router> 
 );
