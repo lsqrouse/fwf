@@ -8,7 +8,7 @@ export default class FrontPage extends Component {
         lobbyID: 0
     }
 
-    handleSubmit = async (e) => {
+    handleSubmitCreate = async (e) => {
         e.preventDefault();
     try {
       let res = await fetch("https://httpbin.org/post", {
@@ -29,7 +29,31 @@ export default class FrontPage extends Component {
         console.log("ERRRRRRRRRRRRRRR");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err + "ASFASFASFASFASFASFASf");
+    }
+
+    }
+    handleSubmit = async (e) => {
+        e.preventDefault();
+    try {
+      let res = await fetch("https://httpbin.org/post", {
+        method: "POST",
+        body: JSON.stringify({
+          userName: this.state.userName,
+        }),
+      });
+      let resJson = await res.json();
+      if (res.status === 200) {
+        this.setState({
+            userName: "",
+            lobbyID: 0,
+        })
+        
+      } else {
+        console.log("ERRRRRRRRRRRRRRR");
+      }
+    } catch (err) {
+      console.log(err + "ASFASFASFASFASFASFASf");
     }
 
     }
@@ -45,17 +69,24 @@ export default class FrontPage extends Component {
 
                 <div className='box'>
                     <h1>Join Lobby</h1>
-                    <form action="/url" method="POST">
-                        <input type="text" placeholder="Username"/>
-                        <input type="text" placeholder="LobbyID"/>
-                    </form>   
-                    
-                    <button className='myButton'>Join</button>
-                    <h1>Create Lobby</h1>
                     <form onSubmit={this.handleSubmit}>
                         <input type="text" placeholder="Username" onChange={(e) => this.setState({userName: e.target.value})}/>
+                        <input type="text" placeholder="LobbyID" onChange={(e) => this.setState({lobbyID: e.target.value})}/>
+                        <div>
+                         <button className='myButton' type='submit'>{this.state.userName}</button>
+                        </div>
+                        
+                    </form>   
+                    
+                    
+                    <h1>Create Lobby</h1>
+                    <form onSubmit={this.handleSubmitCreate}>
+                        <input type="text" placeholder="Username" onChange={(e) => this.setState({userName: e.target.value})}/>
+                        <div>
+                           <button className='myButton' type='submit'>Create</button>
+                        </div>
                     </form>  
-                    <button className='myButton'>Create</button>
+                   
                 </div>
 
             </div>
