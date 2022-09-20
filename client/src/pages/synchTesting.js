@@ -1,7 +1,6 @@
-import React from 'react';
-import useState from 'react';
+import React, {useState} from 'react';
 
-function SyncTesting() {
+export default function SyncTesting() {
     const [num, setNum] = useState(0);
 
     const increaseNum = () => {
@@ -9,10 +8,9 @@ function SyncTesting() {
     }
 
     return (<div>
-        <h> This is a test to see if something changes : {num}</h>
+        <h> This is a test to see if something changes : {num} </h>
         <br/>
         <button onClick={increaseNum} > Increase Num</button>
     </ div>)
 }
 
-export default SyncTesting;

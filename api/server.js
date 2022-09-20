@@ -123,7 +123,7 @@ connection.on('connect', function(err) {
   
 });
 
-connection.connect();
+// connection.connect();
 
 //basic testing endpoint
 app.get("/api", (req, res) => {

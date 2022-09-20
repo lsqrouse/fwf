@@ -8,11 +8,10 @@ import SyncTesting from './pages/synchTesting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-<Router> 
+  <Router> 
       <Routes>
-        <Route exact path="/" element={App}></Route>
-        <Route exact path="/sync" element={SyncTesting}/>
-
+        <Route exact path="/" element={<App/>}></Route>
+        <Route exact path="/sync" element={<SyncTesting/>}/>
       </Routes>
     </Router> 
 );
