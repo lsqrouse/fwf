@@ -7,7 +7,7 @@ export default class FrontPage extends Component {
         userName: "",
         lobbyID: 0
     }
-
+    //URL FOR API NEED TO BE UPDATED
     handleSubmitCreate = async (e) => {
         e.preventDefault();
     try {
