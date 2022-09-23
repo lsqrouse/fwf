@@ -5,6 +5,7 @@ export const abilities = {
     investigate: "investigate",
     vote: "vote",
     swap: "swap",
-    resurrect: "resurrect"
-
+    resurrect: "resurrect",
+    frame: "frame",
+    bomb: "bomb"
 }
