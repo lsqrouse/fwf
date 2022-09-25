@@ -23,10 +23,18 @@ const io = new Server(server, {
 
 //allows us to connect to frontend
 
-
+var userList = []
 // this block will run when the client connects
 io.on('connection', (socket) => {
   console.log("someone is here")
+
+  socket.on("join_lobby", (data) => {
+    console.log("Joining lobby ", data.lobbyId);
+    socket.join(data.lobbyId)
+    userList.push({id: socket.id})
+    console.log("users is now ", userList)
+    io.in(data.lobbyId).emit("players", userList)
+  });
 
   socket.on("send_num", (data) => {
     console.log(data)
@@ -36,6 +44,13 @@ io.on('connection', (socket) => {
     data["number"] = num
     socket.emit("receive_num", data)
   })
+
+  socket.on("send_state", (data) => {
+    console.log("new game state is ", data);
+    socket.emit("recieve_state", data)
+  });
+
+
   
 })
 
@@ -94,16 +109,13 @@ connection.on('connect', function(err) {
 
 // connection.connect();
 
-// //basic testing endpoint
+// basic testing endpoint
 app.get("/api", (req, res) => {
   console.log("connected to api")
     res.json({message: "Hello world!"})
 });
 
 //starts the application
-// app.listen(PORT, () => {
-//     console.log('Server listening on ' + PORT)
-// });
 server.listen(3001, () => {
   console.log("server is running")
  })
