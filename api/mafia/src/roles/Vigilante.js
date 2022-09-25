@@ -1,9 +1,8 @@
 const Teams = require("./Teams");
 const Abilities = require("./Ability");
 
-class Drunk extends RoleType {
+class Vigilante extends RoleType {
   constructor() {
-    super("drunk", Abilities.block, Teams.Villager);
+    super("vigilante", Abilities.kill, Teams.Village);
   }
 }
-
