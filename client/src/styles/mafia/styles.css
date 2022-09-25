@@ -1,0 +1,27 @@
+.roleDiv {
+  border-radius: 10px;
+  border: 1px lightgray solid;
+  height: 30px;
+  margin-top: 4px;
+  padding: 6px;
+}
+
+.roleDiv img {
+  float: left;
+}
+
+.addRoleButton {
+  float: right;
+}
+
+#chooseRolesDiv, #selectedRolesDiv {
+  max-width: 150px;
+}
+
+#chooseRolesDiv {
+  float: left;
+}
+
+#selectedRolesDiv {
+  float: right;
+}
