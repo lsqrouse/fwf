@@ -11,7 +11,7 @@ export default class FrontPage extends Component {
     handleSubmitCreate = async (e) => {
         e.preventDefault();
     try {
-      let res = await fetch("https://httpbin.org/post", {
+      let res = await fetch("http://localhost:3001/create", {
         method: "POST",
         body: JSON.stringify({
           userName: this.state.userName,
@@ -36,7 +36,7 @@ export default class FrontPage extends Component {
     handleSubmit = async (e) => {
         e.preventDefault();
     try {
-      let res = await fetch("https://httpbin.org/post", {
+      let res = await fetch("http://localhost:3001/", {
         method: "POST",
         body: JSON.stringify({
           userName: this.state.userName,
