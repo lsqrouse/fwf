@@ -10,8 +10,18 @@ class Game {
 function assignRoles(allUsers, roleList) {
     // TODO: Randomly assign each role to a user. Need to create an instance of Player for each user,
     // then return all players as a list.
-
-    return;
+    let test = []
+    let left = JSON.parse(JSON.stringify(roleList))
+    for (let i of allUsers) {
+      if (left.length > 0) {
+        let ran = Math.floor(Math.random() * left.length)
+        //test.push({ user: i,name: left[ran].name,img: left[ran].img})
+        left.splice(ran, 1)
+      } else {
+        //test.push({user: i,name: "Hitman",img:'hitman.png'})
+      }
+    }
+    return test;
 }
 
 function whoHasWon() {
