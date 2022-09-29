@@ -1,7 +1,10 @@
+
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-
+import FrontPage from './FrontPage.tsx';
+import Login from './Login.tsx';
+import MainLobby from './MainLobby.tsx';
 function App() {
   const [data, setData] = React.useState(null);
 
@@ -13,11 +16,11 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{!data ? "Loading..." : data}</p>
-
-      </header>
+      <FrontPage></FrontPage>
+      <hr></hr>
+      <Login></Login>
+      <hr></hr>
+      <MainLobby></MainLobby>
     </div>
   );
 }
