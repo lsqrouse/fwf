@@ -11,7 +11,9 @@ type testGameProps = {
 };
 
 type gameState = {
-    whoseTurn: string
+    lobbyId: string,
+    whoseTurn: string,
+    counter: number,
 }
 
 type myState = {
@@ -22,7 +24,7 @@ type myState = {
 export default function TestGame(props: testGameProps) {
     const [joined, setJoined] = useState<boolean>(false);
     const [playerList, setPlayerList] = useState<Array<any>>([]);
-    const [gameState, setGameState] = useState<any>({});
+    const [gameState, setGameState] = useState<any>({whoseTurn: '', counter: 0, lobbyId: props.lobbyId});
     const [myState, setMyState] = useState<any>({});
 
     const colDefs = [
@@ -37,7 +39,8 @@ export default function TestGame(props: testGameProps) {
     useEffect(() => {
         socket.on("recieve_state", (data) => {
             console.log("Game state updated to ", data)
-            setGameState(data   )
+            var newGameState = data;
+            setGameState(newGameState)
         });
 
         socket.on("turn_update", (data) => {
@@ -53,13 +56,9 @@ export default function TestGame(props: testGameProps) {
         
     }, [socket])
 
-    const update = () => {
-        socket.emit("update_state", gameState)
-    }
     const takeTurn = () => {
-        if (socket.id = gameState.whoseTurn) {
-            socket.emit("turn_done", gameState)
-        }
+        gameState.counter+=1
+        socket.emit("update_state", gameState)
     }
     return (
         <>
@@ -70,6 +69,9 @@ export default function TestGame(props: testGameProps) {
                rowData={playerList}
                columnDefs={colDefs}>
            </AgGridReact>
-       </div>        </>
+       </div>
+       <br/>
+        {gameState.counter} is the current value of hte counter
+               </>
     );
 }
