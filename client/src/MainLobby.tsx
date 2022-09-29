@@ -5,11 +5,11 @@ import TextLog from './textLog.jsx';
 
 export default class MainLobby extends Component {
   state = {
-    msg: [],
-
+    log: ['hello and welcome', "hello"],
+    msg: "",
   }
   handleSubmit = async (e) => {
-    console.log(this.state.msg);
+    console.log(this.state.msg + "hi");
     e.preventDefault();
     try {
       let res = await fetch("http://localhost:3001/", {
@@ -50,12 +50,12 @@ export default class MainLobby extends Component {
           </div>
           <div className='middle'>
             <div className='chat'>Players
-            
+
               <div>
                 <form onSubmit={this.handleSubmit}>
                   <div id='chatBox'>
                     <hr></hr>
-                    <input className='textBox' type="text" placeholder="UserName" onChange={(e) =>  this.setState({ msg: e.target.value })} />
+                    <input className='textBox' type="text" placeholder="UserName" onChange={(e) => this.setState({ msg: e.target.value })} />
                     <button className='myB' type='submit'>Invite</button>
                   </div>
 
@@ -64,14 +64,19 @@ export default class MainLobby extends Component {
             </div>
             <div className='screen'>Screen</div>
             <div className='chat'>chat
-            <TextLog texts = {this.state.msg}></TextLog>
+              <ul className="list-group">
+                {this.state.log.map(listitem => (
+                  <li key={listitem}>
+                    {listitem}
+                  </li>
+                ))}
+              </ul>
               <div>
                 <form onSubmit={this.handleSubmit}>
-                
-                  <div id='chatBox'>
-                  <hr></hr>
-                    <input className='textBox' type="text" placeholder="type message" onChange={(e) => this.setState({ msg: e.target.value })} />
 
+                  <div id='chatBox'>
+                    <hr></hr>
+                    <input className='textBox' type="text" placeholder="type message" onChange={(e) => this.setState({ msg: e.target.value })} />
                     <button className='myB' type='submit'>send</button>
                   </div>
 

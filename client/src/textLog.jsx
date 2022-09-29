@@ -9,8 +9,10 @@ class TextLog extends Component {
     ]
   };
 
+  
+
   render() {
-    console.log(this.props.texts);
+    console.log(this.state.listitems);
     return (
       <React.Fragment>
         <ul className="list-group">
