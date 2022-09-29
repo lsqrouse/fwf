@@ -74,3 +74,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
     If it isn't installed, run sudo apt install npm on linux, if on windows then download nodejs from https://nodejs.org/en/download/ and follow the steps
 2. Go into /api and run npm install, then npm start
 3. In a different instance of terminal, go into /client and run npm install, then npm start
+
+### Issues
+1. Make sure you have the most recent version of npm installed, either by doing these commands:
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+or by doing whatever windows lets you do. Restart shell after running those commands, then remove node_modules and re-run node install.
