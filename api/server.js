@@ -127,16 +127,11 @@ app.get("/api", (req, res) => {
 });
  
 app.get("/api/accounts/login", (req, res) => {
-  console.log("have a request")
-  console.log(req.query);
   getUserByUsername(connection, req.query, res)
   
 })
 
 app.get("/api/accounts/create", (req, res) => {
-  console.log("have a request")
-  console.log(req.query);
-  console.log("createUser", createUser)
   createUser(connection, req.query , res)
   
 })
