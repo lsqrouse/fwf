@@ -4,8 +4,9 @@
 }
 
 .roleDiv {
+  background-color: azure;
   border-radius: 10px;
-  border: 1px lightgray solid;
+  border: 1px darkgray solid;
   height: 30px;
   margin-top: 4px;
   padding: 6px;
