@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import SyncTesting from './pages/synchTesting.tsx';
 import Home from './pages/Home';
-import AccountTesting from './pages/AccountTesting';
+import AccountTesting from './pages/AccountTesting.tsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
