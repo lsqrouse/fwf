@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import SyncTesting from './pages/synchTesting';
+import SyncTesting from './pages/synchTesting.tsx';
 import Home from './pages/Home';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

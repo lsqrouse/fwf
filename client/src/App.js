@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import SyncTesting from './pages/synchTesting';
+import SyncTesting from './pages/synchTesting.tsx';
 
 
 function App() {

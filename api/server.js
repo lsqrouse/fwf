@@ -24,6 +24,9 @@ const io = new Server(server, {
 //allows us to connect to frontend
 
 var userList = []
+var gameState = {
+
+}
 // this block will run when the client connects
 io.on('connection', (socket) => {
   console.log("someone is here")
@@ -34,6 +37,10 @@ io.on('connection', (socket) => {
     userList.push({id: socket.id})
     console.log("users is now ", userList)
     io.in(data.lobbyId).emit("players", userList)
+
+    socket.emit("recieve_state
+    
+    ", gameState)
   });
 
   socket.on("send_num", (data) => {
@@ -45,13 +52,16 @@ io.on('connection', (socket) => {
     socket.emit("receive_num", data)
   })
 
-  socket.on("send_state", (data) => {
+  socket.on("update_state", (data) => {
     console.log("new game state is ", data);
     socket.emit("recieve_state", data)
   });
 
+})
 
-  
+io.on("disconnect", (socket) => {
+  console.log(socket.id, " has left the lobby"
+  )
 })
 
 var db_config = {  
