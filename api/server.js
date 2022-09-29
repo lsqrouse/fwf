@@ -1,28 +1,147 @@
+// import * as queries from './queries.js'
+
 const express = require("express");
+var Connection = require('tedious').Connection; 
+var Request = require('tedious').Request; 
+const {Server} = require('socket.io'); 
+const http = require('http');
+const formatMessage = require('./helper/formatDate')
+const cors = require("cors");
+const {getUserByUsername, createUser} = require('./queries.js')
+
 
 const PORT = process.env.PORT || 3001;
 const userNames = [];
 const app = express();
-const bodyParser = require("body-parser")
+app.use(cors());
 
-app.use(bodyParser.urlencoded({
-    extended:true
-}));
 
-app.post("/create", function(req, res) {
-    console.log(req);
-    var num1 = Number(req.body.userName);
-    var num2 = Number(req.body.lobbyID);
-      
-    userNames.push(num1);
-    console.log("singing into lobby: " + num2);
-    console.log(userNames);
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  },
+});
+
+//allows us to connect to frontend
+
+var userList = []
+var gameState = {
+
+}
+// this block will run when the client connects
+io.on('connection', (socket) => {
+  console.log("someone is here")
+
+  socket.on("join_lobby", (data) => {
+    console.log("Joining lobby ", data.lobbyId);
+    socket.join(data.lobbyId)
+    userList.push({id: socket.id})
+    console.log("users is now ", userList)
+    io.in(data.lobbyId).emit("players", userList)
+
   });
 
+  socket.on("send_num", (data) => {
+    console.log(data)
+    num = data["number"]
+    num++
+    console.log(num)
+    data["number"] = num
+    socket.emit("receive_num", data)
+  })
+
+  socket.on("update_state", (data) => {
+    console.log("new game state is ", data);
+    socket.emit("recieve_state", data)
+  });
+
+})
+
+io.on("disconnect", (socket) => {
+  console.log(socket.id, " has left the lobby"
+  )
+})
+
+var db_config = {  
+    server: 'fwf.database.windows.net',  //update me
+    authentication: {
+        type: 'default',
+        options: {
+            userName: 'fwf_admin', //update me
+            password: 'Us$&18gS2Yoz'  //update me
+        }
+    },
+    options: {
+        // If you are on Microsoft Azure, you need encryption:
+        encrypt: true,
+        database: 'fwf_dev'  //update me
+    }
+};  
+
+function executeStatement() {  
+    request = new Request("SELECT * FROM testing_table;", function(err) {  
+    if (err) {  
+        console.log(err);}  
+    });  
+    var result = "";  
+    request.on('row', function(columns) {  
+        columns.forEach(function(column) {  
+          if (column.value === null) {  
+            console.log('NULL');  
+          } else {  
+            result+= column.value + " ";  
+          }  
+        });  
+        console.log(result);  
+        result ="";  
+    });  
+
+    request.on('done', function(rowCount, more) {  
+    console.log(rowCount + ' rows returned');  
+    });  
+    
+    // Close the connection after the final event emitted by the request, after the callback passes
+    request.on("requestCompleted", function (rowCount, more) {
+        // connection.close();
+    });
+    connection.execSql(request);  
+}
+
+
+var connection = new Connection(db_config);  
+connection.on('connect', function(err) {  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    executeStatement();  
+  
+});
+
+connection.connect();
+
+// basic testing endpoint
 app.get("/api", (req, res) => {
+  console.log("connected to api")
     res.json({message: "Hello world!"})
 });
 
-app.listen(PORT, () => {
-    console.log('Server listening on ' + PORT)
-});
+app.get("/api/accounts/login", (req, res) => {
+  console.log("have a request")
+  console.log(req.query);
+  getUserByUsername(connection, req.query, res)
+  
+})
+
+app.get("/api/accounts/create", (req, res) => {
+  console.log("have a request")
+  console.log(req.query);
+  createUser(connection, req.query, res)
+  
+})
+
+
+//starts the application
+server.listen(3001, () => {
+  console.log("server is running")
+ })
