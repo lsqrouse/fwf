@@ -42,7 +42,43 @@ function RoleSetter() {
   }
   
   function suggestRoles() {
+    console.log("Num players = " + numPlayers)
+    if (numPlayers < 4) {
+      return;
+    } else if (numPlayers == 4) {
+      console.log("Four")
+      setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 3));
+    } else if (numPlayers == 5) {
+      setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 4));
+    } else if (numPlayers == 6) {
+      setSelectedRoles(addRolesToList([], "Mafia", 1, "Detective", 1, "Villager", 3));
+    } else {
+      const numMafia = Math.ceil(numPlayers * 0.272);
+      const numVillagers = numPlayers - numMafia - 2;
+      let suggested = addRolesToList([],
+        "Mafia", numMafia,
+        "Villager", numVillagers,
+        "Detective", 1,
+        "Doctor", 1
+        );
+
+      if (numMafia >= 3) {
+        suggested[suggested.indexOf("Mafia")] = "Distractor";
       }
+
+      const villagePowerRoles = ["Drunk", "Vigilante"];
+
+      if (numVillagers >= 6) {
+        console.log("6 or more")
+        for (let i = 0; i < numVillagers - 5; i++) {
+          if (i >= villagePowerRoles.length) {
+            break;
+          }
+          suggested[suggested.indexOf("Villager")] = villagePowerRoles[i];
+        }
+      }
+      
+      setSelectedRoles(suggested);
     }
   }
 
