@@ -56,3 +56,9 @@
 	position:relative;
 	top:1px;
 }
+
+.login{
+  display: flex;
+  align-items: flex-start;
+  margin: 3%;
+}

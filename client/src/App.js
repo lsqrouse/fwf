@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import FrontPage from './FrontPage.tsx';
-
+import Login from './Login.tsx';
+import MainLobby from './MainLobby.tsx';
 function App() {
   const [data, setData] = React.useState(null);
 
@@ -15,7 +16,7 @@ function App() {
 
   return (
     <div className="App">
-      <FrontPage></FrontPage>
+      <MainLobby></MainLobby>
     </div>
   );
 }
