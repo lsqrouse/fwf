@@ -1,3 +1,8 @@
+.settingsBox {
+  width: 300px;
+  margin: auto;
+}
+
 .roleDiv {
   border-radius: 10px;
   border: 1px lightgray solid;
@@ -15,7 +20,8 @@
 }
 
 #chooseRolesDiv, #selectedRolesDiv {
-  max-width: 150px;
+  width: 150px;
+  margin-top: 0;
 }
 
 #chooseRolesDiv {
@@ -23,5 +29,5 @@
 }
 
 #selectedRolesDiv {
-  float: right;
+  float: left;
 }

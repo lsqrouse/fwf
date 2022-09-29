@@ -3,15 +3,20 @@ import PlayerIcon from "../../images/mafia/icons/player.png";
 import VillagerIcon from "../../images/mafia/icons/villager.png";
 import DetectiveIcon from "../../images/mafia/icons/detective.png";
 import DoctorIcon from "../../images/mafia/icons/doctor.png";
+import VigilanteIcon from "../../images/mafia/icons/vigilante.png"
+import DrunkIcon from "../../images/mafia/icons/drunk.png"
 import MafiaIcon from "../../images/mafia/icons/mafia.png";
-
+import DistractorIcon from "../../images/mafia/icons/distractor.png"
 import "../../styles/mafia/styles.css";
 
 const roles = [
   { name: "Villager", image: VillagerIcon},
   { name: "Mafia", image: MafiaIcon},
   { name: "Detective", image: DetectiveIcon},
-  { name: "Doctor", image: DoctorIcon}
+  { name: "Doctor", image: DoctorIcon},
+  { name: "Vigilante", image: VigilanteIcon},
+  { name: "Drunk", image: DrunkIcon},
+  { name: "Distractor", image: DistractorIcon}
 ];
 
 function Settings() {
@@ -33,27 +38,30 @@ function RoleSetter() {
   }
 
   const handleNumPlayers = event => {
-      setNumPlayers(event.target.value);
+      setNumPlayers(parseInt(event.target.value));
   }
   
   function suggestRoles() {
-    if (numPlayers >= 4) {
-      console.log(numPlayers);
-      switch (numPlayers) {
-        case 4:
-          console.log("asdsad");
-          setSelectedRoles(["Villager", "Villager", "Villager", "Mafia"]);
-          break;
-        default:
-          
       }
     }
   }
 
+  function addRolesToList(list) {
+    let newList = [...list];
+    for (let i = 1; i < arguments.length; i += 2) {
+      const role = arguments[i];
+      const num = arguments[i + 1];
+      for (let j = 0; j < num; j++) {
+        newList.push(role);
+      }
+    }
+    return newList;
+  }
+
   return (
-    <div>
+    <div class="settingsBox">
       <div>
-        There are <input type="number" onChange={handleNumPlayers} value={numPlayers} /> players
+        There are <input type="number" onChange={handleNumPlayers} /> players
       </div>
       <div id="chooseRolesDiv">
         CHOOSE:
@@ -96,7 +104,7 @@ function SelectedRoles(props) {
           src={
             roles.find(role => {return role.name === roleName}).image
           }
-          width="40px"
+          width="35px"
           alt={roleName}
           title={roleName}
           />
