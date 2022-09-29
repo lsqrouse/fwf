@@ -106,12 +106,14 @@ function RoleSetter(props) {
     <div class="roleSetter">
       <div id="chooseRolesDiv">
         CHOOSE:
+        <br/>
         {roles && roles.map(role =>
           <Role roleName={role.name} image={role.image} addRole={addRole} />
         )}
       </div>
       <div id="selectedRolesDiv">
         SELECTED: {selectedRoles.length}
+        <br/>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
         <SelectedRoles selectedRoles={selectedRoles}/>
