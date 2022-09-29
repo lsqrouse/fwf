@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './MainLobby.css';
+import Game from './pages/Game';
 // @ts-ignore
 import TextLog from './textLog.jsx';
 
@@ -7,6 +8,7 @@ export default class MainLobby extends Component {
   state = {
     log: ['hello and welcome', "hello"],
     msg: "",
+    game: "Mafia",
   }
   handleSubmit = async (e) => {
     console.log(this.state.msg + "hi");
@@ -62,7 +64,9 @@ export default class MainLobby extends Component {
                 </form>
               </div>
             </div>
-            <div className='screen'>Screen</div>
+            <div className='screen'>
+              <Game game={this.state.game} />
+            </div>
             <div className='chat'>chat
               <ul className="list-group">
                 {this.state.log.map(listitem => (
