@@ -33,12 +33,10 @@ function getUserByUsername(connection, query, res) {
 }
 
 function createUser(connection, query, res) {
-  console.log("inside create user, should add to database here")
   request = new Request(`INSERT INTO accounts (username, pass) VALUES ('${query.uname}', '${query.pass}');`, function(err) {  
     if (err) {  
         console.log(err);}  
     });  
-    var userId = "";  
 
     request.on('done', function(rowCount, more) {
       console.log(rowCount + ' rows returned', more);  
