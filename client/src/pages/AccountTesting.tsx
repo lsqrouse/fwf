@@ -4,7 +4,8 @@ import TestGame from './TestGame';
 
 export default function AccountTesting() {
     const [username, setUsername] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    const [password, setPassword] = useState<string>("");
+    const [repeatPass, setRepeatPass] = useState<string>("r");
 
     const [isLogin, setIsLogin] = useState<boolean>(true);
 
@@ -17,12 +18,16 @@ export default function AccountTesting() {
             .then((data) => console.log("recieved this from api, ", data))
         } else {
             //handle account creation
-            var {uname, pass, repeat_pass} = document.forms[0];
-
+            console.log("inside of create account")
             //only make the api call if the passwords are the same
-            if (pass.equals(repeat_pass)) {
-                fetch(`/api/account/create?uname=${uname}&pass=${pass}`)
-
+            if (password == repeatPass) {
+                console.log(
+                    
+                "making request"
+                )
+                fetch(`/api/accounts/create?uname=${username}&pass=${password}`)
+                .then((res) => res.json())
+                .then((data) => console.log("recieved this from api, ", data))
             }
 
 
@@ -41,21 +46,19 @@ export default function AccountTesting() {
             {/* <input type="submit" /> */}
             <button onClick={handleSubmit}> Submit </button>
             <button onClick={() => setIsLogin(false)}> Need to create an account? </button>
-</>
+            </>
         : <>
-        <form onSubmit={handleSubmit}>
             <label>Username </label>
-            <input type="text" name="uname" required />
+            <input type="text" name="uname" onChange={e => setUsername(e.target.value)} required />
             <br/>
             <label>Password </label>
-            <input type="password" name="pass" required />
+            <input type="password" name="pass" onChange={e => setPassword(e.target.value)}  required />
             <br/>
             <label> Repeat Password </label>
-            <input type="password" name="repeat_pass" required />
+            <input type="password" name="repeat_pass" onChange={e => setRepeatPass(e.target.value)}  required />
             <br/>
 
-            <input type="submit" />
-        </form>
+            <button onClick={handleSubmit}> Submit </button>
         <button onClick={() => setIsLogin(true)}> Already have an account?</button>
         </>}
 

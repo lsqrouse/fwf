@@ -33,7 +33,8 @@ function getUserByUsername(connection, query, res) {
 }
 
 function createUser(connection, query, res) {
-  console.log("inside create user")
+  console.log("inside create user, should add to database here")
+  
 }
 
-module.exports = getUserByUsername;
+module.exports = {getUserByUsername, createUser};
