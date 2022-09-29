@@ -20,14 +20,29 @@ const roles = [
 ];
 
 function Settings() {
+  const [numPlayers, setNumPlayers] = useState();
+  const handleNumPlayers = event => {
+    setNumPlayers(parseInt(event.target.value));
+  }
+
   return (
-    <RoleSetter />
+    <div>
+      <div>
+        There are <input type="number" onChange={handleNumPlayers} /> players
+      </div>
+      <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+      <RoleSetter numPlayers={numPlayers} />
+    </div>
   );
 }
 
-function RoleSetter() {
+function startGame() {
+  // TODO: check for invalid role list
+  alert("Started the game!");
+}
+
+function RoleSetter(props) {
   const [selectedRoles, setSelectedRoles] = useState(["Villager"]);
-  const [numPlayers, setNumPlayers] = useState();
 
   function addRole(role) {
     setSelectedRoles(selectedRoles =>[...selectedRoles, role]);
@@ -36,30 +51,24 @@ function RoleSetter() {
   function clearRoles() {
     setSelectedRoles([]);
   }
-
-  const handleNumPlayers = event => {
-      setNumPlayers(parseInt(event.target.value));
-  }
   
   function suggestRoles() {
-    console.log("Num players = " + numPlayers)
-    if (numPlayers < 4) {
+    if (props.numPlayers < 4) {
       return;
-    } else if (numPlayers == 4) {
-      console.log("Four")
+    } else if (props.numPlayers == 4) {
       setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 3));
-    } else if (numPlayers == 5) {
+    } else if (props.numPlayers == 5) {
       setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 4));
-    } else if (numPlayers == 6) {
-      setSelectedRoles(addRolesToList([], "Mafia", 1, "Detective", 1, "Villager", 3));
+    } else if (props.numPlayers == 6) {
+      setSelectedRoles(addRolesToList([], "Mafia", 2, "Detective", 1, "Villager", 3));
     } else {
-      const numMafia = Math.ceil(numPlayers * 0.272);
-      const numVillagers = numPlayers - numMafia - 2;
+      const numMafia = Math.ceil(props.numPlayers * 0.272);
+      const numVillagers = props.numPlayers - numMafia - 2;
       let suggested = addRolesToList([],
         "Mafia", numMafia,
-        "Villager", numVillagers,
         "Detective", 1,
-        "Doctor", 1
+        "Doctor", 1,
+        "Villager", numVillagers
         );
 
       if (numMafia >= 3) {
@@ -69,7 +78,6 @@ function RoleSetter() {
       const villagePowerRoles = ["Drunk", "Vigilante"];
 
       if (numVillagers >= 6) {
-        console.log("6 or more")
         for (let i = 0; i < numVillagers - 5; i++) {
           if (i >= villagePowerRoles.length) {
             break;
@@ -95,10 +103,7 @@ function RoleSetter() {
   }
 
   return (
-    <div class="settingsBox">
-      <div>
-        There are <input type="number" onChange={handleNumPlayers} /> players
-      </div>
+    <div class="roleSetter">
       <div id="chooseRolesDiv">
         CHOOSE:
         {roles && roles.map(role =>
