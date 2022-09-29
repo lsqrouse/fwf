@@ -38,9 +38,6 @@ io.on('connection', (socket) => {
     console.log("users is now ", userList)
     io.in(data.lobbyId).emit("players", userList)
 
-    socket.emit("recieve_state
-    
-    ", gameState)
   });
 
   socket.on("send_num", (data) => {
