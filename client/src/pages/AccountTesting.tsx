@@ -59,7 +59,7 @@ export default function AccountTesting() {
             <br/>
 
             <button onClick={handleSubmit}> Submit </button>
-        <button onClick={() => setIsLogin(true)}> Already have an account?</button>
+            <button onClick={() => setIsLogin(true)}> Already have an account?</button>
         </>}
 
 
