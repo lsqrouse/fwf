@@ -5,6 +5,9 @@ import React from 'react';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import Game from './pages/game';
+
 function App() {
   const [data, setData] = React.useState(null);
 
