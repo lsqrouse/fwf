@@ -14,7 +14,7 @@ function getUserByUsername(connection, query, res) {
           } 
           if (column.metadata.colName == 'pass') {  
             if (column.value == query.pass) {
-              res.json({userId: userId, tocken: '123'})
+              res.json({userId: userId, token: '123'})
             }
           } 
 
@@ -30,6 +30,10 @@ function getUserByUsername(connection, query, res) {
       console.log("completed: ", rowCount, more)
     });
     connection.execSql(request);  
+}
+
+function createUser(connection, query, res) {
+  console.log("inside create user")
 }
 
 module.exports = getUserByUsername;

@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const getUserByUsername = require('./queries.js')
+const {getUserByUsername, createUser} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -132,6 +132,14 @@ app.get("/api/accounts/login", (req, res) => {
   getUserByUsername(connection, req.query, res)
   
 })
+
+app.get("/api/accounts/create", (req, res) => {
+  console.log("have a request")
+  console.log(req.query);
+  createUser(connection, req.query, res)
+  
+})
+
 
 //starts the application
 server.listen(3001, () => {
