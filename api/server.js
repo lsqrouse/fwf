@@ -1,3 +1,5 @@
+// import * as queries from './queries.js'
+
 const express = require("express");
 var Connection = require('tedious').Connection; 
 var Request = require('tedious').Request; 
@@ -5,6 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
+const getUserByUsername = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -101,10 +104,11 @@ function executeStatement() {
     
     // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
-        connection.close();
+        // connection.close();
     });
     connection.execSql(request);  
 }
+
 
 var connection = new Connection(db_config);  
 connection.on('connect', function(err) {  
@@ -114,13 +118,20 @@ connection.on('connect', function(err) {
   
 });
 
-// connection.connect();
+connection.connect();
 
 // basic testing endpoint
 app.get("/api", (req, res) => {
   console.log("connected to api")
     res.json({message: "Hello world!"})
 });
+
+app.get("/api/accounts/login", (req, res) => {
+  console.log("have a request")
+  console.log(req.query);
+  getUserByUsername(connection, req.query, res)
+  
+})
 
 //starts the application
 server.listen(3001, () => {
