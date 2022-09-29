@@ -2,6 +2,9 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
+
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import SyncTesting from './pages/synchTesting.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
@@ -18,6 +21,7 @@ function App() {
   }, []);
 
   return (
+    <>
     <div className="App">
       <FrontPage></FrontPage>
       <hr></hr>
@@ -25,6 +29,8 @@ function App() {
       <hr></hr>
       <MainLobby></MainLobby>
     </div>
+
+    </>
   );
 }
 
