@@ -11,7 +11,7 @@ const {getUserByUsername, createUser} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
-
+const userNames = [];
 const app = express();
 app.use(cors());
 
