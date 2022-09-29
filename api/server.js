@@ -125,7 +125,7 @@ app.get("/api", (req, res) => {
   console.log("connected to api")
     res.json({message: "Hello world!"})
 });
-
+ 
 app.get("/api/accounts/login", (req, res) => {
   console.log("have a request")
   console.log(req.query);
@@ -136,7 +136,8 @@ app.get("/api/accounts/login", (req, res) => {
 app.get("/api/accounts/create", (req, res) => {
   console.log("have a request")
   console.log(req.query);
-  createUser(connection, req.query, res)
+  console.log("createUser", createUser)
+  createUser(connection, req.query , res)
   
 })
 

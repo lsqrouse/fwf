@@ -8,7 +8,6 @@ import SyncTesting from './pages/synchTesting.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Game from './pages/game';
 
 function App() {
