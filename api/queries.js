@@ -33,7 +33,8 @@ function getUserByUsername(connection, query, res) {
 }
 
 function createUser(connection, query, res) {
-  request = new Request(`INSERT INTO accounts (username, pass) VALUES ('${query.uname}', '${query.pass}');`, function(err) {  
+  console.log(query);
+  request = new Request(`INSERT INTO accounts (username, pass, email) VALUES ('${query.uname}', '${query.pass}', '${query.email}');`, function(err) {  
     if (err) {  
         console.log(err);}  
     });  
@@ -44,6 +45,7 @@ function createUser(connection, query, res) {
     
     // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
+      
       console.log("completed: ", rowCount, more)
       console.log("added new user")
     });

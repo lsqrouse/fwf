@@ -12,30 +12,18 @@ export default class Login extends Component {
 
     handleSubmitCreate = async (e) => {
         e.preventDefault();
-    try {
-      let res = await fetch("http://localhost:3001/create", {
-        method: "POST",
-        body: JSON.stringify({
-          userName: this.state.userName,
-          lobbyID: this.state.password,
-          email: this.state.email
-        }),
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        this.setState({
-            userName: "",
-            lobbyID: 0,
-        })
-        
-      } else {
-        console.log("ERRRRRRRRRRRRRRR");
-      }
-    } catch (err) {
-      console.log(err + "ASFASFASFASFASFASFASf");
+        console.log(
+                    
+          "making request"
+          )
+          fetch(`/api/accounts/create?uname=${this.state.userName}&pass=${this.state.password}&email=${this.state.email}`)
+          .then((res) => res.json())
+          .then((data) => console.log("recieved this from api, ", data))
     }
 
-    }
+      
+
+
     handleSubmit = async (e) => {
         e.preventDefault();
     try {
