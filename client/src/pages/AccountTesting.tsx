@@ -21,16 +21,11 @@ export default function AccountTesting() {
             console.log("inside of create account")
             //only make the api call if the passwords are the same
             if (password == repeatPass) {
-                console.log(
-                    
-                "making request"
-                )
+                console.log("making request")
                 fetch(`/api/accounts/create?uname=${username}&pass=${password}`)
                 .then((res) => res.json())
                 .then((data) => console.log("recieved this from api, ", data))
             }
-
-
         }
     }
 
