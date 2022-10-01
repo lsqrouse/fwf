@@ -1,5 +1,4 @@
 
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 
@@ -8,7 +7,6 @@ import SyncTesting from './pages/synchTesting.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
-import Game from './pages/Game';
 
 function App() {
   const [data, setData] = React.useState(null);
