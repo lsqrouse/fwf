@@ -18,16 +18,13 @@ function App() {
   }, []);
 
   return (
-    <>
+   
     <div className="App">
+      
       <FrontPage></FrontPage>
-      <hr></hr>
-      <Login></Login>
-      <hr></hr>
-      <MainLobby></MainLobby>
     </div>
 
-    </>
+    
   );
 }
 

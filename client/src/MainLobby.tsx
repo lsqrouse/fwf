@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import './MainLobby.css';
-import Game from './pages/Game';
+import Game from './pages/game';
 // @ts-ignore
 import TextLog from './textLog.jsx';
 
@@ -8,7 +9,8 @@ export default class MainLobby extends Component {
   state = {
     log: ['hello and welcome', "hello"],
     msg: "",
-    game: "Mafia",
+    game: "None",
+    name: "Name"
   }
   handleSubmit = async (e) => {
     console.log(this.state.msg + "hi");
@@ -40,12 +42,24 @@ export default class MainLobby extends Component {
   render() {
     return (
       <>
+        <div className="login">
+          <Link to="/">
+            <button className='myButton'>Back</button>
+          </Link>
+          <Link to="/Instructions">
+            <button className='myButton'>Instructions</button>
+          </Link>
+        </div>
         <div className='titleBox'>
           <h1>Fun With Friends</h1>
         </div>
         <div className='outerBox'>
           <div className='navBar'>
-            <button className='myB' type='submit'>Game1</button>
+            <button className='myBMaf' type='submit' onClick={() => {
+              this.setState({ game: 'Mafia' });
+            }}>Mafia
+              <p className='descMaf'>HELLO THIS IS MAFIA BABY</p>
+            </button>
             <button className='myB' type='submit'>Game2</button>
             <button className='myB' type='submit'>Game3</button>
             <button className='myB' type='submit'>Game4</button>
@@ -60,7 +74,6 @@ export default class MainLobby extends Component {
                     <input className='textBox' type="text" placeholder="UserName" onChange={(e) => this.setState({ msg: e.target.value })} />
                     <button className='myB' type='submit'>Invite</button>
                   </div>
-
                 </form>
               </div>
             </div>

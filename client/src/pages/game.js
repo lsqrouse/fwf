@@ -7,7 +7,7 @@ const Game = (props) => {
     );
   } else {
     return (
-      "Unknown game \"" + props.state.game + "\"" 
+      <p>Please choose a game</p>
     );
   }
 };
