@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 export default class FrontPage extends Component {
   state = {
-    userName: "",
+    userName: "Name",
     lobbyID: 0
   }
   //URL FOR API NEED TO BE UPDATED
