@@ -10,6 +10,7 @@ import AccountTesting from './pages/AccountTesting.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx'; 
 import MainLobby from './MainLobby.tsx';
+import Instructions from './Instructions.tsx';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,6 +19,7 @@ root.render(
       <Routes>
         <Route exact path="/" element={<App/>}></Route>
         <Route exact path="Login" element={<Login />} />
+        <Route exact path="Instructions" element={<Instructions />} />
         <Route exact path="FrontPage" element={<FrontPage />} /> 
         <Route exact path="MainLobby" element={<MainLobby />} /> 
         <Route exact path="/sync" element={<SyncTesting/>}/>

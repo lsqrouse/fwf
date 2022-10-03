@@ -45,6 +45,9 @@ export default class MainLobby extends Component {
           <Link to="/">
             <button className='myButton'>Back</button>
           </Link>
+          <Link to="/Instructions">
+            <button className='myButton'>Instructions</button>
+          </Link>
         </div>
         <div className='titleBox'>
           <h1>Fun With Friends</h1>
