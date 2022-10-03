@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './FrontPage.css';
 import { useState } from "react";
+import { Link, useLocation } from 'react-router-dom';
 
 export default class FrontPage extends Component {
     state = {
@@ -65,7 +66,11 @@ export default class FrontPage extends Component {
         return(
             <div className='container'>
                 <div className='login'>
+                <Link to="/Login">
                   <button className='myButton' type='submit'>Login</button>
+                </Link>
+                <p>{this.state.userName}</p>
+                 
                 </div>
                 
                 <div className='box'>

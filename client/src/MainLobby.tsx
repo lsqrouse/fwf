@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './MainLobby.css';
-import Game from './pages/Game';
+import Game from './pages/game';
 // @ts-ignore
 import TextLog from './textLog.jsx';
 
