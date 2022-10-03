@@ -100,11 +100,35 @@
     width: 40%;
     height: 20%;
 }
+.myBMaf {
+  width: 40%;
+  height: 20%;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.myBMaf:hover .descMaf{
+  opacity: 1;
+  size: auto;
+  width: auto;
+  height: auto;
+}
+
+
+
+.descMaf {
+  opacity: 0;
+  size: 0px;
+  width: 0px;
+  height: 0px;
+}
 
 .textBox {
     width: 90%;
 
 }
+
+
 
 #chatBox {
     position: absolute;
