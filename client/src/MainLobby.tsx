@@ -58,7 +58,7 @@ export default class MainLobby extends Component {
             <button className='myBMaf' type='submit' onClick={() => {
               this.setState({ game: 'Mafia' });
             }}>Mafia
-              <p className='descMaf'>HELLO THIS IS MAFIA BABY</p>
+              <p className='descMaf'>HELLO THIS IS MAFIA BABY hi</p>
             </button>
             <button className='myB' type='submit'>Game2</button>
             <button className='myB' type='submit'>Game3</button>
