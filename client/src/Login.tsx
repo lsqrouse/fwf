@@ -71,10 +71,7 @@ export default class Login extends Component {
             <input type="text" placeholder="Username" onChange={(e) => this.setState({ userName: e.target.value })} />
             <input type="text" placeholder="Passoword" onChange={(e) => this.setState({ password: e.target.value })} />
             <div>
-              <Link to={{
-                pathname: '/', 
-                state: [{name: this.state.userName}]
-                }}>
+              <Link to="/" state={{name: this.state.userName}}>
                 <button className='myButton' type='submit'>Login</button>
               </Link>
             </div>
