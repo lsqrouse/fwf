@@ -10,6 +10,7 @@ export default class MainLobby extends Component {
     log: ['hello and welcome', "hello"],
     msg: "",
     game: "None",
+    name: "Name"
   }
   handleSubmit = async (e) => {
     console.log(this.state.msg + "hi");
