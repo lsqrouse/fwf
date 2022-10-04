@@ -1,112 +1,111 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './FrontPage.css';
-import { useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-export default class FrontPage extends Component {
-  state = {
-    userName: "Name",
-    lobbyID: 0
-  }
+export default function FrontPage () {
+  const [userName, setUserName] = useState("name");
+  const [lobbyCode, setLobbyCode] = useState('0')
+
+  const dispatch = useDispatch();
   //URL FOR API NEED TO BE UPDATED
-  handleSubmitCreate = async (e) => {
-    e.preventDefault();
-    try {
-      let res = await fetch("http://localhost:3001/api/accounts/create", {
-        method: "POST",
-        body: JSON.stringify({
-          userName: this.state.userName,
-          lobbyID: this.state.lobbyID
-        }),
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        this.setState({
-          userName: "",
-          lobbyID: 0,
-        })
+  const handleSubmitCreate = () => {
+    console.log("isnide of handle submit create")
+    fetch('/api/lobby/create')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("got data from api: ", data)
+        dispatch({type: 'updateLobby', payload: data})
+      })    // try {
+    //   let res = await fetch("http://localhost:3001/api/accounts/create", {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //       userName: this.state.userName,
+    //       lobbyID: this.state.lobbyID
+    //     }),
+    //   });
+    //   let resJson = await res.json();
+    //   if (res.status === 200) {
+    //     this.setState({
+    //       userName: "",
+    //       lobbyID: 0,
+    //     })
 
-      } else {
-        console.log("ERRRRRRRRRRRRRRR");
-      }
-    } catch (err) {
-      console.log(err + "ASFASFASFASFASFASFASf");
-    }
+    //   } else {
+    //     console.log("ERRRRRRRRRRRRRRR");
+    //   }
+    // } catch (err) {
+    //   console.log(err + "ASFASFASFASFASFASFASf");
+    // }
 
 
-
-  }
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      let res = await fetch("http://localhost:3001/", {
-        method: "POST",
-        body: JSON.stringify({
-          userName: this.state.userName,
-        }),
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        this.setState({
-          userName: "",
-          lobbyID: 0,
-        })
-
-      } else {
-        console.log("ERRRRRRRRRRRRRRR");
-      }
-    } catch (err) {
-      console.log(err + "ASFASFASFASFASFASFASf");
-    }
 
   }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    fetch('/api/lobby/create', )
+    // try {
+    //   let res = await fetch("http://localhost:3001/", {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //       userName: this.state.userName,
+    //     }),
+    //   });
+    //   let resJson = await res.json();
+    //   if (res.status === 200) {
+    //     this.setState({
+    //       userName: "",
+    //       lobbyID: 0,
+    //     })
+
+    //   } else {
+    //     console.log("ERRRRRRRRRRRRRRR");
+    //   }
+    // } catch (err) {
+    //   console.log(err + "ASFASFASFASFASFASFASf");
+    // }
+
+  }
 
 
-  render() {
-    return (
-      <div className='container'>
-        <div className='login'>
-          <Link to="/Login">
-            <button className='myButton' type='submit'>Login</button>
-          </Link>
-          <p>{this.state.userName}</p>
-
-        </div>
-
-        <div className='box'>
-          <h1>Fun With Friends</h1>
-        </div>
-
-        <div className='box'>
-          <h1>Join Lobby</h1>
-          <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Username" onChange={(e) => this.setState({ userName: e.target.value })} />
-            <input type="text" placeholder="LobbyID" onChange={(e) => this.setState({ lobbyID: e.target.value })} />
-            <div>
-            <Link to="/MainLobby">
-                <button className='myButton' type='submit'>Join</button>
-              </Link>
-            </div>
-
-          </form>
-
-
-          <h1>Create Lobby</h1>
-          <form onSubmit={this.handleSubmitCreate}>
-            <input type="text" placeholder="Username" onChange={(e) => this.setState({ userName: e.target.value })} />
-            <div>
-              <Link to="/MainLobby">
-                <button className='myButton' type='submit'>Create</button>
-              </Link>
-            </div>
-          </form>
-
-        </div>
+  return (
+    <div className='container'>
+      <div className='login'>
+        <Link to="/Login">
+          <button className='myButton' type='submit'>Login</button>
+        </Link>
+        <p>{userName}</p>
 
       </div>
 
+      <div className='box'>
+        <h1>Fun With Friends</h1>
+      </div>
 
-    )
-  }
+      <div className='box'>
+        <h1>Join Lobby</h1>
+        <input type="text" placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
+        <input type="text" placeholder="LobbyID" onChange={(e) => setLobbyCode(e.target.value)} />
+        <div>
+        <Link to="/MainLobby">
+            <button className='myButton' type='submit' onClick={handleSubmit}>Join</button>
+          </Link>
+        </div>
+
+
+
+        <h1>Create Lobby</h1>
+          <input type="text" placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
+          <div>
+            <Link to="/MainLobby">
+              <button className='myButton' type='submit' onClick={handleSubmitCreate}>Create</button>
+            </Link>
+          </div>
+      </div>
+
+    </div>
+
+
+  )
 }
 
