@@ -14,59 +14,57 @@ type gameState = {
     lobbyId: string,
     whoseTurn: string,
     counter: number,
+    playerList: Array<JSON>,
+    lobbyHost: string,
 }
 
-type myState = {
+type playerState = {
     id: string,
+    lobbyId: string,
     role: string
 }
 
 export default function TestGame(props: testGameProps) {
     const [joined, setJoined] = useState<boolean>(false);
-    const [playerList, setPlayerList] = useState<Array<any>>([]);
-    const [gameState, setGameState] = useState<any>({whoseTurn: '', counter: 0, lobbyId: props.lobbyId});
-    const [myState, setMyState] = useState<any>({});
+    const [gameState, setGameState] = useState<any>({});
+    const [playerState, setPlayerState] = useState<any>({});
 
     const colDefs = [
         {field: 'id'}
     ]
 
     if (!joined) {
+        console.log("joining lobby")
         socket.emit("join_lobby", props.lobbyId)
         setJoined(true)
     }
 
     useEffect(() => {
-        socket.on("recieve_state", (data) => {
+        socket.on("recieve_game_state", (data) => {
             console.log("Game state updated to ", data)
             var newGameState = data;
             setGameState(newGameState)
-        });
+        }); 
 
-        socket.on("turn_update", (data) => {
-            var newGameState = gameState;
-            newGameState.whoseTurn = data;
-            setGameState(newGameState)
-        })
-
-        socket.on("players", (data) => {
+        socket.on("recieve_player_state", (data) => {
             console.log("new player data", data)
-            setPlayerList(data)
-        })
-        
+            var newPlayerState = data
+            setPlayerState(newPlayerState)
+        })      
     }, [socket])
 
     const takeTurn = () => {
         gameState.counter+=1
-        socket.emit("update_state", gameState)
+        socket.emit("update_game_state", gameState)
     }
+    console.log("Current game state: ", gameState)
     return (
         <>
-        <h1>hello world, game is this {props.lobbyId}, currently player {gameState.whoseTurn}'s turn players are currently:</h1>
+        <h1>hello world, game is this {props.lobbyId}, hosted by: {gameState.lobbyHost}, <br/> You are: {playerState.id} <br></br> players are currently:</h1>
         <button onClick={takeTurn}> Take your turn </button>
         <div className='ag-theme-alpine' style={{height: 400, width: 600}}>
            <AgGridReact
-               rowData={playerList}
+               rowData={gameState.playerList}
                columnDefs={colDefs}>
            </AgGridReact>
        </div>

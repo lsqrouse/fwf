@@ -5,7 +5,7 @@ export default function Home() {
     const [lobby, setLobby] = useState("");
 
     const joinLobby = () => {
-        
+         
     } 
     return (
         <>      

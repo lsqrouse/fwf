@@ -24,45 +24,99 @@ const io = new Server(server, {
   },
 });
 
+/*
+ *  Constant Caching variables 
+ */
 //allows us to connect to frontend
+var lobbies = {
+  'ABC' : {
+    lobbyId: 'ABC',
+    playerList: [],
+    whoseTurn: '',
+    counter: 0,
+    lobbyHost: undefined,
 
-var userList = []
-var gameState = {}
+  }
+}
+
+var players = {
+
+}
+
 // this block will run when the client connects
 io.on('connection', (socket) => {
-  console.log("someone is here")
-
   socket.on("join_lobby", (data) => {
     console.log("Joining lobby ", data);
     socket.join(data)
-    userList.push({id: socket.id})
-    console.log("users is now ", userList)
-    io.in(data).emit("players", userList)
-    io.in(data).emit("recieve_state", gameState)
+    var gameState = {}
+    if(lobbies.hasOwnProperty(data)) {
+      gameState = lobbies[data]
+    } else {
+      //means the lobby doesn't exist, need to let that happen somehow
+      console.log("Player tried to join lobby that doesn't exist")
+      return
+    }
+    //caches that the player is in a given lobby
+    players[socket.id] = data;
 
+    //TODO this should get set at lobby creation time
+    if (gameState.lobbyHost == undefined) {
+      gameState.lobbyHost = socket.id;
+    }
+
+
+    gameState.playerList.push({id: socket.id})
+    io.in(gameState.lobbyId).emit("recieve_game_state", gameState)
+    var newPlayerState = {
+      id: socket.id,
+      lobbyId: data,
+      role: ''
+    }
+    socket.emit("recieve_player_state", newPlayerState)
   });
 
-  socket.on("send_num", (data) => {
-    console.log(data)
-    num = data["number"]
-    num++
-    console.log(num)
-    data["number"] = num
-    socket.emit("receive_num", data)
+  socket.on("update_game_state", (data) => {
+    console.log("Updating Lobby " + data.lobbyId + " state to:", data);
+    lobbies[data.lobbyId] = data;
+    io.in(data.lobbyId).emit("recieve_game_state", data)
+  });
+
+  socket.on("disconnect", (data) => {
+    var gameState = {}
+    if(players.hasOwnProperty(socket.id)) {
+      gameState = lobbies[players[socket.id]]
+    } else {
+      //means the lobby doesn't exist, need to let that happen somehow
+      console.log("Player that no longer exists tried to leave")
+      return
+    }
+    console.log("Player ".concat(socket.id).concat(" is leaving") )
+    delete players[socket.id];
+    //removes player from game list
+    const index = gameState.playerList.findIndex(el => {
+      return el.id === String(socket.id);
+    }); 
+    if (index > -1) { // only splice array when item is found
+      gameState.playerList.splice(index, 1); // 2nd parameter means remove one item only
+    }
+    
+    //test to see if the lobby should be removed
+    if (gameState.playerList.length == 0) {
+      //TODO probably need more cleanup than this
+      console.log("DELETED LOBBY ", gameState.lobbyId)
+      delete lobbies[gameState.lobbyId]
+      return
+    }
+    //update the lobby's host if necessary
+    if (gameState.lobbyHost == socket.id) {
+      gameState.lobbyHost = gameState.playerList[0].id
+    }
+    //reflects changes across other cleints
+    io.in(gameState.lobbyId).emit("recieve_game_state", gameState)
   })
 
-  socket.on("update_state", (data) => {
-    console.log("new game state is ", data);
-    io.in(data.lobbyId).emit("recieve_state", data)
-    gameState = data;
-  });
-
 })
 
-io.on("disconnect", (socket) => {
-  console.log(socket.id, " has left the lobby"
-  )
-})
 
 var db_config = {  
     server: 'fwf.database.windows.net',  //update me
