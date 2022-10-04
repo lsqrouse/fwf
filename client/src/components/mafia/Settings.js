@@ -76,15 +76,22 @@ function RoleSetter(props) {
         "Doctor", 1,
         "Villager", numVillagers
         );
+      
+      const mafiaPowerRoles = ["Distractor", "Framer"];
 
       if (numMafia >= 3) {
-        suggested[suggested.indexOf("Mafia")] = "Distractor";
+        for (let i = 0; i < numMafia; i++) {
+          if (i >= mafiaPowerRoles.length) {
+            break;
+          }
+          suggested[suggested.indexOf("Mafia")] = mafiaPowerRoles[i];
+        }
       }
 
-      const villagePowerRoles = ["Drunk", "Vigilante"];
+      const villagePowerRoles = ["Drunk", "Vigilante", "Ressurectionist"];
 
       if (numVillagers >= 6) {
-        for (let i = 0; i < numVillagers - 5; i++) {
+        for (let i = 0; i < numVillagers; i++) {
           if (i >= villagePowerRoles.length) {
             break;
           }
