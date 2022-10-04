@@ -1,3 +1,7 @@
+.settings {
+  display: block;
+}
+
 .roleSetter {
   width: 300px;
   margin: auto;
