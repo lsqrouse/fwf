@@ -12,19 +12,7 @@ import DistractorIcon from "../../images/mafia/icons/distractor.png"
 import ExecutionerIcon from "../../images/mafia/icons/executioner.png";
 import FramerIcon from "../../images/mafia/icons/framer.png";
 import RessurectionistIcon from "../../images/mafia/icons/ressurectionist.png";
-
-const roles = [
-  { name: "Villager", image: VillagerIcon},
-  { name: "Mafia", image: MafiaIcon},
-  { name: "Detective", image: DetectiveIcon},
-  { name: "Doctor", image: DoctorIcon},
-  { name: "Vigilante", image: VigilanteIcon},
-  { name: "Drunk", image: DrunkIcon},
-  { name: "Distractor", image: DistractorIcon},
-  { name: "Executioner", image: ExecutionerIcon},
-  { name: "Framer", image: FramerIcon},
-  { name: "Ressurectionist", image: RessurectionistIcon}
-];
+import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
   const [numPlayers, setNumPlayers] = useState(0);
