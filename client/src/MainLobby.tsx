@@ -2,16 +2,28 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './MainLobby.css';
 import Game from './pages/game';
+import { AgGridReact } from 'ag-grid-react';
+
 // @ts-ignore
 import TextLog from './textLog.jsx';
-
 export default class MainLobby extends Component {
+  constructor (props) {
+    super(props);
+    console.log('props: ', props)
+    this.state.serverInfo = props.serverInfo
+  }
   state = {
     log: ['hello and welcome', "hello"],
     msg: "",
     game: "None",
-    name: "Name"
+    name: "Name",
+    serverInfo: {playerList: []}
   }
+
+  colDefs = [
+    {field: 'id'}
+  ]
+
   handleSubmit = async (e) => {
     console.log(this.state.msg + "hi");
     e.preventDefault();
@@ -40,6 +52,7 @@ export default class MainLobby extends Component {
 
 
   render() {
+    console.log(this.state);
     return (
       <>
         <div className="login">
@@ -55,11 +68,14 @@ export default class MainLobby extends Component {
         </div>
         <div className='outerBox'>
           <div className='navBar'>
-            <button className='myBMaf' type='submit' onClick={() => {
-              this.setState({ game: 'Mafia' });
-            }}>Mafia
-              <p className='descMaf'>HELLO THIS IS MAFIA BABY hi</p>
-            </button>
+            {/* <Link to="/Mafia"> */}
+              <button className='myBMaf' type='submit' onClick={() => {
+                this.setState({ game: 'Mafia' });
+              }}>Mafia
+                <p className='descMaf'>HELLO THIS IS MAFIA BABY hi</p>
+              </button>
+            {/* </Link> */}
+
             <button className='myB' type='submit'>Game2</button>
             <button className='myB' type='submit'>Game3</button>
             <button className='myB' type='submit'>Game4</button>
@@ -103,7 +119,8 @@ export default class MainLobby extends Component {
           </div>
 
           <div className="box">log</div>
-
+          <div className='ag-theme-alpine' style={{height: 400, width: 600}}>
+       </div>
         </div>
       </>
 

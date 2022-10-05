@@ -39,6 +39,8 @@ var lobbies = {
   }
 }
 
+var curLobbyId = 0;
+
 var players = {
 
 }
@@ -168,7 +170,7 @@ var connection = new Connection(db_config);
 connection.on('connect', function(err) {  
     // If no error, then good to proceed.
     console.log("Connected, testing...");
-    executeStatement();  
+    // executeStatement();  
   
 });
 
@@ -188,6 +190,30 @@ app.get("/api/accounts/login", (req, res) => {
 app.get("/api/accounts/create", (req, res) => {
   createUser(connection, req.query , res)
   
+})
+
+app.get("/api/lobby/create", (req, res) => {
+  //TODO
+  // generate lobby code here and place it into lobby object
+  console.log("received request to make new lobby")
+  var newLobby = {
+    lobbyId: curLobbyId.toString(),
+    playerList: [],
+    counter: 0,
+    lobbyHost: undefined,
+    lobbyCode: curLobbyId.toString(),
+    gameState: {
+      whoseTurn: '',
+      gmae: 'mafia'
+    }
+  }
+  curLobbyId++
+  res.json(newLobby)
+  lobbies[curLobbyId.toString()] = newLobby;
+  console.log("lobbies is now ", lobbies)
+
+  //TODO 
+  // save lobby data in database
 })
 
 

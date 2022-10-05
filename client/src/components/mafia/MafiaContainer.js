@@ -1,6 +1,3 @@
-import { useState } from "react";
-import Settings from './Settings';
-
 import PlayerIcon from "../../images/mafia/icons/player.png";
 import VillagerIcon from "../../images/mafia/icons/villager.png";
 import DetectiveIcon from "../../images/mafia/icons/detective.png";
