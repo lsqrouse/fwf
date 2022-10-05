@@ -1,5 +1,6 @@
 .inGame {
   font-size: 14px;
+  height: 100%;
 }
 
 .roleList {
@@ -19,6 +20,14 @@
 }
 
 .roleCardTab {
-  height: 50px;
+  height: 30px;
+  width: 200px;
+  position: absolute;
+  bottom: 0;
+  border: 2px #856c4e solid;
+  border-radius: 10px 10px 0 0;
+  background-color: #faf2dc;
+  padding: 10px;
+  text-align: center;
   
 }
