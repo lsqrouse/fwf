@@ -96,5 +96,10 @@ function sendToAllPlayers(htmlData)
  */
 function isAlive(player) {
     // TODO: Check if player is in graveyard.
+    for (let play = 0; play < this.graveyard.length; play++) {
+      if (player.userId == play.userId) {
+        return true;
+      }
+    }
     return false;
 }
