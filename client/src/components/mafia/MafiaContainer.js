@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Settings from './Settings';
+import InGame from './InGame';
 
 import PlayerIcon from "../../images/mafia/icons/player.png";
 import VillagerIcon from "../../images/mafia/icons/villager.png";
@@ -34,7 +35,10 @@ function MafiaContainer(props) {
     <>
     {
       (gameScreen === "Game" &&
-        <GameScreen />)
+        <GameScreen
+          roles={roles}
+          roleList={selectedRoles}
+        />)
       ||
       (gameScreen === "Settings" &&
         <SettingsScreen
@@ -59,9 +63,9 @@ function SettingsScreen(props) {
   return (
     <>
       <Settings
-      roles={roles}
-      numPlayersHandler={[numPlayers, setNumPlayers]}
-      selectedRolesHandler={[selectedRoles, setSelectedRoles]}
+        roles={roles}
+        numPlayersHandler={[numPlayers, setNumPlayers]}
+        selectedRolesHandler={[selectedRoles, setSelectedRoles]}
       />
       <div>
         <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
@@ -71,12 +75,9 @@ function SettingsScreen(props) {
 }
 
 function GameScreen(props) {
-
   return (
     <>
-      <h3>
-        Mafia: In-Game
-      </h3>
+      <InGame roleList={props.roleList} />
     </>
   );
 }
