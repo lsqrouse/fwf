@@ -68,13 +68,13 @@ export default class MainLobby extends Component {
         </div>
         <div className='outerBox'>
           <div className='navBar'>
-            <Link to="/Mafia">
+            {/* <Link to="/Mafia"> */}
               <button className='myBMaf' type='submit' onClick={() => {
                 this.setState({ game: 'Mafia' });
               }}>Mafia
                 <p className='descMaf'>HELLO THIS IS MAFIA BABY hi</p>
               </button>
-            </Link>
+            {/* </Link> */}
 
             <button className='myB' type='submit'>Game2</button>
             <button className='myB' type='submit'>Game3</button>
