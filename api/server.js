@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -97,7 +97,22 @@ io.on('connection', (socket) => {
       return
     }
     console.log(lobbyState)
-    console.log(io.in(data.lobbyId).clients)
+
+  })
+
+  socket.on("end_game", (data) => {
+    console.log("someome ending the gmae with data ", data)
+    var lobbyState = {}
+    if(lobbies.hasOwnProperty(data.lobbyId)) {
+      lobbyState = lobbies[data.lobbyId]
+    } else {
+      //means the lobby doesn't exist, need to let that happen somehow
+      console.log("Player tried to join lobby that doesn't exist")
+      return
+    }
+    console.log(lobbyState)
+
+    saveGameHistory(connection, lobbyState);
 
   })
 
@@ -194,7 +209,7 @@ var connection = new Connection(db_config);
 connection.on('connect', function(err) {  
     // If no error, then good to proceed.
     console.log("Connected, testing...");
-    // executeStatement();  
+    executeStatement();  
   
 });
 
