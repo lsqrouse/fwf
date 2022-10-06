@@ -41,11 +41,11 @@ export default function MainLobby() {
           dispatch({type: 'updateLobby', payload: newLobbyState})
         });
         
-        socket.on("recieve_player_state", (data) => {
+      socket.on("recieve_player_state", (data) => {
           console.log("Recieved updated player state from server: ", data)
           var newPlayerState = data;
           dispatch({type: 'updatePlayer', payload: newPlayerState})
-      })  
+      });  
     
   }, [socket])
 
