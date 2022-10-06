@@ -18,27 +18,7 @@ export default function FrontPage () {
         dispatch({type: 'updateLobby', payload: data})
         dispatch({type: 'updatePlayer', payload: {nickname: userName, host: true}})
 
-      })    // try {
-    //   let res = await fetch("http://localhost:3001/api/accounts/create", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       userName: this.state.userName,
-    //       lobbyID: this.state.lobbyID
-    //     }),
-    //   });
-    //   let resJson = await res.json();
-    //   if (res.status === 200) {
-    //     this.setState({
-    //       userName: "",
-    //       lobbyID: 0,
-    //     })
-
-    //   } else {
-    //     console.log("ERRRRRRRRRRRRRRR");
-    //   }
-    // } catch (err) {
-    //   console.log(err + "ASFASFASFASFASFASFASf");
-    // }
+      })  
 
 
 
@@ -52,26 +32,7 @@ export default function FrontPage () {
       dispatch({type: 'updatePlayer', payload: {nickname: userName, host: false}})
 
     })
-    // try {
-    //   let res = await fetch("http://localhost:3001/", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       userName: this.state.userName,
-    //     }),
-    //   });
-    //   let resJson = await res.json();
-    //   if (res.status === 200) {
-    //     this.setState({
-    //       userName: "",
-    //       lobbyID: 0,
-    //     })
-
-    //   } else {
-    //     console.log("ERRRRRRRRRRRRRRR");
-    //   }
-    // } catch (err) {
-    //   console.log(err + "ASFASFASFASFASFASFASf");
-    // }
+ 
 
   }
 
