@@ -54,7 +54,6 @@ function MafiaContainer(props) {
       (gameScreen === "Settings" &&
         <SettingsScreen
           numPlayers={numPlayers}
-          setNumPlayers={setNumPlayers}
           selectedRoles={selectedRoles}
           setSelectedRoles={setSelectedRoles}
           startGame={startGame}
