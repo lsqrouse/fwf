@@ -14,42 +14,45 @@ export default function MainLobby() {
   const [joined, setJoined] = useState<boolean>(false);
   // const [lobbyState, setLobbyState] = useState<any>(useSelector((state: any) => state.lobbyState));
   const lobbyState = useSelector((state: any) => state.lobbyState);
+  const playerState = useSelector((state: any) => state.playerState);
+
   console.log("lobby state is, ", lobbyState)
 
   const dispatch = useDispatch();
 
-  // state = {
-  //   log: ['hello and welcome', "hello"],
-  //   msg: "",
-  //   game: "None",
-  //   name: "Name",
-  //   serverInfo: {playerList: []}
-  // }
-
   const colDefs = [
-    {field: 'id'}
+    {field: 'nickname'}
   ]
 
   if (!joined && lobbyState.lobbyId != undefined) {
-      socket.emit("join_lobby", lobbyState.lobbyId)
-      console.log("joined lobby ", lobbyState.lobbyId)
+      var join_data = {
+        lobbyId: lobbyState.lobbyId,
+        nickname: playerState.nickname
+      }  
+      socket.emit("join_lobby", join_data)
+      console.log("joined lobby ", join_data)
       setJoined(true)
   }
 
   useEffect(() => {
       socket.on("receive_lobby_state", (data) => {
-          console.log("Recieved update from server: ", data)
+          console.log("Recieved updated lobby state from server: ", data)
           var newLobbyState = data;
           dispatch({type: 'updateLobby', payload: newLobbyState})
-        }); 
+        });
+        
+        socket.on("recieve_player_state", (data) => {
+          console.log("Recieved updated player state from server: ", data)
+          var newPlayerState = data;
+          dispatch({type: 'updatePlayer', payload: newPlayerState})
+      })  
     
   }, [socket])
 
   const handleGameChoice = (game: string) => {
-    console.log("handling game choice update to ", game)
     var curLobbyState = lobbyState;
     curLobbyState.game = game;
-    console.log("updating state to ", curLobbyState)
+    console.log("Updating Lobby State to: ", curLobbyState)
     socket.emit("update_lobby_state", curLobbyState);
   }
 
@@ -64,7 +67,7 @@ export default function MainLobby() {
         </Link>
       </div>
       <div className='titleBox'>
-        <h1>Fun With Friends</h1>
+        <h1>Welcome to Fun With Friends, {playerState.nickname}. <br/> Invite friends to play with code {lobbyState.lobbyId}</h1>
       </div>
       <div className='outerBox'>
         <div className='navBar'>
@@ -80,8 +83,8 @@ export default function MainLobby() {
         </div>
         <div className='middle'>
           <div className='chat'>Players
-
-            <div>
+            
+            <div style={{width: "100%", height: "90%", marginTop: '10%'}}>
               {/* <form onSubmit={this.handleSubmit}>
                 <div id='chatBox'>
                   <hr></hr>
@@ -89,6 +92,10 @@ export default function MainLobby() {
                   <button className='myB' type='submit'>Invite</button>
                 </div>
               </form> */}
+              <AgGridReact
+                rowData={lobbyState.playerList}
+                columnDefs={colDefs}>
+            </AgGridReact>
             </div>
           </div>
           <div className='screen'>

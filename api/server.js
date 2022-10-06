@@ -49,17 +49,17 @@ var players = {
 io.on('connection', (socket) => {
   socket.on("join_lobby", (data) => {
     console.log("Joining lobby ", data);
-    socket.join(data)
+    socket.join(data.lobbyId)
     var gameState = {}
-    if(lobbies.hasOwnProperty(data.toString())) {
-      gameState = lobbies[data]
+    if(lobbies.hasOwnProperty(data.lobbyId)) {
+      gameState = lobbies[data.lobbyId]
     } else {
       //means the lobby doesn't exist, need to let that happen somehow
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
     //caches that the player is in a given lobby
-    players[socket.id] = data;
+    players[socket.id] = data.lobbyId;
 
     //TODO this should get set at lobby creation time
     if (gameState.lobbyHost == undefined) {
@@ -67,12 +67,13 @@ io.on('connection', (socket) => {
     }
 
 
-    gameState.playerList.push({id: socket.id})
+    gameState.playerList.push({id: socket.id, nickname: data.nickname})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
-      lobbyId: data,
-      role: ''
+      lobbyId: data.lobbyId,
+      role: '',
+      nickname: data.nickname
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
