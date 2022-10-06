@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
     console.log("Joining lobby ", data);
     socket.join(data)
     var gameState = {}
-    if(lobbies.hasOwnProperty(data)) {
+    if(lobbies.hasOwnProperty(data.toString())) {
       gameState = lobbies[data]
     } else {
       //means the lobby doesn't exist, need to let that happen somehow
@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 
 
     gameState.playerList.push({id: socket.id})
-    io.in(gameState.lobbyId).emit("recieve_game_state", gameState)
+    io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       lobbyId: data,
@@ -77,11 +77,18 @@ io.on('connection', (socket) => {
     socket.emit("recieve_player_state", newPlayerState)
   });
 
-  socket.on("update_game_state", (data) => {
+  socket.on("update_lobby_state", (data) => {
     console.log("Updating Lobby " + data.lobbyId + " state to:", data);
     lobbies[data.lobbyId] = data;
-    io.in(data.lobbyId).emit("recieve_game_state", data)
+    io.in(data.lobbyId.toString()).emit("receive_lobby_state", data)
+    console.log("updated")
   });
+
+  //   socket.on("update_game_state", (data) => {
+  //   console.log("Updating Lobby " + data.lobbyId + " state to:", data);
+  //   lobbies[data.lobbyId] = data;
+  //   io.in(data.lobbyId).emit("recieve_game_state", data)
+  // });
 
   socket.on("disconnect", (data) => {
     var gameState = {}
@@ -197,7 +204,7 @@ app.get("/api/lobby/create", (req, res) => {
   // generate lobby code here and place it into lobby object
   console.log("received request to make new lobby")
   var newLobby = {
-    lobbyId: curLobbyId.toString(),
+    lobbyId: curLobbyId.toString() + "L",
     playerList: [],
     counter: 0,
     lobbyHost: undefined,
@@ -205,17 +212,34 @@ app.get("/api/lobby/create", (req, res) => {
     gameState: {
       whoseTurn: '',
       gmae: 'mafia'
-    }
+    },
+    game: ''
   }
   curLobbyId++
   res.json(newLobby)
-  lobbies[curLobbyId.toString()] = newLobby;
+  lobbies[newLobby.lobbyId] = newLobby;
   console.log("lobbies is now ", lobbies)
 
   //TODO 
   // save lobby data in database
 })
 
+app.get("/api/lobby/join", (req, res) => {
+  var gameState = {};
+  var lobbyId = req.query.lobbyCode
+  console.log("trying to join ", req.query)
+  if(lobbies.hasOwnProperty(lobbyId)) {
+    gameState = lobbies[lobbyId]
+  } else {
+    //means the lobby doesn't exist, need to let that happen somehow
+    console.log("Player tried to join lobby that doesn't exist")
+    return
+  }
+  res.json(gameState)
+
+  //TODO 
+  // save lobby data in database
+})
 
 //starts the application
 server.listen(3001, () => {

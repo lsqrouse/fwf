@@ -41,9 +41,13 @@ export default function FrontPage () {
 
 
   }
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    fetch('/api/lobby/create', )
+  const handleSubmit = () => {
+    fetch('/api/lobby/join?lobbyCode=' + lobbyCode)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("got data from api: ", data)
+      dispatch({type: 'updateLobby', payload: data})
+    })
     // try {
     //   let res = await fetch("http://localhost:3001/", {
     //     method: "POST",

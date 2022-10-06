@@ -1,4 +1,4 @@
-const initialState = {}
+const initialState = {lobbyState: {}}
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {

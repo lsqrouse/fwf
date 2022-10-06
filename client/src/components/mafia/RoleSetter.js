@@ -1,5 +1,8 @@
+import {useSelector} from 'react-redux';
+
 function RoleSetter(props) {
-  const numPlayers = props.numPlayers;
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
+  // const numPlayers = props.numPlayers;
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
 

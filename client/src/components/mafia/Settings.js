@@ -1,10 +1,11 @@
 import { useState } from "react";
 import RoleSetter from "./RoleSetter";
 import "../../styles/mafia/styles.css";
+import { useSelector } from "react-redux";
 
 function Settings(props) {
   const roles = props.roles;
-  const numPlayers = props.numPlayersHandler[0];
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
   const setNumPlayers = props.numPlayersHandler[1];
   const selectedRoles = props.selectedRolesHandler[0];
   const setSelectedRoles = props.selectedRolesHandler[1];
@@ -20,7 +21,7 @@ function Settings(props) {
         <p>
           <h3>MAFIA: Settings</h3>
         </p>
-        There are <input type="number" onChange={updateNumPlayers} /> players
+        There are {numPlayers} players
       </div>
       <RoleSetter
         roles={roles}
