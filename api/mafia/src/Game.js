@@ -52,12 +52,6 @@ function doVote()
       player = key
     }
   }
-
-  // Send results to each player
-  sendToAllPlayers(
-    `<html>` + max.toString() + player.toString() + 
-    `<html>`
-  )
 }
 
 function getNightSummary()
@@ -73,20 +67,6 @@ function getNightSummary()
   }
 
   // Send night summary to each player
-  sendToAllPlayers(
-    `<html>` + nightSummary.toString() + 
-    `<html>`
-  )
-}
-
-function sendToAllPlayers(htmlData)
-{
-  // For loop to go through all players in player list
-  for (let player = 0; player < this.allPlayers.length; player++)
-  {
-    // Send html data to each player
-    print(player)
-  }
 }
 
 /**

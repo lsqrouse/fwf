@@ -16,6 +16,7 @@ function RoleSetter(props) {
   
   function suggestRoles() {
     if (numPlayers < 4) {
+      alert("Need more than three players!!");
       return;
     } else if (numPlayers == 4) {
       setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 3));
@@ -81,7 +82,7 @@ function RoleSetter(props) {
         )}
       </div>
       <div id="selectedRolesDiv">
-        SELECTED: {selectedRoles.length}
+        SELECTED: {numPlayers}
         <br/>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>

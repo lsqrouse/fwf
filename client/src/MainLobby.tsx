@@ -27,6 +27,7 @@ export default function MainLobby() {
   if (!joined && lobbyState.lobbyId != undefined) {
       var join_data = {
         lobbyId: lobbyState.lobbyId,
+        host: playerState.host,
         nickname: playerState.nickname
       }  
       socket.emit("join_lobby", join_data)
@@ -54,6 +55,47 @@ export default function MainLobby() {
     curLobbyState.game = game;
     console.log("Updating Lobby State to: ", curLobbyState)
     socket.emit("update_lobby_state", curLobbyState);
+  }
+
+  // If just player return player screen
+  if (playerState.host == false)
+  {
+    return (
+      <>
+      <div className='titleBox'>
+        <h1>Welcome {playerState.nickname}! <br/> Game: {lobbyState.gameState.game} <br/> Lobby Code: {lobbyState.lobbyId}</h1>
+      </div>
+      <div className='outerBox'>
+        <div className='middle'>
+          <div className='chat'>Players
+            <div style={{width: "100%", height: "90%", marginTop: '10%'}}>
+              <AgGridReact
+                rowData={lobbyState.playerList}
+                columnDefs={colDefs}>
+            </AgGridReact>
+            </div>
+          </div>
+          <div className='playerScreen'>
+            <h1>Your Role is: <br/> {playerState.Role} </h1>
+            <br/>
+            <div>
+              <button onClick={() => {alert("if role == roletype then do role action")}}> Do Role Action </button>
+            </div>
+            <br/>
+            <div>
+              <button onClick={() => {alert("if role == mafia then show mafia list")}}> View Mafia List </button>
+            </div>
+          </div>
+          <div className='chat'>chat
+            
+          </div>
+        </div>
+
+        <div className='ag-theme-alpine' style={{height: 75, width: 100}}>
+      </div>
+      </div>
+    </>
+    )
   }
 
   return (
