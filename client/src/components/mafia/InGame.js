@@ -21,18 +21,18 @@ function DayPhase(props) {
   return (
     <>
     <div className="mainInfo">
-        <Chat />
-        <AliveList alivePlayers={alivePlayers} />
-      </div>
-      <div className="sideButtons">
-        <ChatButton />
-        <AbilityButton />
-        <NotesButton />
-        <AlertsButton />
-        <hr />
-        <AliveButton />
-        <DeadButton />
-      </div>
+      <Chat />
+      <AliveList alivePlayers={alivePlayers} />
+    </div>
+    <div className="sideButtons">
+      <ChatButton />
+      <AbilityButton />
+      <NotesButton />
+      <AlertsButton />
+      <hr />
+      <AliveButton />
+      <DeadButton />
+    </div>
   </>
   );
 }

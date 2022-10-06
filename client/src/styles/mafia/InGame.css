@@ -9,6 +9,18 @@
   height: 40px;
 }
 
+.sideButtons {
+  display: inline-block;
+  width: 50px;
+  height: 500px;
+}
+
+.mainInfo {
+  display: inline-block;
+  width: 350px;
+  height: 500px;
+}
+
 .chatbox {
   height: 250px;
   border: 1px grey solid;
@@ -30,14 +42,4 @@
   background-color: #faf2dc;
   padding: 10px;
   text-align: center; 
-}
-
-.mainInfo {
-  float: left;
-  width: 250px;
-}
-
-.sideButtons {
-  float: left;
-  width: 50px;
 }
