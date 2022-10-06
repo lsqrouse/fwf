@@ -17,7 +17,7 @@ import RessurectionistIcon from "../../images/mafia/icons/ressurectionist.png";
 import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
-  const [numPlayers, setNumPlayers] = useState(0);
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
   const [selectedRoles, setSelectedRoles] = useState(["Villager"]);
   const [gameScreen, setGameScreen] = useState("Settings");
   const [socket, setSocket] = useState(props.socket);
