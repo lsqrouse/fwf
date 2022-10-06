@@ -67,12 +67,13 @@ io.on('connection', (socket) => {
     }
 
 
-    gameState.playerList.push({id: socket.id, nickname: data.nickname})
+    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       lobbyId: data.lobbyId,
       role: '',
+      host: data.host,
       nickname: data.nickname
     }
     socket.emit("recieve_player_state", newPlayerState)
@@ -212,7 +213,11 @@ app.get("/api/lobby/create", (req, res) => {
     lobbyCode: curLobbyId.toString(),
     gameState: {
       whoseTurn: '',
-      gmae: 'mafia'
+      game: 'mafia',
+      mafiaList: [],
+      alivePlayerList: [],
+      deadPlayerList: [],
+      currentPhase: 'day'
     },
     game: ''
   }

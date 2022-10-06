@@ -29,6 +29,7 @@ function MafiaContainer(props) {
     } else {
       setGameScreen("Game")
     }
+    //setGameScreen("Game")
   }
 
   return (

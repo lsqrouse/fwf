@@ -16,7 +16,7 @@ export default function FrontPage () {
       .then((data) => {
         console.log("got data from api: ", data)
         dispatch({type: 'updateLobby', payload: data})
-        dispatch({type: 'updatePlayer', payload: {nickname: userName}})
+        dispatch({type: 'updatePlayer', payload: {nickname: userName, host: true}})
 
       })    // try {
     //   let res = await fetch("http://localhost:3001/api/accounts/create", {
@@ -49,7 +49,7 @@ export default function FrontPage () {
     .then((data) => {
       console.log("got data from api: ", data)
       dispatch({type: 'updateLobby', payload: data})
-      dispatch({type: 'updatePlayer', payload: {nickname: userName}})
+      dispatch({type: 'updatePlayer', payload: {nickname: userName, host: false}})
 
     })
     // try {
