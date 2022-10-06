@@ -1,0 +1,33 @@
+.inGame {
+  font-size: 14px;
+  height: 100%;
+}
+
+.roleList {
+  display: block;
+  border: 1px grey solid;
+  height: 40px;
+}
+
+.chatbox {
+  height: 200px;
+  border: 1px grey solid;
+}
+
+.aliveList {
+  height: 200px;
+  border: 1px grey solid;
+}
+
+.roleCardTab {
+  height: 30px;
+  width: 200px;
+  position: absolute;
+  bottom: 0;
+  border: 2px #856c4e solid;
+  border-radius: 10px 10px 0 0;
+  background-color: #faf2dc;
+  padding: 10px;
+  text-align: center;
+  
+}
