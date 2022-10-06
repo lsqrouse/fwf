@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Settings from './Settings';
 import InGame from './InGame';
+import { useSelector } from "react-redux";
 
 import PlayerIcon from "../../images/mafia/icons/player.png";
 import VillagerIcon from "../../images/mafia/icons/villager.png";
@@ -19,6 +20,9 @@ function MafiaContainer(props) {
   const [numPlayers, setNumPlayers] = useState(0);
   const [selectedRoles, setSelectedRoles] = useState(["Villager"]);
   const [gameScreen, setGameScreen] = useState("Settings");
+  const [socket, setSocket] = useState(props.socket);
+  const lobbyState = useSelector((state) => state.lobbyState);
+
 
   function startGame() {
     // TODO: check for invalid role list
@@ -30,6 +34,12 @@ function MafiaContainer(props) {
       setGameScreen("Game")
     }
     //setGameScreen("Game")
+    console.log("starting game socketemit")
+    var startData = {
+      lobbyId: lobbyState.lobbyId,
+      selectedRoles: selectedRoles,
+    }
+    socket.emit("start_game", startData)
   }
 
   return (

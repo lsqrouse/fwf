@@ -86,6 +86,21 @@ io.on('connection', (socket) => {
     console.log("updated")
   });
 
+  socket.on("start_game", (data) => {
+    console.log("someome starting the gmae with data ", data)
+    var lobbyState = {}
+    if(lobbies.hasOwnProperty(data.lobbyId)) {
+      lobbyState = lobbies[data.lobbyId]
+    } else {
+      //means the lobby doesn't exist, need to let that happen somehow
+      console.log("Player tried to join lobby that doesn't exist")
+      return
+    }
+    console.log(lobbyState)
+    console.log(io.in(data.lobbyId).clients)
+
+  })
+
   //   socket.on("update_game_state", (data) => {
   //   console.log("Updating Lobby " + data.lobbyId + " state to:", data);
   //   lobbies[data.lobbyId] = data;

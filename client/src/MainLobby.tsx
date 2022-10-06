@@ -141,7 +141,7 @@ export default function MainLobby() {
             </div>
           </div>
           <div className='screen'>
-            <Game game={lobbyState.game} />
+            <Game game={lobbyState.game} socket={socket}/>
           </div>
           <div className='chat'>chat
             <ul className="list-group">
