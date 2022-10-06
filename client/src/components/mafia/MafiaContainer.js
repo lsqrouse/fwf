@@ -42,6 +42,10 @@ function MafiaContainer(props) {
     socket.emit("start_game", startData)
   }
 
+  function endGame() {
+    socket.emit("end_game", lobbyState)
+  }
+
   return (
     <>
     {
@@ -58,6 +62,7 @@ function MafiaContainer(props) {
           selectedRoles={selectedRoles}
           setSelectedRoles={setSelectedRoles}
           startGame={startGame}
+          endGame={endGame}
         />)
     }
     </>
@@ -70,6 +75,7 @@ function SettingsScreen(props) {
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
   const startGame = props.startGame;
+  const endGame = props.endGame;
 
   return (
     <>
@@ -80,6 +86,9 @@ function SettingsScreen(props) {
       />
       <div>
         <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+      </div>
+      <div>
+        <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
       </div>
     </>
   );
