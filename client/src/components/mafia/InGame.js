@@ -1,18 +1,40 @@
 import "../../styles/mafia/InGame.css"
+import { ChatButton, AbilityButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
+
+// Placeholder
+const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
 
 function InGame(props) {
-  // Placeholder
-  const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
 
   return (
     <div className="inGame">
       <RoleList roleList={props.roleList} />
-      <Chat />
-      <AliveList alivePlayers={alivePlayers} />
-      <RoleCardTab />
+      <DayPhase />
+      <RoleCardTab onClick={(props) => showRoleCard}/>
     </div>
   );
 
+}
+
+function DayPhase(props) {
+
+  return (
+    <>
+    <div className="mainInfo">
+        <Chat />
+        <AliveList alivePlayers={alivePlayers} />
+      </div>
+      <div className="sideButtons">
+        <ChatButton />
+        <AbilityButton />
+        <NotesButton />
+        <AlertsButton />
+        <hr />
+        <AliveButton />
+        <DeadButton />
+      </div>
+  </>
+  );
 }
 
 function RoleList(props) {
@@ -64,6 +86,10 @@ function RoleCardTab(props) {
       ROLE
     </div>
   );
+}
+
+function showRoleCard(props) {
+
 }
 
 export default InGame;
