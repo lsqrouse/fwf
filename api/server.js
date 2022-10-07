@@ -96,7 +96,6 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    var choosen = [];
     io.in(data.lobbyId).fetchSockets().then((response) => {
       var newPlayerList = []
       response.forEach((socket) => {
@@ -107,7 +106,6 @@ io.on('connection', (socket) => {
         for (let i of lobbyState.playerList) {
           if (left.length > 0) {
             var ran = Math.floor(Math.random() * left.length);
-            if (!choosen.includes(left[ran])) {
                var newPlayerState = {
                 id: i.id,
                 lobbyId: data.lobbyId,
@@ -115,11 +113,7 @@ io.on('connection', (socket) => {
                 host: i.host,
                 nickname: i.nickname
               }
-              choosen.push(left[ran]);
-              left.splice(ran, 1);
-            } else {
-              break;
-            }
+            left.splice(ran, 1);
           } else {
             var newPlayerState = {
               id: i.id,
