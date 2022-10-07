@@ -136,6 +136,7 @@ io.on('connection', (socket) => {
         })  
       })
         lobbyState.playerList = assignments;
+        lobbyState.gameScreen = "Game";
         lobbies[data.lobbyId] = lobbyState
         console.log("updated lobby state is ", lobbyState)
         io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
@@ -288,6 +289,7 @@ app.get("/api/lobby/create", (req, res) => {
       currentPhase: 'day',
       phaseNum: 0
     },
+    gameScreen: 'Settings',
     game: ''
   }
   curLobbyId++
