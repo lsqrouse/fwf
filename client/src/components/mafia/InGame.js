@@ -1,7 +1,7 @@
 import "../../styles/mafia/InGame.css"
 import { useSelector } from 'react-redux';
 import { useState } from "react";
-import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
+import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
 
@@ -94,13 +94,15 @@ function Chat(props) {
 }
 
 function AliveList(props) {
-const alivePlayers = props.alivePlayers;
+  const lobbyState = useSelector((state) => state.lobbyState);
+  // TODO: Check which players are alive
+  const alivePlayers = lobbyState.playerList;
 
   return (
     <div className="aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
       <ul>
-        {alivePlayers.map(name => {return <li>{name}</li>})}
+        {alivePlayers.map(player => {return <li>{player.nickname}</li>})}
       </ul>
     </div>
   )
