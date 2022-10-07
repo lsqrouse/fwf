@@ -96,13 +96,12 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    var newPLIST = [];
-    var newPlayerState;
     var left = JSON.parse(JSON.stringify(data.selectedRoles));
     for (let i of lobbyState.playerList) {
+      var newPLIST = [];
       if (left.length > 0) {
         var ran = Math.floor(Math.random() * left.length);
-        newPlayerState = {
+        var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
           role: left[ran],
@@ -111,7 +110,7 @@ io.on('connection', (socket) => {
         }
         left.splice(ran, 1);
       } else {
-        newPlayerState = {
+        var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
           role: 'Villager',
@@ -122,16 +121,16 @@ io.on('connection', (socket) => {
       io.in(data.lobbyId).fetchSockets().then((response) => {
         response.forEach((socket) => {
           if (i.id == socket.id) {
-            console.log(newPlayerState);
+            //console.log(newPlayerState);
             newPLIST.push(newPlayerState);
             socket.emit("recieve_player_state", newPlayerState);
           }
         })
       });
       //console.log(newPLIST);
+      lobbyState.playerList = newPLIST;
     }
-    lobbyState.playerList = newPLIST;
-    console.log(newPLIST);
+    console.log(lobbyState.playerList);
   })
 
   //   socket.on("update_game_state", (data) => {
