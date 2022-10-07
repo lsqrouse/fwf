@@ -211,6 +211,11 @@ function executeStatement() {
 
 var connection = new Connection(db_config);  
 connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+ } else {
+    console.log('Connected');
+ }
     // If no error, then good to proceed.
     console.log("Connected, testing...");
     executeStatement();  
@@ -226,11 +231,13 @@ app.get("/api", (req, res) => {
 });
  
 app.get("/api/accounts/login", (req, res) => {
+  console.log("received request for login", req.query)
   getUserByUsername(connection, req.query, res)
   
 })
 
 app.get("/api/accounts/create", (req, res) => {
+  console.log("received request to create an account")
   createUser(connection, req.query , res)
   
 })

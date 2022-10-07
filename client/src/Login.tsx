@@ -1,57 +1,66 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 import './FrontPage.css';
 import { Link } from 'react-router-dom';
-export default class Login extends Component {
+import { useDispatch } from 'react-redux';
 
-  state = {
-    userName: "",
-    password: "",
-    email: "",
-  }
+export default function Login() {
+
+  const [username, setUsername] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const [email, setEmail] = useState<string>();
+
+  const dispatch = useDispatch();
 
 
-  handleSubmitCreate = async (e) => {
-    e.preventDefault();
-    console.log(
-
-      "making request"
-    )
-    fetch(`/api/accounts/create?uname=${this.state.userName}&pass=${this.state.password}&email=${this.state.email}`)
+  const handleCreateAccount = () => {
+    console.log("hitting ", `/api/accounts/create?uname=${username}&pass=${password}&email=${email}`)
+    fetch(`/api/accounts/create?uname=${username}&pass=${password}&email=${email}`)
       .then((res) => res.json())
-      .then((data) => console.log("recieved this from api, ", data))
+      .then((data) => {
+        console.log("recieved this from api, ", data)
+        dispatch({type: 'updateUser', payload: data});
+      })
   }
 
+  const handleLogin = () => {
+    console.log("making login call now with ", username, ", ", password)
+    fetch(`/api/accounts/login?uname=${username}&pass=${password}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("recieved this from api, ", data)
+        dispatch({type: 'updateUser', payload: data});
+      })  }
 
 
 
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      let res = await fetch("http://localhost:3001/", {
-        method: "POST",
-        body: JSON.stringify({
-          userName: this.state.userName,
-          password: this.state.password
-        }),
-      });
-      let resJson = await res.json();
-      if (res.status === 200) {
-        this.setState({
-          userName: "",
-          lobbyID: 0,
-        })
 
-      } else {
-        console.log("ERRRRRRRRRRRRRRR");
-      }
-    } catch (err) {
-      console.log(err + "ASFASFASFASFASFASFASf");
-    }
+  // const handleSubmit = () => {
+  //   e.preventDefault();
+  //   try {
+  //     let res = await fetch("http://localhost:3001/", {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         userName: this.state.userName,
+  //         password: this.state.password
+  //       }),
+  //     });
+  //     let resJson = await res.json();
+  //     if (res.status === 200) {
+  //       this.setState({
+  //         userName: "",
+  //         lobbyID: 0,
+  //       })
 
-  }
+  //     } else {
+  //       console.log("ERRRRRRRRRRRRRRR");
+  //     }
+  //   } catch (err) {
+  //     console.log(err + "ASFASFASFASFASFASFASf");
+  //   }
 
-  render() {
+  // }
+
     return (
       <div className='container'>
         <div className="login">
@@ -67,29 +76,25 @@ export default class Login extends Component {
 
         <div className='box'>
           <h1>Login</h1>
-          <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Username" onChange={(e) => this.setState({ userName: e.target.value })} />
-            <input type="text" placeholder="Passoword" onChange={(e) => this.setState({ password: e.target.value })} />
+            <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+            <input type="text" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
             <div>
-              <Link to="/" state={{name: this.state.userName}}>
-                <button className='myButton' type='submit'>Login</button>
+              <Link to="/" >
+                <button className='myButton' type='submit' onClick={handleLogin}>Login</button>
               </Link>
             </div>
 
-          </form>
 
 
           <h1>Create Account</h1>
-          <form onSubmit={this.handleSubmitCreate}>
-            <input type="text" placeholder="Username" onChange={(e) => this.setState({ userName: e.target.value })} />
-            <input type="text" placeholder="Passoword" onChange={(e) => this.setState({ password: e.target.value })} />
-            <input type="text" placeholder="email" onChange={(e) => this.setState({ email: e.target.value })} />
+          <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+            <input type="text" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
             <div>
               <Link to="/">
-                <button className='myButton' type='submit'>Sign Up</button>
+                <button className='myButton' type='submit' onClick={handleCreateAccount}>Sign Up</button>
               </Link>
             </div>
-          </form>
 
         </div>
 
@@ -98,6 +103,3 @@ export default class Login extends Component {
 
     )
   }
-
-
-}

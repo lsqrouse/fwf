@@ -3,7 +3,10 @@ const initialState = {
     lobbyHost: '',
     gameState: {}
   },
-  playerState: {}
+  playerState: {},
+  userState: {
+    uname: 'name'
+  }
 }
 
 export default function reducer(state = initialState, action) {
@@ -24,6 +27,15 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         playerState: action.payload,
+      }
+    }
+    case 'updateUser': {
+      console.log("state is: ", state)
+      console.log("action is ", action)
+      // Can return just the new todos array - no extra object around it
+      return {
+        ...state,
+        userState: action.payload,
       }
     }
     default:
