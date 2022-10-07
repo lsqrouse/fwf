@@ -100,6 +100,7 @@ io.on('connection', (socket) => {
       response.forEach((socket) => {
         //console.log(socket.id, "is present")
         var left = JSON.parse(JSON.stringify(data.selectedRoles));
+        //console.log(lobbyState.playerList);
         for (var i of lobbyState.playerList) {
           if (left.length > 0) {
             var ran = Math.floor(Math.random() * left.length);
@@ -120,14 +121,13 @@ io.on('connection', (socket) => {
               nickname: i.nickname
             }
           }
+          if (i.id == socket.id) {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
         }
-        socket.emit("receive_player_state", newPlayerState);
-        console.log("NEW PLAYERS: " + newPlayerState);
-        console.log(data.playerList);
       })
+      console.log(lobbies.playerList);
     });
-
-
   })
 
   //   socket.on("update_game_state", (data) => {
