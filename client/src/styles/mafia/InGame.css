@@ -60,12 +60,22 @@
   background-color: #faf2dc;
 }
 
+.roleCard img {
+  margin-right: 20px;
+}
+
+.roleCard h1 {
+  display: inline;
+}
+
 .roleCard .roleLabel {
-  margin-top: 0;
   text-align: center;
 }
 
 .roleCard .tapToHideLabel {
-  margin-bottom: 0;
+  width: 240px;
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 10px;
   text-align: center;
 }

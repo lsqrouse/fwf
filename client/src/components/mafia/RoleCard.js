@@ -27,6 +27,7 @@ function RoleCardOpen(props) {
       </div>
       <img src={role.image} alt={role.name} />
       <h1>{role.name}</h1>
+      <hr />
       <p><b>Team:</b> {role.team}</p>
       <p><b>Win Condition:</b> {role.winCondition}</p>
       {role.abilities && <p><b>Abilities:</b> {role.abilities}</p>}
