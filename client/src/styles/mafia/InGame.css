@@ -30,7 +30,7 @@
 .sideButtons {
   display: inline-block;
   width: 50px;
-  height: 500px;
+  height: 460px;
 }
 
 .phase {
@@ -40,17 +40,16 @@
 .mainInfo {
   display: inline-block;
   width: 400px;
-  height: 500px;
 }
 
 .topScreen {
-  height: 210px;
+  height: 190px;
   border: 1px grey solid;
   padding: 20px;
 }
 
 .bottomScreen {
-  height: 210px;
+  height: 190px;
   border: 1px grey solid;
   padding: 20px;
   overflow: auto;
@@ -68,7 +67,7 @@
   height: 20px;
   width: 300px;
   position: relative;
-  bottom: -20px;
+  bottom: 0px;
   left: 50px;
   border: 2px #856c4e solid;
   border-bottom: none;
