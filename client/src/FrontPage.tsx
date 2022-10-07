@@ -18,7 +18,7 @@ export default function FrontPage () {
       .then((data) => {
         console.log("got data from api: ", data)
         dispatch({type: 'updateLobby', payload: data})
-        dispatch({type: 'updatePlayer', payload: {nickname: userName, host: true}})
+        dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: true}})
 
       })    // try {
     //   let res = await fetch("http://localhost:3001/api/accounts/create", {
@@ -46,7 +46,8 @@ export default function FrontPage () {
 
   }
   const handleSubmit = () => {
-    fetch('/api/lobby/join?lobbyCode=' + lobbyCode)
+    console.log("calling with nickname ", nickname)
+    fetch(`/api/lobby/join?lobbyCode=${lobbyCode}&nickname=${nickname}`)
     .then((res) => res.json())
     .then((data) => {
       console.log("got data from api: ", data)
@@ -54,26 +55,7 @@ export default function FrontPage () {
       dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: false}})
 
     })
-    // try {
-    //   let res = await fetch("http://localhost:3001/", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       userName: this.state.userName,
-    //     }),
-    //   });
-    //   let resJson = await res.json();
-    //   if (res.status === 200) {
-    //     this.setState({
-    //       userName: "",
-    //       lobbyID: 0,
-    //     })
 
-    //   } else {
-    //     console.log("ERRRRRRRRRRRRRRR");
-    //   }
-    // } catch (err) {
-    //   console.log(err + "ASFASFASFASFASFASFASf");
-    // }
 
   }
 
