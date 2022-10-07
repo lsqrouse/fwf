@@ -26,7 +26,7 @@ function MafiaContainer(props) {
 
   function startGame() {
     // TODO: check for invalid role list
-    setNumPlayers(lobbyState.playerList.length);
+    //setNumPlayers(lobbyState.playerList.length);
     console.log(lobbyState.playerList.length);
     console.log("NUM PLAYERS %d", numPlayers);
     const playersNow = lobbyState.playerList.length;
