@@ -170,9 +170,17 @@ function Chat(props) {
 }
 
 function Vote(props) {
+  const players = useSelector((state) => state.lobbyState.playerList);
+
   return (
     <div className="topScreen vote">
-      Vote who to eliminate
+      <form>
+        <label for="voteChoice"><b>You vote:</b></label>
+        <select name="voteChoice">
+          <option value={null}></option>
+          {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+        </select>
+      </form>
     </div>
   );
 }
