@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
         }
         socket.emit("receive_player_state", newPlayerState);
         console.log("NEW PLAYERS: " + newPlayerState);
-        console.log(gameState.playerList);
+        console.log(data.playerList);
       })
     });
 
