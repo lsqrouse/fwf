@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser, saveGameHistory} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory, createLobby} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -145,11 +145,10 @@ io.on('connection', (socket) => {
     //console.log(lobbyState.playerList);
   });
 
-  //   socket.on("update_game_state", (data) => {
-  //   console.log("Updating Lobby " + data.lobbyId + " state to:", data);
-  //   lobbies[data.lobbyId] = data;
-  //   io.in(data.lobbyId).emit("recieve_game_state", data)
-  // });
+  socket.on("end_game", (lobbyState) => {
+    console.log("Saving game that took place in " + lobbyState.lobbyId);
+    saveGameHistory(connection, lobbyState)
+  });
 
   socket.on("disconnect", (data) => {
     var lobbyState = {}
@@ -299,12 +298,14 @@ app.get("/api/lobby/create", (req, res) => {
 
   //TODO 
   // save lobby data in database
+  createLobby(connection, newLobby)
+  
 })
 
 app.get("/api/lobby/join", (req, res) => {
   var gameState = {};
   var lobbyId = req.query.lobbyCode
-  console.log("trying to join ", req.query)
+  console.log("Client trying to join lobby: ", req.query)
   if(lobbies.hasOwnProperty(lobbyId)) {
     gameState = lobbies[lobbyId]
   } else {
@@ -313,9 +314,6 @@ app.get("/api/lobby/join", (req, res) => {
     return
   }
   res.json(gameState)
-
-  //TODO 
-  // save lobby data in database
 })
 
 //starts the application

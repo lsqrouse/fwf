@@ -55,7 +55,7 @@ function createUser(connection, query, res) {
 }
 
 function saveGameHistory(connection, lobbyState) {
-  request = new Request(`INSERT INTO game_history ("gamestate") values ('${lobbyState}');`, function(err) {  
+  request = new Request(`INSERT INTO game_history ("gamestate", "created_at") values ('${lobbyState}', GETDATE());`, function(err) {  
     if (err) {  
         console.log("we have an error", err);}  
     });  
@@ -73,5 +73,24 @@ function saveGameHistory(connection, lobbyState) {
     connection.execSql(request);
 }
 
+function createLobby(connection, lobbyState) {
+  request = new Request(`INSERT INTO lobbies ("gamestate", "created_at") values ('${lobbyState}', GETDATE());`, function(err) {  
+    if (err) {  
+        console.log("we have an error", err);}  
+    });  
 
-module.exports = {getUserByUsername, createUser, saveGameHistory};
+    request.on('done', function(rowCount, more) {
+      console.log(rowCount + ' rows returned', more);  
+    });  
+    
+    // Close the connection after the final event emitted by the request, after the callback passes
+    request.on("requestCompleted", function (rowCount, more) {
+      
+      console.log("completed: ", rowCount, more)
+      console.log("Created a new lobby")
+    });
+    connection.execSql(request);
+}
+
+
+module.exports = {getUserByUsername, createUser, saveGameHistory, createLobby};
