@@ -6,6 +6,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
+import { json } from 'stream/consumers';
 
 const socket = io("http://localhost:3001").connect()
 
@@ -23,16 +24,28 @@ export default function MainLobby() {
   const colDefs = [
     { field: 'nickname' }
   ]
-
+  console.log("joined %b", joined)
   if (!joined && lobbyState.lobbyId != undefined) {
     var join_data = {
       lobbyId: lobbyState.lobbyId,
       host: playerState.host,
-      nickname: playerState.nickname
+      nickname: playerState.nickname,
     }
-    socket.emit("join_lobby", join_data)
-    console.log("joined lobby ", join_data)
-    setJoined(true)
+    var rejoin = false;
+    for (var i =0; i < lobbyState.playerList.length; i++) {
+      console.log(lobbyState.playerList[i].nickname);
+      if(lobbyState.playerList[i].nickname == join_data.nickname) {
+        console.log("BREAKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
+        rejoin = true;
+        break;
+      }
+    }
+    if(!rejoin){
+      socket.emit("join_lobby", join_data)
+      console.log("joined lobby ", join_data)
+      setJoined(true)
+    }
+    
   }
 
   useEffect(() => {
@@ -50,6 +63,14 @@ export default function MainLobby() {
 
   }, [socket])
 
+
+  const handleLeave = () => {
+    var curLobbyState = lobbyState;
+    setJoined(false)
+    dispatch({ type: 'updateLobby', payload: {}})
+    console.log("disconnecting: ");
+  }
+
   const handleGameChoice = (game: string) => {
     var curLobbyState = lobbyState;
     curLobbyState.game = game;
@@ -61,6 +82,14 @@ export default function MainLobby() {
   if (playerState.host == false) {
     return (
       <>
+      <div className="login">
+        <Link to="/">
+          <button className='myButton' onClick={handleLeave}>Back</button>
+        </Link>
+        <Link to="/Instructions">
+          <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
+        </Link>
+      </div>
         <div className='titleBox'>
           <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.gameState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
         </div>
@@ -101,7 +130,7 @@ export default function MainLobby() {
     <>
       <div className="login">
         <Link to="/">
-          <button className='myButton'>Back</button>
+          <button className='myButton' onClick={handleLeave}>Back</button>
         </Link>
         <Link to="/Instructions">
           <button className='myButton'>Instructions</button>
@@ -132,7 +161,7 @@ export default function MainLobby() {
           </button>
         </div>
         <div className='middle'>
-          <div className='chat'>Players
+          <div className='chat'>Players:
 
             <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
               {/* <form onSubmit={this.handleSubmit}>

@@ -21,7 +21,7 @@ function Settings(props) {
         <p>
           <h3>MAFIA: Settings</h3>
         </p>
-        There are {numPlayers} players
+        There are {numPlayers} players. Minimum 2 required.
       </div>
       <RoleSetter
         roles={roles}
