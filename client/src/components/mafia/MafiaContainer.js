@@ -22,13 +22,19 @@ function MafiaContainer(props) {
   const [gameScreen, setGameScreen] = useState("Settings");
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
-
+  const minPlayers = 2;
 
   function startGame() {
     // TODO: check for invalid role list
-    if (numPlayers > selectedRoles.length) {
+    setNumPlayers(lobbyState.playerList.length);
+    console.log(lobbyState.playerList.length);
+    console.log("NUM PLAYERS %d", numPlayers);
+    const playersNow = lobbyState.playerList.length;
+    if(playersNow < minPlayers) {
+      alert("not enough players in game");
+    }else if (playersNow > selectedRoles.length) {
       alert("Not enough roles selected!");
-    } else if (numPlayers < selectedRoles.length) {
+    } else if (playersNow < selectedRoles.length) {
       alert("Too many roles selected!");
     } else {
       setGameScreen("Game")
