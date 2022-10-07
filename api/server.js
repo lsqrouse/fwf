@@ -96,44 +96,40 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    io.in(data.lobbyId).fetchSockets().then((response) => {
-      var newPlayerList = []
-      response.forEach((socket) => {
-        //console.log(socket.id, "is present")
-        var left = JSON.parse(JSON.stringify(data.selectedRoles));
-        //console.log(choosen);
-        //console.log(lobbyState.playerList);
-        for (let i of lobbyState.playerList) {
-          if (left.length > 0) {
-            var ran = Math.floor(Math.random() * left.length);
-               var newPlayerState = {
-                id: i.id,
-                lobbyId: data.lobbyId,
-                role: left[ran],
-                host: i.host,
-                nickname: i.nickname
-              }
-            left.splice(ran, 1);
-          } else {
-            var newPlayerState = {
-              id: i.id,
-              lobbyId: data.lobbyId,
-              role: 'Villager',
-              host: i.host,
-              nickname: i.nickname
-            }
-          }
+    var newPlayerList = [];
+    var left = JSON.parse(JSON.stringify(data.selectedRoles));
+    for (let i of lobbyState.playerList) {
+      if (left.length > 0) {
+        var ran = Math.floor(Math.random() * left.length);
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: left[ran],
+          host: i.host,
+          nickname: i.nickname
+        }
+        console.log(newPlayerState);
+        left.splice(ran, 1);
+      } else {
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: 'Villager',
+          host: i.host,
+          nickname: i.nickname
+        }
+      }
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
           if (i.id == socket.id) {
             newPlayerList.push(newPlayerState);
             socket.emit("recieve_player_state", newPlayerState);
-            console.log(newPlayerState);
           }
-        }
-      })
+        })
+      });
       lobbyState.playerList = newPlayerList;
       console.log(lobbyState.playerList);
-
-    });
+    }
   })
 
   //   socket.on("update_game_state", (data) => {
