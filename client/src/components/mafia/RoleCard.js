@@ -1,5 +1,4 @@
 import { useState } from "react";
-import roles from "../../data/mafia/roles";
 
 function RoleCard(props) {
   const role = props.role;

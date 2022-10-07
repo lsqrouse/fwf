@@ -86,8 +86,10 @@ function RoleSetter(props) {
       <div id="selectedRolesDiv">
         SELECTED: {numPlayers}
         <br/>
+        {isHost && <>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
+        </>}
         <SelectedRoles roles={props.roles} selectedRoles={selectedRoles}/>
       </div>
     </div>
