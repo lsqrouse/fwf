@@ -13,14 +13,14 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
-  // TODO: feed in player's actual role stored in server to the RoleCard component.
+  const playerRole = useSelector((state) => state.playerState.role);
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
       <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
-      <RoleCard role={roles[0]} />
+      <RoleCard role={roles.find(r => r.name = playerRole)} />
     </div>
   );
 }
