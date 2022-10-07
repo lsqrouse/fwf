@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import './FrontPage.css';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 export default function FrontPage () {
-  const [userName, setUserName] = useState("name");
+  const userName = useSelector((state: any) => state.userState.uname);
+  const [nickname, setNickname] = useState('name')
   const [lobbyCode, setLobbyCode] = useState('0')
 
   const dispatch = useDispatch();
@@ -49,7 +51,7 @@ export default function FrontPage () {
     .then((data) => {
       console.log("got data from api: ", data)
       dispatch({type: 'updateLobby', payload: data})
-      dispatch({type: 'updatePlayer', payload: {nickname: userName, host: false}})
+      dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: false}})
 
     })
     // try {
@@ -92,7 +94,7 @@ export default function FrontPage () {
 
       <div className='box'>
         <h1>Join Lobby</h1>
-        <input type="text" placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
+        <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
         <input type="text" placeholder="LobbyID" onChange={(e) => setLobbyCode(e.target.value)} />
         <div>
         <Link to="/MainLobby">
@@ -103,7 +105,7 @@ export default function FrontPage () {
 
 
         <h1>Create Lobby</h1>
-          <input type="text" placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
+          <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
           <div>
             <Link to="/MainLobby">
               <button className='myButton' type='submit' onClick={handleSubmitCreate}>Create</button>

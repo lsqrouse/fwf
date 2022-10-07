@@ -17,18 +17,24 @@ import RessurectionistIcon from "../../images/mafia/icons/ressurectionist.png";
 import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
-  const [numPlayers, setNumPlayers] = useState(0);
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
   const [selectedRoles, setSelectedRoles] = useState(["Villager"]);
   const [gameScreen, setGameScreen] = useState("Settings");
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
-
+  const minPlayers = 2;
 
   function startGame() {
     // TODO: check for invalid role list
-    if (numPlayers > selectedRoles.length) {
+    //setNumPlayers(lobbyState.playerList.length);
+    console.log(lobbyState.playerList.length);
+    console.log("NUM PLAYERS %d", numPlayers);
+    const playersNow = lobbyState.playerList.length;
+    if(playersNow < minPlayers) {
+      alert("not enough players in game");
+    }else if (playersNow > selectedRoles.length) {
       alert("Not enough roles selected!");
-    } else if (numPlayers < selectedRoles.length) {
+    } else if (playersNow < selectedRoles.length) {
       alert("Too many roles selected!");
     } else {
       setGameScreen("Game")
@@ -40,6 +46,10 @@ function MafiaContainer(props) {
       selectedRoles: selectedRoles,
     }
     socket.emit("start_game", startData)
+  }
+
+  function endGame() {
+    socket.emit("end_game", lobbyState)
   }
 
   return (
@@ -54,10 +64,10 @@ function MafiaContainer(props) {
       (gameScreen === "Settings" &&
         <SettingsScreen
           numPlayers={numPlayers}
-          setNumPlayers={setNumPlayers}
           selectedRoles={selectedRoles}
           setSelectedRoles={setSelectedRoles}
           startGame={startGame}
+          endGame={endGame}
         />)
     }
     </>
@@ -70,6 +80,7 @@ function SettingsScreen(props) {
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
   const startGame = props.startGame;
+  const endGame = props.endGame;
 
   return (
     <>
@@ -80,6 +91,9 @@ function SettingsScreen(props) {
       />
       <div>
         <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+      </div>
+      <div>
+        <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
       </div>
     </>
   );

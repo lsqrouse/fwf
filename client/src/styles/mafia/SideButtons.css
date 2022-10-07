@@ -1,0 +1,46 @@
+.sideButton {
+  width: 50px;
+  height: 50px;
+  border: none;
+  background-color: transparent;
+  display: block;
+}
+
+.sideButton:active {
+  background-color: skyblue;
+}
+
+#chatButton {
+  background-image: url("../../images/mafia/buttons/chat.png");
+  background-size: cover;
+}
+
+#abilityButton {
+  background-image: url("../../images/mafia/buttons/ok.png");
+  background-size: cover;
+}
+
+#voteButton {
+  background-image: url("../../images/mafia/buttons/vote.png");
+  background-size: cover;
+}
+
+#notesButton {
+  background-image: url("../../images/mafia/buttons/notes.png");
+  background-size: cover;
+}
+
+#alertsButton {
+  background-image: url("../../images/mafia/buttons/alert.png");
+  background-size: cover;
+}
+
+#aliveButton {
+  background-image: url("../../images/mafia/buttons/person.png");
+  background-size: cover;
+}
+
+#deadButton {
+  background-image: url("../../images/mafia/buttons/rip.png");
+  background-size: cover;
+}
