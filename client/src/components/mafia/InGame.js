@@ -6,12 +6,17 @@ import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
 
 function InGame(props) {
+  // chat, vote, ability, notes, alerts 
+  const [topScreen, setTopScreen] = useState("chat");
+  // aliveList, deadList
+  const [bottomScreen, setBottomScreen] = useState("aliveList");
+
   // TODO: feed in player's actual role stored in server to the RoleCard component.
 
   return (
     <div className="inGame">
       <RoleList roleList={props.roleList} />
-      <DayPhase />
+      <DayPhase setTopScreen={setTopScreen} setBottomScreen={setBottomScreen} />
       <RoleCard role={roles[0]} />
     </div>
   );
@@ -19,6 +24,8 @@ function InGame(props) {
 }
 
 function DayPhase(props) {
+  const setTopScreen = props.setTopScreen;
+  const setBottomScreen = props.setBottomScreen
 
   return (
     <div className="phase">
@@ -27,19 +34,22 @@ function DayPhase(props) {
         <AliveList />
       </div>
       <div className="sideButtons">
-        <ChatButton />
-        <VoteButton />
-        <NotesButton />
-        <AlertsButton />
+        <ChatButton setScreen={setTopScreen} />
+        <VoteButton setScreen={setTopScreen} />
+        <NotesButton setScreen={setTopScreen} />
+        <AlertsButton setScreen={setTopScreen} />
         <hr />
-        <AliveButton />
-        <DeadButton />
+        <AliveButton setScreen={setBottomScreen} />
+        <DeadButton setScreen={setBottomScreen} />
       </div>
     </div>
   );
 }
 
 function NightPhase(props) {
+  const setTopScreen = props.setTopScreen;
+  const setBottomScreen = props.setBottomScreen
+
   return (
     <>
     <div className="mainInfo">
@@ -47,13 +57,13 @@ function NightPhase(props) {
       <AliveList />
     </div>
     <div className="sideButtons">
-      <ChatButton />
-      <AbilityButton />
-      <NotesButton />
-      <AlertsButton />
+      <ChatButton setScreen={setTopScreen} />
+      <AbilityButton setScreen={setTopScreen} />
+      <NotesButton setScreen={setTopScreen} />
+      <AlertsButton setScreen={setTopScreen} />
       <hr />
-      <AliveButton />
-      <DeadButton />
+      <AliveButton setScreen={setBottomScreen} />
+      <DeadButton setScreen={setBottomScreen} />
     </div>
   </>
   );

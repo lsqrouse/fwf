@@ -1,44 +1,51 @@
 import "../../styles/mafia/SideButtons.css"
 
-function ChatButton() {
+function ChatButton(props) {
+  const setScreen = () => { props.setScreen("chat") }
   return (
-    <button type="button" className="sideButton" id="chatButton"></button>
+    <button type="button" className="sideButton" id="chatButton" onClick={setScreen}></button>
   );
 }
 
-function VoteButton() {
+function VoteButton(props) {
+  const setScreen = () => { props.setScreen("vote") }
   return (
-    <button type="button" className="sideButton" id="voteButton"></button>
+    <button type="button" className="sideButton" id="voteButton" onClick={setScreen}></button>
   );
 }
 
-function AbilityButton() {
+function AbilityButton(props) {
+  const setScreen = () => { props.setScreen("ability") }
   return (
-    <button type="button" className="sideButton" id="abilityButton"></button>
+    <button type="button" className="sideButton" id="abilityButton" onClick={setScreen}></button>
   );
 }
 
-function NotesButton() {
+function NotesButton(props) {
+  const setScreen = () => { props.setScreen("notes") }
   return (
-    <button type="button" className="sideButton" id="notesButton"></button>
+    <button type="button" className="sideButton" id="notesButton" onClick={setScreen}></button>
   );
 }
 
-function AlertsButton() {
+function AlertsButton(props) {
+  const setScreen = () => { props.setScreen("alerts") }
   return (
-    <button type="button" className="sideButton" id="alertsButton"></button>
+    <button type="button" className="sideButton" id="alertsButton" onClick={setScreen}></button>
   );
 }
 
-function AliveButton() {
+function AliveButton(props) {
+  const setScreen = () => { props.setScreen("aliveList") }
   return (
-    <button type="button" className="sideButton" id="aliveButton"></button>
+    <button type="button" className="sideButton" id="aliveButton" onClick={setScreen}></button>
   );
 }
 
-function DeadButton() {
+function DeadButton(props) {
+  const setScreen = () => { props.setScreen("deadList") }
   return (
-    <button type="button" className="sideButton" id="deadButton"></button>
+    <button type="button" className="sideButton" id="deadButton" onClick={setScreen}></button>
   );
 }
 
