@@ -81,6 +81,7 @@ function SettingsScreen(props) {
   const setSelectedRoles = props.setSelectedRoles;
   const startGame = props.startGame;
   const endGame = props.endGame;
+  const isHost = useSelector((state) => state.playerState.host);
 
   return (
     <>
@@ -89,12 +90,14 @@ function SettingsScreen(props) {
         numPlayersHandler={[numPlayers, setNumPlayers]}
         selectedRolesHandler={[selectedRoles, setSelectedRoles]}
       />
+      {isHost && <>
       <div>
         <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
       </div>
       <div>
         <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
       </div>
+      </>}
     </>
   );
 }

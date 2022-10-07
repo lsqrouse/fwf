@@ -108,15 +108,7 @@ export default function MainLobby() {
               </div>
             </div>
             <div className='playerScreen'>
-              <h1>Your Role is: <br /> {playerState.Role} </h1>
-              <br />
-              <div>
-                <button onClick={() => { alert("if role == roletype then do role action") }}> Do Role Action </button>
-              </div>
-              <br />
-              <div>
-                <button onClick={() => { alert("if role == mafia then show mafia list") }}> View Mafia List </button>
-              </div>
+              <Game game={lobbyState.game} socket={socket} />
             </div>
             <div className='chat'>chat
 

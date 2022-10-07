@@ -6,6 +6,8 @@ function RoleSetter(props) {
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
 
+  const isHost = useSelector((state) => state.playerState.host);
+
   function addRole(role) {
     setSelectedRoles([...selectedRoles, role]);
   }
@@ -74,18 +76,20 @@ function RoleSetter(props) {
 
   return (
     <div class="roleSetter">
-      <div id="chooseRolesDiv">
+      {isHost && <div id="chooseRolesDiv">
         CHOOSE:
         <br/>
         {props.roles && props.roles.map(role =>
           <Role roleName={role.name} image={role.image} addRole={addRole} />
         )}
-      </div>
+      </div>}
       <div id="selectedRolesDiv">
         SELECTED: {numPlayers}
         <br/>
+        {isHost && <>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
+        </>}
         <SelectedRoles roles={props.roles} selectedRoles={selectedRoles}/>
       </div>
     </div>
