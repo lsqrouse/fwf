@@ -127,11 +127,14 @@ io.on('connection', (socket) => {
             socket.emit("recieve_player_state", newPlayerState);
           }
         })
+        console.log(newPLIST);
+        lobbyState.playerList = newPLIST;
+        lobbies[data.lobbyId] = lobbyState
+        io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
       });
       //console.log(newPLIST);
     }
-    console.log(newPLIST);
-    lobbyState.playerList = newPLIST;
+
     //console.log(lobbyState.playerList);
   });
 
