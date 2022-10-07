@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
           }
           if (i.id == socket.id) {
             socket.emit("recieve_player_state", newPlayerState);
-            //console.log(newPlayerState);
+            console.log(newPlayerState);
           }
         }
       })
