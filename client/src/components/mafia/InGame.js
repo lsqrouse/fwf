@@ -20,7 +20,7 @@ function InGame(props) {
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
       <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
-      <RoleCard role={roles.find(r => r.name = playerRole)} />
+      <RoleCard role={roles.find(r => r.name === playerRole)} />
     </div>
   );
 }
