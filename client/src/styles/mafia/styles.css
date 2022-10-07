@@ -1,0 +1,54 @@
+.settings {
+  display: block;
+}
+
+.roleSetter {
+  width: 300px;
+  margin: auto;
+}
+
+.roleDiv {
+  background-color: azure;
+  border-radius: 10px;
+  border: 1px darkgray solid;
+  height: 30px;
+  margin-top: 4px;
+  padding: 6px;
+}
+
+.roleDiv img {
+  float: left;
+}
+
+.addRoleButton {
+  float: right;
+}
+
+#chooseRolesDiv, #selectedRolesDiv {
+  width: 150px;
+  margin-top: 0;
+}
+
+#chooseRolesDiv {
+  float: left;
+}
+
+#selectedRolesDiv {
+  float: left;
+}
+
+.roleCard {
+  border: 2px #856c4e solid;
+  border-radius: 10px;
+  background-color: #faf2dc;
+  width: 300px;
+  height: 400px;
+}
+
+.roleCard .top {
+  margin-top: 0;
+}
+
+.roleCard .bottom {
+  margin-bottom: 0;
+}

@@ -1,0 +1,155 @@
+
+
+  .outerBox {
+    width: 60%;
+    border: 8px solid blue;
+    padding: 5%;
+    margin: 0 auto;
+    margin-top: 2%;
+    border-radius: 5%;
+    align-items: center;
+    font-size: 60%;
+    height: 80%;
+    
+  }
+
+  .box {
+    width: 35%;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+  }
+
+
+  .titleBox {
+    width: 25%;
+    font-size: 50%;
+    border: 8px solid blue;
+    padding: 1%;
+    margin: 0 auto;
+    margin-bottom: 1%;
+    margin-top: 2%;
+    border-radius: 5%;
+  }
+
+  .middle {
+    display: flex;
+    align-items: center;
+    gap: 10%;
+  }
+
+
+  .chat{
+    display: flex;
+    height: 600px;
+    width: 15%;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+    position: relative;
+  }
+  
+
+  .players{
+    display: flex;
+    height: 600px;
+    width: 15%;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+  
+  }
+
+  .screen {
+    display: flex;
+    height: 600px;
+    width: 75%;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+    overflow-y:auto
+  }
+
+  .playerScreen
+  {
+    width: 75%;
+    height: 600px;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+  }
+
+  .navBar {
+    width: 80%;
+    border: 8px solid blue;
+    padding: 2%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    border-radius: 5%;
+    display: flex;
+    gap: 10%;
+    direction: ltr;
+    align-items: center;
+  }
+
+  .myB {
+    width: 40%;
+    height: 20%;
+}
+.myBMaf {
+  width: 40%;
+  height: 20%;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.myBMaf:hover .descMaf{
+  opacity: 1;
+  size: auto;
+  width: auto;
+  height: auto;
+}
+
+
+
+.descMaf {
+  opacity: 0;
+  size: 0px;
+  width: 0px;
+  height: 0px;
+}
+
+.textBox {
+    width: 90%;
+
+}
+
+
+
+#chatBox {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.line {
+  width: 50%;
+  text-align: left;
+  margin-left: 0;
+}
