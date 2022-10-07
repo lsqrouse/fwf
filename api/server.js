@@ -130,6 +130,13 @@ io.on('connection', (socket) => {
       client_socket.emit("recieve_player_state", newPlayerState);
     }
     */
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        console.log(socket.id, "is present")
+      })
+    });
+
+
   })
 
   //   socket.on("update_game_state", (data) => {
