@@ -1,5 +1,8 @@
 const initialState = {
-  lobbyState: {},
+  lobbyState: {
+    lobbyHost: '',
+    gameState: {}
+  },
   playerState: {}
 }
 

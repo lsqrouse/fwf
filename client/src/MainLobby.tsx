@@ -25,6 +25,8 @@ export default function MainLobby() {
     { field: 'nickname' }
   ]
   console.log("joined %b", joined)
+  console.log("host is ", lobbyState.lobbyHost)
+  console.log("i am ", playerState.id, " comp is ", playerState.id == lobbyState.lobbyHost)
   if (!joined && lobbyState.lobbyId != undefined) {
     var join_data = {
       lobbyId: lobbyState.lobbyId,
@@ -79,7 +81,9 @@ export default function MainLobby() {
   }
 
   // If just player return player screen
-  if (playerState.host == false) {
+  console.log(playerState.host == false)
+  console.log(playerState.id != lobbyState.lobbyHost)
+  if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
       <div className="login">
