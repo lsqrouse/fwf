@@ -16,10 +16,35 @@ function InGame(props) {
   return (
     <div className="inGame">
       <RoleList roleList={props.roleList} />
-      <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
       <RoleCard role={roles[0]} />
     </div>
   );
+}
+
+function Phase(props) {
+  const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
+  const topScreen = props.topScreen;
+  const setTopScreen = props.setTopScreen;
+  const bottomScreen = props.bottomScreen;
+  const setBottomScreen = props.setBottomScreen;
+
+  switch (phase) {
+    case "day":
+      return (
+        <div className="phase">
+          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+        </div>
+      );
+    case "night":
+      return (
+        <div className="phase">
+          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+        </div>
+      );
+    default:
+      return <div>Invalid game phase!</div>
+  }
 }
 
 function DayPhase(props) {
@@ -29,7 +54,7 @@ function DayPhase(props) {
   const setBottomScreen = props.setBottomScreen
 
   return (
-    <div className="phase">
+    <>
       <div className="mainInfo">
         <TopScreen screen={topScreen} />
         <BottomScreen screen={bottomScreen} />
@@ -43,7 +68,7 @@ function DayPhase(props) {
         <AliveButton setScreen={setBottomScreen} />
         <DeadButton setScreen={setBottomScreen} />
       </div>
-    </div>
+    </>
   );
 }
 
