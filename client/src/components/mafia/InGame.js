@@ -5,11 +5,7 @@ import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, Alive
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
 
-// Placeholder
-const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
-
 function InGame(props) {
-
   // TODO: feed in player's actual role stored in server to the RoleCard component.
 
   return (
@@ -28,7 +24,7 @@ function DayPhase(props) {
     <div className="phase">
       <div className="mainInfo">
         <Chat />
-        <AliveList alivePlayers={alivePlayers} />
+        <AliveList />
       </div>
       <div className="sideButtons">
         <ChatButton />
@@ -48,7 +44,7 @@ function NightPhase(props) {
     <>
     <div className="mainInfo">
       <Chat />
-      <AliveList alivePlayers={alivePlayers} />
+      <AliveList />
     </div>
     <div className="sideButtons">
       <ChatButton />
