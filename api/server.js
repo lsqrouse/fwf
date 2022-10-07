@@ -96,8 +96,12 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    console.log(lobbyState)
-    console.log(io.in(data.lobbyId).clients)
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        console.log(socket.id, "is present")
+      })
+    });
+
 
   })
 
