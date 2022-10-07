@@ -36,19 +36,3 @@
 #selectedRolesDiv {
   float: left;
 }
-
-.roleCard {
-  border: 2px #856c4e solid;
-  border-radius: 10px;
-  background-color: #faf2dc;
-  width: 300px;
-  height: 400px;
-}
-
-.roleCard .top {
-  margin-top: 0;
-}
-
-.roleCard .bottom {
-  margin-bottom: 0;
-}

@@ -1,6 +1,9 @@
 import "../../styles/mafia/InGame.css"
 import { useSelector } from 'react-redux';
+import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
+import RoleCard from "./RoleCard";
+import roles from "../../data/mafia/roles";
 
 // Placeholder
 const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
@@ -11,7 +14,7 @@ function InGame(props) {
     <div className="inGame">
       <RoleList roleList={props.roleList} />
       <DayPhase />
-      <RoleCardTab onClick={(props) => showRoleCard}/>
+      <RoleCard role={roles[0]} />
     </div>
   );
 
@@ -99,18 +102,6 @@ const alivePlayers = props.alivePlayers;
       </ul>
     </div>
   )
-}
-
-function RoleCardTab(props) {
-  return (
-    <div className="roleCardTab">
-      ROLE
-    </div>
-  );
-}
-
-function showRoleCard(props) {
-
 }
 
 export default InGame;
