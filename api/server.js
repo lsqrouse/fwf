@@ -96,43 +96,34 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    
-    //console.log("HELLO" + io.in(data.lobbyId).clients)
-    data.lobbyId.forEach(function (lobbyId) {
-      socket.to(lobbyId).emit("WHAW")
-    })
-  /*
-    var left = JSON.parse(JSON.stringify(data.selectedRoles));
-    for (var s in clients) {
-      var client_socket = s;
-      console.log("GOT HERE");
-      for (var i of lobbyState.playerList) {
-        if (left.length > 0) {
-          var ran = Math.floor(Math.random() * left.length);
-          var newPlayerState = {
-            id: i,
-            lobbyId: data.lobbyId,
-            role: left[ran],
-            host: data.host,
-            nickname: data.nickname
-          }
-          left.splice(ran, 1);
-        } else {
-          var newPlayerState = {
-            id: i,
-            lobbyId: data.lobbyId,
-            role: 'Villager',
-            host: data.host,
-            nickname: data.nickname
-          }
-        }
-      }
-      client_socket.emit("recieve_player_state", newPlayerState);
-    }
-    */
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
-        console.log(socket.id, "is present")
+        //console.log(socket.id, "is present")
+        var left = JSON.parse(JSON.stringify(data.selectedRoles));
+        for (var i of lobbyState.playerList) {
+          if (left.length > 0) {
+            var ran = Math.floor(Math.random() * left.length);
+            var newPlayerState = {
+              id: i.id,
+              lobbyId: data.lobbyId,
+              role: left[ran],
+              host: i.host,
+              nickname: i.nickname
+            }
+            left.splice(ran, 1);
+          } else {
+            var newPlayerState = {
+              id: i.id,
+              lobbyId: data.lobbyId,
+              role: 'Villager',
+              host: i.host,
+              nickname: i.nickname
+            }
+          }
+        }
+        socket.emit("receive_player_state", newPlayerState);
+        console.log("NEW PLAYERS: " + newPlayerState);
+        console.log(gameState.playerList);
       })
     });
 
@@ -299,26 +290,6 @@ app.get("/api/lobby/join", (req, res) => {
   //TODO 
   // save lobby data in database
 })
-
-function findClientsSocket(roomId, namespace) {
-  var res = []
-  // The default namespace is "/"
-  , ns = io.of(namespace ||"/");
-
-  if (ns) {
-      for (var id in ns.connected) {
-          if(roomId) {
-              var index = ns.connected[id].rooms.indexOf(roomId);
-              if(index !== -1) {
-                  res.push(ns.connected[id]);
-              }
-          } else {
-              res.push(ns.connected[id]);
-          }
-      }
-  }
-  return res;
-}
 
 //starts the application
 server.listen(3001, () => {
