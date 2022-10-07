@@ -15,9 +15,13 @@
   height: 500px;
 }
 
+.phase {
+  display: flex;
+}
+
 .mainInfo {
   display: inline-block;
-  width: 350px;
+  width: 400px;
   height: 500px;
 }
 
