@@ -98,6 +98,7 @@ io.on('connection', (socket) => {
     }
     var choosen = [];
     io.in(data.lobbyId).fetchSockets().then((response) => {
+      var newPlayerList = []
       response.forEach((socket) => {
         //console.log(socket.id, "is present")
         var left = JSON.parse(JSON.stringify(data.selectedRoles));
@@ -129,12 +130,15 @@ io.on('connection', (socket) => {
             }
           }
           if (i.id == socket.id) {
+            newPlayerList.push(newPlayerState);
             socket.emit("recieve_player_state", newPlayerState);
             console.log(newPlayerState);
           }
         }
       })
+      lobbyState.playerList = newPlayerList;
       console.log(lobbyState.playerList);
+
     });
   })
 
