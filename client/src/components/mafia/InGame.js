@@ -1,18 +1,66 @@
 import "../../styles/mafia/InGame.css"
+import { useSelector } from 'react-redux';
+import { useState } from "react";
+import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
+import RoleCard from "./RoleCard";
+import roles from "../../data/mafia/roles";
+
+// Placeholder
+const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
 
 function InGame(props) {
-  // Placeholder
-  const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
+
+  // TODO: feed in player's actual role stored in server to the RoleCard component.
 
   return (
     <div className="inGame">
       <RoleList roleList={props.roleList} />
-      <Chat />
-      <AliveList alivePlayers={alivePlayers} />
-      <RoleCardTab />
+      <DayPhase />
+      <RoleCard role={roles[0]} />
     </div>
   );
 
+}
+
+function DayPhase(props) {
+
+  return (
+    <div className="phase">
+      <div className="mainInfo">
+        <Chat />
+        <AliveList alivePlayers={alivePlayers} />
+      </div>
+      <div className="sideButtons">
+        <ChatButton />
+        <VoteButton />
+        <NotesButton />
+        <AlertsButton />
+        <hr />
+        <AliveButton />
+        <DeadButton />
+      </div>
+    </div>
+  );
+}
+
+function NightPhase(props) {
+  return (
+    <>
+    <div className="mainInfo">
+      <Chat />
+      <AliveList alivePlayers={alivePlayers} />
+    </div>
+    <div className="sideButtons">
+      <ChatButton />
+      <AbilityButton />
+      <NotesButton />
+      <AlertsButton />
+      <hr />
+      <AliveButton />
+      <DeadButton />
+    </div>
+  </>
+  );
 }
 
 function RoleList(props) {
@@ -56,14 +104,6 @@ const alivePlayers = props.alivePlayers;
       </ul>
     </div>
   )
-}
-
-function RoleCardTab(props) {
-  return (
-    <div className="roleCardTab">
-      ROLE
-    </div>
-  );
 }
 
 export default InGame;
