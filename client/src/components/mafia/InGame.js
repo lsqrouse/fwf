@@ -10,6 +10,8 @@ const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
 
 function InGame(props) {
 
+  // TODO: feed in player's actual role stored in server to the RoleCard component.
+
   return (
     <div className="inGame">
       <RoleList roleList={props.roleList} />
