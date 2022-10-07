@@ -238,7 +238,6 @@ app.get("/api/lobby/create", (req, res) => {
   var newLobby = {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
-    counter: 0,
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
     gameState: {
@@ -247,7 +246,8 @@ app.get("/api/lobby/create", (req, res) => {
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
-      currentPhase: 'day'
+      currentPhase: 'day',
+      phaseNum: 0
     },
     game: ''
   }

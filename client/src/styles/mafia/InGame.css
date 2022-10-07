@@ -3,6 +3,24 @@
   height: 100%;
 }
 
+.mafiaHeader {
+  display: block;
+}
+
+.mafiaHeaderContent {
+  display: flex;
+  margin: auto;
+  border: 1px grey solid;
+  padding: 10px 10px 10px 150px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mafiaHeader span {
+  margin: 0 10px 0 10px;
+}
+
 .roleList {
   display: block;
   border: 1px grey solid;

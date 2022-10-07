@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
+import SunIcon from "../../images/mafia/sun.png";
+import MoonIcon from "../../images/mafia/moon.png";
 
 function InGame(props) {
   // chat, vote, ability, notes, alerts 
@@ -15,6 +17,7 @@ function InGame(props) {
 
   return (
     <div className="inGame">
+      <MafiaHeader />
       <RoleList roleList={props.roleList} />
       <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
       <RoleCard role={roles[0]} />
@@ -97,22 +100,25 @@ function NightPhase(props) {
   );
 }
 
-function TopScreen(props) {
-  const screen = props.screen;
-  switch (screen) {
-    case "chat":
-      return <Chat />
-    case "vote":
-      return <Vote />
-    case "ability":
-      return <Ability />
-    case "notes":
-      return <Notes />
-    case "alerts":
-      return <Alerts />
-    default:
-      return <Alerts />
-  }
+function MafiaHeader(props) {
+  const gameState = useSelector((state) => state.lobbyState.gameState);
+  const icon = gameState.currentPhase === "day" ? SunIcon : MoonIcon;
+
+  return (
+    <div className="mafiaHeader">
+      <div className="mafiaHeaderContent">
+        <span>MAFIA</span>
+        <img src={icon} width="25px" height="25px" alt={capitaliseFirst(gameState.currentPhase)} />
+        <span>
+          {gameState.phaseNum}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function capitaliseFirst(str) {
+  return str.charAt(0).toUpperCase + str.slice(1);
 }
 
 function RoleList(props) {
@@ -135,6 +141,24 @@ function RoleList(props) {
       {a}
     </div>
   );
+}
+
+function TopScreen(props) {
+  const screen = props.screen;
+  switch (screen) {
+    case "chat":
+      return <Chat />
+    case "vote":
+      return <Vote />
+    case "ability":
+      return <Ability />
+    case "notes":
+      return <Notes />
+    case "alerts":
+      return <Alerts />
+    default:
+      return <Alerts />
+  }
 }
 
 function Chat(props) {
