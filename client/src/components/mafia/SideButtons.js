@@ -6,6 +6,12 @@ function ChatButton() {
   );
 }
 
+function VoteButton() {
+  return (
+    <button type="button" className="sideButton" id="voteButton"></button>
+  );
+}
+
 function AbilityButton() {
   return (
     <button type="button" className="sideButton" id="abilityButton"></button>
@@ -38,6 +44,7 @@ function DeadButton() {
 
 export {
   ChatButton,
+  VoteButton,
   AbilityButton,
   NotesButton,
   AlertsButton,

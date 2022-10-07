@@ -1,5 +1,6 @@
 import "../../styles/mafia/InGame.css"
-import { ChatButton, AbilityButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
+import { useSelector } from 'react-redux';
+import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton } from "../../components/mafia/SideButtons"
 
 // Placeholder
 const alivePlayers = ["Jamie", "Quinn", "Kartik", "Brian", "Rob"];
@@ -18,6 +19,26 @@ function InGame(props) {
 
 function DayPhase(props) {
 
+  return (
+    <div className="phase">
+      <div className="mainInfo">
+        <Chat />
+        <AliveList alivePlayers={alivePlayers} />
+      </div>
+      <div className="sideButtons">
+        <ChatButton />
+        <VoteButton />
+        <NotesButton />
+        <AlertsButton />
+        <hr />
+        <AliveButton />
+        <DeadButton />
+      </div>
+    </div>
+  );
+}
+
+function NightPhase(props) {
   return (
     <>
     <div className="mainInfo">

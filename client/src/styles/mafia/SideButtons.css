@@ -20,6 +20,11 @@
   background-size: cover;
 }
 
+#voteButton {
+  background-image: url("../../images/mafia/buttons/vote.png");
+  background-size: cover;
+}
+
 #notesButton {
   background-image: url("../../images/mafia/buttons/notes.png");
   background-size: cover;
