@@ -96,25 +96,53 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    console.log(lobbyState)
-
-  })
-
-  socket.on("end_game", (data) => {
-    console.log("someome ending the gmae with data ", data)
-    var lobbyState = {}
-    if(lobbies.hasOwnProperty(data.lobbyId)) {
-      lobbyState = lobbies[data.lobbyId]
-    } else {
-      //means the lobby doesn't exist, need to let that happen somehow
-      console.log("Player tried to join lobby that doesn't exist")
-      return
+    var assignments = [];
+    var left = JSON.parse(JSON.stringify(data.selectedRoles));
+    for (let i of lobbyState.playerList) {
+      if (left.length > 0) {
+        var ran = Math.floor(Math.random() * left.length);
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: left[ran],
+          host: i.host,
+          nickname: i.nickname
+        }
+        left.splice(ran, 1);
+        assignments.push(newPlayerState)
+      } else {
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: 'Villager',
+          host: i.host,
+          nickname: i.nickname
+        }
+        assignments.push(newPlayerState)
+      }
+      //console.log(newPLIST);
     }
-    console.log(lobbyState)
 
-    saveGameHistory(connection, lobbyState);
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        assignments.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) {
+            console.log("updating a player state ", newPlayerState)
 
-  })
+            //console.log(newPlayerState);
+            //console.log(newPLIST);
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+        lobbyState.playerList = assignments;
+        lobbies[data.lobbyId] = lobbyState
+        console.log("updated lobby state is ", lobbyState)
+        io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
+      });
+
+    //console.log(lobbyState.playerList);
+  });
 
   //   socket.on("update_game_state", (data) => {
   //   console.log("Updating Lobby " + data.lobbyId + " state to:", data);
