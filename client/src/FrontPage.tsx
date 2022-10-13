@@ -16,7 +16,7 @@ export default function FrontPage () {
       .then((data) => {
         console.log("got data from api: ", data)
         dispatch({type: 'updateLobby', payload: data})
-        dispatch({type: 'updatePlayer', payload: {nickname: userName, host: true}})
+        dispatch({type: 'updatePlayer', payload: {nickname: userName, isAlive: true, host: true}})
 
       })  
 
@@ -29,7 +29,7 @@ export default function FrontPage () {
     .then((data) => {
       console.log("got data from api: ", data)
       dispatch({type: 'updateLobby', payload: data})
-      dispatch({type: 'updatePlayer', payload: {nickname: userName, host: false}})
+      dispatch({type: 'updatePlayer', payload: {nickname: userName, isAlive: true, host: false}})
 
     })
  

@@ -30,6 +30,8 @@ export default function MainLobby() {
       lobbyId: lobbyState.lobbyId,
       host: playerState.host,
       nickname: playerState.nickname,
+      isAlive: playerState.isAlive,
+      role: playerState.role,
     }
     var rejoin = false;
     for (var i =0; i < lobbyState.playerList.length; i++) {
@@ -78,6 +80,27 @@ export default function MainLobby() {
     socket.emit("update_lobby_state", curLobbyState);
   }
 
+  const handleFramerTarget = (name: string) => {
+    var curLobbyState = lobbyState;
+    curLobbyState.gameState.framerTarget = name;
+    console.log("Updating Lobby State Framer Target to: ", curLobbyState)
+    socket.emit("update_lobby_state", curLobbyState);
+  }
+
+  const handleRessurectionistTarget = (name: string) => {
+    var curLobbyState = lobbyState;
+    curLobbyState.gameState.ressurectionistTarget = name;
+    console.log("Updating Lobby State Ressurectionist Target to: ", curLobbyState)
+    socket.emit("update_lobby_state", curLobbyState);
+  }
+
+  const handleExecutionerTarget = (name: string) => {
+    var curLobbyState = lobbyState;
+    curLobbyState.gameState.executionerTarget = name;
+    console.log("Updating Lobby State Ressurectionist Target to: ", curLobbyState)
+    socket.emit("update_lobby_state", curLobbyState);
+  }
+
   // If just player return player screen
   if (playerState.host == false) {
     return (
@@ -104,14 +127,297 @@ export default function MainLobby() {
               </div>
             </div>
             <div className='playerScreen'>
-              <h1>Your Role is: <br /> {playerState.Role} </h1>
-              <br />
+              <h1>Your Role is: {playerState.Role} </h1>
+              <br/>
+              <h1>You Are Alive: {playerState.isAlive.toString()} </h1>
+              <br/>
               <div>
-                <button onClick={() => { alert("if role == roletype then do role action") }}> Do Role Action </button>
+                <button id="viewNightSummary" onClick={() => 
+                {
+                  console.log(playerState.host)
+                  // Hide role action stuff
+                  var hide1 = document.getElementById("frameName") as HTMLInputElement;
+                  var hide2 = document.getElementById("frameButton") as HTMLInputElement;
+                  var hide3 = document.getElementById("ressurectName") as HTMLInputElement;
+                  var hide4 = document.getElementById("ressurectButton") as HTMLInputElement;
+                  var hide5 = document.getElementById("executeName") as HTMLInputElement;
+                  var hide6 = document.getElementById("executeButton") as HTMLInputElement;
+                  hide1.style.display = "none"
+                  hide2.style.display = "none"
+                  hide3.style.display = "none"
+                  hide4.style.display = "none"
+                  hide5.style.display = "none"
+                  hide6.style.display = "none"
+
+                  // Get the modal and title
+                  var modal = document.getElementById("myModal") as HTMLInputElement;
+                  var modalTitle = document.getElementById("modalTitle") as HTMLInputElement;
+                  modalTitle.innerHTML = "Night Summary"
+
+                  // Get the button that opens the modal
+                  var btn = document.getElementById("viewNightSummary") as HTMLInputElement;
+
+                  // Get the <span> element that closes the modal
+                  var span = document.getElementsByClassName("close")[0] as HTMLInputElement;
+
+                  // Display night summary if available
+                  var str = '<ul>'
+                  // var list = lobbyState.gamesState.mafiaList;
+                  // for (var i = 0; i < list.length; i++){
+                  //   var player = list[i].nickname;
+                  //   str += '<li>'+ player + '</li>';
+                  //   str += '</ul>';
+                  // }
+
+                  // If night phase not started
+                  if (lobbyState.gameState.nightPhaseStarted == false)
+                  {
+                    modalTitle.innerHTML = "Night Phase has not started yet"
+                  }
+                  // If night phase not ended
+                  else if (lobbyState.gameState.nightPhaseStarted == true && lobbyState.gamesState.nightPhaseEnded == false)
+                  {
+                    modalTitle.innerHTML = "Night Phase has not ended yet"
+                  }
+                  // Else if ended
+                  else if (lobbyState.gameState.nightPhaseStarted == true && lobbyState.gamesState.nightPhaseEnded == true)
+                  {
+                    str = "<h3>" + lobbyState.gameState.nightEventSummary + "</h3>"
+                  }
+
+                  var nameContainer = document.getElementById("nameContainer") as HTMLInputElement;
+                  nameContainer.innerHTML = str;
+
+                  // When the user clicks on the button, open the modal 
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                }} > View Night Summary </button>
               </div>
-              <br />
+              <br/>
               <div>
-                <button onClick={() => { alert("if role == mafia then show mafia list") }}> View Mafia List </button>
+                <button id="doRoleAction" onClick={() => 
+                {
+                  // UnHide role action stuff
+                  var hide1 = document.getElementById("frameName") as HTMLInputElement;
+                  var hide2 = document.getElementById("frameButton") as HTMLInputElement;
+                  var hide3 = document.getElementById("ressurectName") as HTMLInputElement;
+                  var hide4 = document.getElementById("ressurectButton") as HTMLInputElement;
+                  var hide5 = document.getElementById("executeName") as HTMLInputElement;
+                  var hide6 = document.getElementById("executeButton") as HTMLInputElement;
+                  hide1.style.display = "block"
+                  hide2.style.display = "block"
+                  hide3.style.display = "block"
+                  hide4.style.display = "block"
+                  hide5.style.display = "block"
+                  hide6.style.display = "block"
+
+                  // Get the modal and title
+                  var modal = document.getElementById("myModal") as HTMLInputElement;
+                  var modalTitle = document.getElementById("modalTitle") as HTMLInputElement;
+                  modalTitle.innerHTML = "Framers can choose a player to frame <br/> Ressurectionist can choose a dead player to revive <br/> Executioner can choose soemone to Execute"
+
+                  // Get the button that opens the modal
+                  var btn = document.getElementById("doRoleAction") as HTMLInputElement;
+
+                  // Get the <span> element that closes the modal
+                  var span = document.getElementsByClassName("close")[0] as HTMLInputElement;
+                  
+                  // Get list of all players
+                  var str = '<ul>'
+                  var list = lobbyState.playerList;
+                  for (var i = 0; i < list.length; i++){
+                    var player = list[i].nickname;
+                    str += '<li>'+ player + '</li>';
+                    str += '</ul>';
+                  }
+
+                  var nameContainer = document.getElementById("nameContainer") as HTMLInputElement;
+                  nameContainer.innerHTML = str;
+
+                  // When the user clicks on the button, open the modal 
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                }}
+                > Temp Role Action </button>
+              </div>
+              <br/>
+              <div id="myModal" className="modal">
+                <div className="modal-content">
+                  <span className="close">&times;</span>
+                  <h1 id="modalTitle"></h1>
+                  <div id="nameContainer"></div>
+                  <input type="text" id="frameName" name="frameName"></input>
+                  <input type="text" id="ressurectName" name="ressurectName"></input>
+                  <input type="text" id="executeName" name="executeName"></input>
+                  <br/>
+                  <button id="frameButton" onClick={() => {
+                    var fname = document.getElementById("frameName") as HTMLInputElement;
+                    var name = fname.value;
+                    handleFramerTarget(name);
+                  }}
+                  >Frame Player </button>
+                  <button id="ressurectButton" onClick={() => {
+                    var fname = document.getElementById("ressurectName") as HTMLInputElement;
+                    var name = fname.value;
+                    handleRessurectionistTarget(name);
+                  }}
+                  >Revive Player</button>
+                  <button id="executeButton" onClick={() => {
+                    var fname = document.getElementById("executeName") as HTMLInputElement;
+                    var name = fname.value;
+                    handleExecutionerTarget(name);
+                  }}
+                  >Execute Player</button>
+                </div>
+              </div>
+              <div>
+                <button id="checkMafia" onClick={() => 
+                {
+                  // Hide role action stuff
+                  var hide1 = document.getElementById("frameName") as HTMLInputElement;
+                  var hide2 = document.getElementById("frameButton") as HTMLInputElement;
+                  var hide3 = document.getElementById("ressurectName") as HTMLInputElement;
+                  var hide4 = document.getElementById("ressurectButton") as HTMLInputElement;
+                  var hide5 = document.getElementById("executeName") as HTMLInputElement;
+                  var hide6 = document.getElementById("executeButton") as HTMLInputElement;
+                  hide1.style.display = "none"
+                  hide2.style.display = "none"
+                  hide3.style.display = "none"
+                  hide4.style.display = "none"
+                  hide5.style.display = "none"
+                  hide6.style.display = "none"
+
+                  // Get the modal and title
+                  var modal = document.getElementById("myModal") as HTMLInputElement;
+                  var modalTitle = document.getElementById("modalTitle") as HTMLInputElement;
+                  modalTitle.innerHTML = "Mafia Members"
+
+                  // Get the button that opens the modal
+                  var btn = document.getElementById("checkMafia") as HTMLInputElement;
+
+                  // Get the <span> element that closes the modal
+                  var span = document.getElementsByClassName("close")[0] as HTMLInputElement;
+                  
+                  // Get list of all players in list
+                  var str = '<ul>'
+                  // var list = lobbyState.gamesState.mafiaList;
+                  // for (var i = 0; i < list.length; i++){
+                  //   var player = list[i].nickname;
+                  //   str += '<li>'+ player + '</li>';
+                  //   str += '</ul>';
+                  // }
+
+                  var nameContainer = document.getElementById("nameContainer") as HTMLInputElement;
+                  nameContainer.innerHTML = str;
+
+                  // When the user clicks on the button, open the modal 
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                }}
+                > View Mafia List </button>
+              </div>
+              <br/>
+              <div>
+                <button id="viewDeadPlayers" onClick={() => 
+                {
+                  // Hide role action stuff
+                  var hide1 = document.getElementById("frameName") as HTMLInputElement;
+                  var hide2 = document.getElementById("frameButton") as HTMLInputElement;
+                  var hide3 = document.getElementById("ressurectName") as HTMLInputElement;
+                  var hide4 = document.getElementById("ressurectButton") as HTMLInputElement;
+                  var hide5 = document.getElementById("executeName") as HTMLInputElement;
+                  var hide6 = document.getElementById("executeButton") as HTMLInputElement;
+                  hide1.style.display = "none"
+                  hide2.style.display = "none"
+                  hide3.style.display = "none"
+                  hide4.style.display = "none"
+                  hide5.style.display = "none"
+                  hide6.style.display = "none"
+
+                  // Get the modal and title
+                  var modal = document.getElementById("myModal") as HTMLInputElement;
+                  var modalTitle = document.getElementById("modalTitle") as HTMLInputElement;
+                  modalTitle.innerHTML = "Dead Members"
+
+                  // Get the button that opens the modal
+                  var btn = document.getElementById("viewDeadPlayers") as HTMLInputElement;
+
+                  // Get the <span> element that closes the modal
+                  var span = document.getElementsByClassName("close")[0] as HTMLInputElement;
+                  
+                  // Get list of all players in list
+                  var str = '<ul>'
+                  // var list = lobbyState.gamesState.deadPlayerList;
+                  // for (var i = 0; i < list.length; i++){
+                  //   var player = list[i].nickname;
+                  //   str += '<li>'+ player + '</li>';
+                  //   str += '</ul>';
+                  // }
+
+                  var nameContainer = document.getElementById("nameContainer") as HTMLInputElement;
+                  nameContainer.innerHTML = str;
+
+                  // When the user clicks on the button, open the modal 
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                }}
+                > View Dead Player List </button>
+              </div>
+              <br/>
+              <div>
+                <h3>Message from Game: {lobbyState.gameState.allPlayersMessage}</h3>
               </div>
             </div>
             <div className='chat'>chat
@@ -158,6 +464,9 @@ export default function MainLobby() {
           </button>
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('fake artist') }}>FAKE ARTIST
             <p className='descMaf'>HELLO THIS IS FAKE ARTIST BABY hi</p>
+          </button>
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
+            <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
           </button>
         </div>
         <div className='middle'>

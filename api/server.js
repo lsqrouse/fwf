@@ -67,14 +67,15 @@ io.on('connection', (socket) => {
     }
 
 
-    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname})
+    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       lobbyId: data.lobbyId,
       role: '',
       host: data.host,
-      nickname: data.nickname
+      isAlive: data.isAlive,
+      nickname: data.nickname,
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
@@ -87,7 +88,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("start_game", (data) => {
-    console.log("someome starting the gmae with data ", data)
+    console.log("someone starting the game with data ", data)
     var lobbyState = {}
     if(lobbies.hasOwnProperty(data.lobbyId)) {
       lobbyState = lobbies[data.lobbyId]
@@ -100,8 +101,37 @@ io.on('connection', (socket) => {
 
   })
 
+  socket.on("end_night_phase", (data) => {
+    console.log("Night phase ending with data", data)
+    var lobbyState = {}
+    if(lobbies.hasOwnProperty(data.lobbyId)) {
+      lobbyState = lobbies[data.lobbyId]
+
+      // Adjust game data with night summary
+      // Initialize empty night summary string
+      let nightSummary = ""
+
+      // Go through graveyard and find all dead players
+      for (let deadPlayer = 0; deadPlayer < lobbyState.gameState.deadPlayerList.length; deadPlayer++)
+      {
+        // Add dead player name to summary list
+        nightSummary += "Oh no! " + deadPlayer.nickname + " has died :("
+      }
+      lobbyState.gameState.nightEventSummary = nightSummary;
+
+      //reflects changes across other cleints
+      io.in(lobbyState.lobbyId).emit("recieve_game_state", gameState)
+    } else {
+      //means the lobby doesn't exist, need to let that happen somehow
+      console.log("Player tried to join lobby that doesn't exist")
+      return
+    }
+    console.log(lobbyState)
+
+  })
+
   socket.on("end_game", (data) => {
-    console.log("someome ending the gmae with data ", data)
+    console.log("someome ending the game with data ", data)
     var lobbyState = {}
     if(lobbies.hasOwnProperty(data.lobbyId)) {
       lobbyState = lobbies[data.lobbyId]
@@ -247,7 +277,16 @@ app.get("/api/lobby/create", (req, res) => {
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
-      currentPhase: 'day'
+      currentPhase: 'day',
+      dayPhaseTimeLimit: 90,
+      nightPhaseTimeLimit: 90,
+      nightPhaseStarted: false,
+      nightPhaseEnded: false,
+      nightEventSummary: '',
+      framerTarget: '',
+      ressurectionistTarget: '',
+      executionerTarget: '',
+      allPlayersMessage: 'Do Nothing'
     },
     game: ''
   }

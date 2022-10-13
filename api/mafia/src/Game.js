@@ -54,21 +54,6 @@ function doVote()
   }
 }
 
-function getNightSummary()
-{
-  // Initialize empty night summary string
-  let nightSummary = ""
-
-  // Go through graveyard and find all dead players
-  for (let deadPlayer = 0; deadPlayer < this.graveyard.length; deadPlayer++)
-  {
-    // Add dead player name to summary list
-    nightSummary += "Oh no!" + deadPlayer.userId + "has died"
-  }
-
-  // Send night summary to each player
-}
-
 /**
  * Check if a given player is alive.
  * @param {Player} player 
