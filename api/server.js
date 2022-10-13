@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser, saveGameHistory} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory, createLobby} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -97,9 +97,54 @@ io.on('connection', (socket) => {
       console.log("Player tried to join lobby that doesn't exist")
       return
     }
-    console.log(lobbyState)
+    var assignments = [];
+    var left = JSON.parse(JSON.stringify(data.selectedRoles));
+    for (let i of lobbyState.playerList) {
+      if (left.length > 0) {
+        var ran = Math.floor(Math.random() * left.length);
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: left[ran],
+          host: i.host,
+          nickname: i.nickname
+        }
+        left.splice(ran, 1);
+        assignments.push(newPlayerState)
+      } else {
+        var newPlayerState = {
+          id: i.id,
+          lobbyId: data.lobbyId,
+          role: 'Villager',
+          host: i.host,
+          nickname: i.nickname
+        }
+        assignments.push(newPlayerState)
+      }
+      //console.log(newPLIST);
+    }
 
-  })
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        assignments.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) {
+            console.log("updating a player state ", newPlayerState)
+
+            //console.log(newPlayerState);
+            //console.log(newPLIST);
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+        lobbyState.playerList = assignments;
+        lobbyState.gameScreen = "Game";
+        lobbies[data.lobbyId] = lobbyState
+        console.log("updated lobby state is ", lobbyState)
+        io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
+      });
+
+    //console.log(lobbyState.playerList);
+  });
 
   socket.on("end_night_phase", (data) => {
     console.log("Night phase ending with data", data)
@@ -127,35 +172,17 @@ io.on('connection', (socket) => {
       return
     }
     console.log(lobbyState)
-
   })
 
-  socket.on("end_game", (data) => {
-    console.log("someome ending the game with data ", data)
-    var lobbyState = {}
-    if(lobbies.hasOwnProperty(data.lobbyId)) {
-      lobbyState = lobbies[data.lobbyId]
-    } else {
-      //means the lobby doesn't exist, need to let that happen somehow
-      console.log("Player tried to join lobby that doesn't exist")
-      return
-    }
-    console.log(lobbyState)
-
-    saveGameHistory(connection, lobbyState);
-
-  })
-
-  //   socket.on("update_game_state", (data) => {
-  //   console.log("Updating Lobby " + data.lobbyId + " state to:", data);
-  //   lobbies[data.lobbyId] = data;
-  //   io.in(data.lobbyId).emit("recieve_game_state", data)
-  // });
+  socket.on("end_game", (lobbyState) => {
+    console.log("Saving game that took place in " + lobbyState.lobbyId);
+    saveGameHistory(connection, lobbyState)
+  });
 
   socket.on("disconnect", (data) => {
-    var gameState = {}
+    var lobbyState = {}
     if(players.hasOwnProperty(socket.id)) {
-      gameState = lobbies[players[socket.id]]
+      lobbyState = lobbies[players[socket.id]]
     } else {
       //means the lobby doesn't exist, need to let that happen somehow
       console.log("Player that no longer exists tried to leave")
@@ -164,26 +191,30 @@ io.on('connection', (socket) => {
     console.log("Player ".concat(socket.id).concat(" is leaving") )
     delete players[socket.id];
     //removes player from game list
-    const index = gameState.playerList.findIndex(el => {
+    const index = lobbyState.playerList.findIndex(el => {
       return el.id === String(socket.id);
     }); 
     if (index > -1) { // only splice array when item is found
-      gameState.playerList.splice(index, 1); // 2nd parameter means remove one item only
+      lobbyState.playerList.splice(index, 1); // 2nd parameter means remove one item only
     }
     
     //test to see if the lobby should be removed
-    if (gameState.playerList.length == 0) {
+    if (lobbyState.playerList.length == 0) {
       //TODO probably need more cleanup than this
-      console.log("DELETED LOBBY ", gameState.lobbyId)
-      delete lobbies[gameState.lobbyId]
+      console.log("DELETED LOBBY ", lobbyState.lobbyId)
+      delete lobbies[lobbyState.lobbyId]
       return
     }
     //update the lobby's host if necessary
-    if (gameState.lobbyHost == socket.id) {
-      gameState.lobbyHost = gameState.playerList[0].id
+    if (lobbyState.lobbyHost == socket.id) {
+      console.log("host is leaving, updating state")
+      lobbyState.lobbyHost = lobbyState.playerList[0].id
+      lobbyState.playerList[0].host = true
     }
+    lobbies[players[socket.id]] = lobbyState
+    console.log("new state is ", lobbyState)
     //reflects changes across other cleints
-    io.in(gameState.lobbyId).emit("recieve_game_state", gameState)
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   })
 
 })
@@ -237,6 +268,11 @@ function executeStatement() {
 
 var connection = new Connection(db_config);  
 connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+ } else {
+    console.log('Connected');
+ }
     // If no error, then good to proceed.
     console.log("Connected, testing...");
     executeStatement();  
@@ -252,13 +288,13 @@ app.get("/api", (req, res) => {
 });
  
 app.get("/api/accounts/login", (req, res) => {
+  console.log("received request for login", req.query)
   getUserByUsername(connection, req.query, res)
-  
 })
 
 app.get("/api/accounts/create", (req, res) => {
+  console.log("received request to create an account")
   createUser(connection, req.query , res)
-  
 })
 
 app.get("/api/lobby/create", (req, res) => {
@@ -268,7 +304,6 @@ app.get("/api/lobby/create", (req, res) => {
   var newLobby = {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
-    counter: 0,
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
     gameState: {
@@ -278,6 +313,7 @@ app.get("/api/lobby/create", (req, res) => {
       alivePlayerList: [],
       deadPlayerList: [],
       currentPhase: 'day',
+      phaseNum: 0,
       dayPhaseTimeLimit: 90,
       nightPhaseTimeLimit: 90,
       nightPhaseStarted: false,
@@ -288,6 +324,7 @@ app.get("/api/lobby/create", (req, res) => {
       executionerTarget: '',
       allPlayersMessage: 'Do Nothing'
     },
+    gameScreen: 'Settings',
     game: ''
   }
   curLobbyId++
@@ -297,12 +334,14 @@ app.get("/api/lobby/create", (req, res) => {
 
   //TODO 
   // save lobby data in database
+  createLobby(connection, newLobby)
+  
 })
 
 app.get("/api/lobby/join", (req, res) => {
   var gameState = {};
   var lobbyId = req.query.lobbyCode
-  console.log("trying to join ", req.query)
+  console.log("Client trying to join lobby: ", req.query)
   if(lobbies.hasOwnProperty(lobbyId)) {
     gameState = lobbies[lobbyId]
   } else {
@@ -311,9 +350,6 @@ app.get("/api/lobby/join", (req, res) => {
     return
   }
   res.json(gameState)
-
-  //TODO 
-  // save lobby data in database
 })
 
 //starts the application

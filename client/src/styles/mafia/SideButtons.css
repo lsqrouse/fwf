@@ -44,3 +44,8 @@
   background-image: url("../../images/mafia/buttons/rip.png");
   background-size: cover;
 }
+
+#mafiaButton {
+  background-image: url("../../images/mafia/buttons/person.png");
+  background-size: cover;
+}
