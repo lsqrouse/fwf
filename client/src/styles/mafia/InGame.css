@@ -3,31 +3,108 @@
   height: 100%;
 }
 
+.mafiaHeader {
+  display: block;
+}
+
+.mafiaHeaderContent {
+  display: flex;
+  margin: auto;
+  border: 1px grey solid;
+  padding: 10px 10px 10px 150px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mafiaHeader span {
+  margin: 0 10px 0 10px;
+}
+
 .roleList {
   display: block;
   border: 1px grey solid;
   height: 40px;
 }
 
-.chatbox {
-  height: 200px;
-  border: 1px grey solid;
+.sideButtons {
+  display: inline-block;
+  width: 50px;
+  height: 460px;
 }
 
-.aliveList {
-  height: 200px;
+.phase {
+  display: flex;
+}
+
+.mainInfo {
+  display: inline-block;
+  width: 400px;
+}
+
+.topScreen {
+  height: 190px;
   border: 1px grey solid;
+  padding: 20px;
+}
+
+.bottomScreen {
+  height: 190px;
+  border: 1px grey solid;
+  padding: 20px;
+  overflow: auto;
+}
+
+.aliveList ul, .deadList ul {
+  padding-left: 0;
+}
+
+.aliveList li, .deadList li {
+  list-style: none;
 }
 
 .roleCardTab {
-  height: 30px;
-  width: 200px;
-  position: absolute;
-  bottom: 0;
+  height: 20px;
+  width: 300px;
+  position: relative;
+  bottom: 0px;
+  left: 50px;
   border: 2px #856c4e solid;
+  border-bottom: none;
   border-radius: 10px 10px 0 0;
   background-color: #faf2dc;
-  padding: 10px;
+  padding-top: 10px;
+  text-align: center; 
+}
+
+.roleCard {
+  width: 240px;
+  height: 380px;
+  position: relative;
+  bottom: 450px;
+  left: 50px;
+  padding: 10px 30px 10px 30px;
+  border: 2px #856c4e solid;
+  border-radius: 10px;
+  background-color: #faf2dc;
+}
+
+.roleCard img {
+  margin-right: 20px;
+}
+
+.roleCard h1 {
+  display: inline;
+}
+
+.roleCard .roleLabel {
   text-align: center;
-  
+}
+
+.roleCard .tapToHideLabel {
+  width: 240px;
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 10px;
+  text-align: center;
 }
