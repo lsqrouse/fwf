@@ -5,7 +5,6 @@ function RoleSetter(props) {
   // const numPlayers = props.numPlayers;
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
-
   const isHost = useSelector((state) => state.playerState.host);
 
   function addRole(role) {

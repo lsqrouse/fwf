@@ -324,6 +324,9 @@ app.get("/api/lobby/create", (req, res) => {
       executionerTarget: '',
       allPlayersMessage: 'Do Nothing'
     },
+    settings: {
+      selectedRoles: ["Villager"]
+    },
     gameScreen: 'Settings',
     game: ''
   }

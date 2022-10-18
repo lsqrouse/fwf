@@ -18,7 +18,7 @@ import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
-  const [selectedRoles, setSelectedRoles] = useState(["Villager"]);
+  const selectedRoles = useSelector((state) => state.lobbyState.settings.selectedRoles);
   const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
@@ -48,6 +48,12 @@ function MafiaContainer(props) {
 
   }
 
+  function updateSelectedRoles(roles) {
+    const newSelectedRoles = roles;
+    lobbyState.settings.selectedRoles = newSelectedRoles;
+    socket.emit("update_lobby_state", lobbyState);
+  }
+
   function endGame() {
     socket.emit("end_game", lobbyState)
   }
@@ -65,9 +71,10 @@ function MafiaContainer(props) {
         <SettingsScreen
           numPlayers={numPlayers}
           selectedRoles={selectedRoles}
-          setSelectedRoles={setSelectedRoles}
+          setSelectedRoles={updateSelectedRoles}
           startGame={startGame}
           endGame={endGame}
+          socket={socket}
         />)
     }
     </>
@@ -82,13 +89,17 @@ function SettingsScreen(props) {
   const startGame = props.startGame;
   const endGame = props.endGame;
   const isHost = useSelector((state) => state.playerState.host);
+  const socket = props.socket;
 
   return (
     <>
       <Settings
         roles={roles}
-        numPlayersHandler={[numPlayers, setNumPlayers]}
-        selectedRolesHandler={[selectedRoles, setSelectedRoles]}
+        numPlayers={numPlayers}
+        setNumPlayers={setNumPlayers}
+        selectedRoles={selectedRoles}
+        setSelectedRoles={setSelectedRoles}
+        socket={socket}
       />
       {isHost && <>
       <div>
