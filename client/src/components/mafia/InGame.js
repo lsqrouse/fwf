@@ -80,11 +80,14 @@ function NightPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 600);
 
   return (
     <>
     <div className="mainInfo">
       <TopScreen props={topScreen} />
+      <MyTimer expiryTimestamp={time} />
       <BottomScreen props={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -100,10 +103,27 @@ function NightPhase(props) {
   );
 }
 
+function MyTimer({ expiryTimestamp }) {
+  const {
+    seconds,
+    isRunning,
+  } = useTimer({ expiryTimestamp, onExpire: () => console.warn('Times Up') });
+
+  return (
+    <div style={{textAlign: 'center'}}>
+      <div style={{fontSize: '100px'}}>
+        <span>{seconds}</span>
+      </div>
+      <p>{isRunning ? 'Running' : 'Not running'}</p>
+    </div>
+  );
+}
+
+
 function MafiaHeader(props) {
   const gameState = useSelector((state) => state.lobbyState.gameState);
   const icon = gameState.currentPhase === "day" ? SunIcon : MoonIcon;
-
+  
   return (
     <div className="mafiaHeader">
       <div className="mafiaHeaderContent">
@@ -111,6 +131,9 @@ function MafiaHeader(props) {
         <img src={icon} width="25px" height="25px" alt={capitaliseFirst(gameState.currentPhase)} />
         <span>
           {gameState.phaseNum}
+        </span>
+        <span>
+          {timer()}
         </span>
       </div>
     </div>
