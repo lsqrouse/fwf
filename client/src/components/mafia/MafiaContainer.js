@@ -22,7 +22,7 @@ function MafiaContainer(props) {
   const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
-  const minPlayers = 2;
+  const minPlayers = 4;
 
   function startGame() {
     // TODO: check for invalid role list
