@@ -83,7 +83,7 @@ function RoleSetter(props) {
         )}
       </div>}
       <div id="selectedRolesDiv">
-        SELECTED: {numPlayers}
+        SELECTED: {selectedRoles.length}
         <br/>
         {isHost && <>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
