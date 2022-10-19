@@ -6,14 +6,8 @@ import { useSelector } from "react-redux";
 function Settings(props) {
   const roles = props.roles;
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
-  const setNumPlayers = props.numPlayersHandler[1];
-  const selectedRoles = props.selectedRolesHandler[0];
-  const setSelectedRoles = props.selectedRolesHandler[1];
-
-  const updateNumPlayers = event => {
-    let num = parseInt(event.target.value);
-    setNumPlayers(num);
-  }
+  const selectedRoles = props.selectedRoles;
+  const setSelectedRoles = props.setSelectedRoles;
 
   return (
     <div class="settings">
@@ -28,6 +22,7 @@ function Settings(props) {
         numPlayers={numPlayers}
         selectedRoles={selectedRoles}
         setSelectedRoles={setSelectedRoles}
+        socket={props.socket}
       />
 
       <div>

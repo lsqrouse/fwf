@@ -5,7 +5,6 @@ function RoleSetter(props) {
   // const numPlayers = props.numPlayers;
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
-
   const isHost = useSelector((state) => state.playerState.host);
 
   function addRole(role) {
@@ -84,7 +83,7 @@ function RoleSetter(props) {
         )}
       </div>}
       <div id="selectedRolesDiv">
-        SELECTED: {numPlayers}
+        SELECTED: {selectedRoles.length}
         <br/>
         {isHost && <>
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
