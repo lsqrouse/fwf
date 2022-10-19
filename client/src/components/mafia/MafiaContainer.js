@@ -138,14 +138,17 @@ function SettingsScreen(props) {
         setSelectedRoles={setSelectedRoles}
         socket={socket}
       />
-      {isHost && <>
-      <div>
-        <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
-      </div>
-      <div>
-        <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
-      </div>
-      <div id="warnMessage">{warnMessage}</div>
+      {isHost &&
+      <>
+        <div>
+          <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+        </div>
+        <div>
+          <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
+        </div>
+        <div id="warnMessage">
+          {warnMessage}
+        </div>
       </>}
     </>
   );

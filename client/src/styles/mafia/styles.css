@@ -36,3 +36,39 @@
 #selectedRolesDiv {
   float: left;
 }
+
+#header {
+  width: 450px;
+  border: 1px black solid;
+  height: 35px;
+  padding: 10px;
+}
+
+#headerContent {
+  width: 100%;
+}
+
+.headerDiv {
+  margin: 0;
+  display: inline-block;
+  width: 33%;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#menuButtonImage {
+  display: block;
+}
+
+#gameTitle {
+  margin: 0 auto;
+}
+
+#gameTitle h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+#lobbyCode {
+  font-size: 20px;
+}

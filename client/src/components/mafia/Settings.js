@@ -13,7 +13,7 @@ function Settings(props) {
     <div class="settings">
       <div>
         <p>
-          <h3>MAFIA: Settings</h3>
+          <h3>Settings</h3>
         </p>
         There are {numPlayers} players. Minimum 2 required.
       </div>
