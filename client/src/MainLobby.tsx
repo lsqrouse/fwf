@@ -135,6 +135,7 @@ export default function MainLobby() {
                 game={lobbyState.game}
                 code={lobbyState.lobbyId}
                 socket={socket}
+                handleLeave={handleLeave}
               />
             </div>
             <div className='chat'>chat
@@ -211,6 +212,7 @@ export default function MainLobby() {
               game={lobbyState.game}
               code={lobbyState.lobbyId}
               socket={socket}
+              handleLeave={handleLeave}
             />
           </div>
           <div className='chat'>chat

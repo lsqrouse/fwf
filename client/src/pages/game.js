@@ -3,8 +3,8 @@ import MafiaContainer from '../components/mafia/MafiaContainer';
 const Game = (props) => {
   return (
     <div id="game">
-      <Header game={props.game} code={props.code} />
-      <GameContainer game={props.game} socket={props.socket}/>
+      <Header game={props.game} code={props.code} handleLeave={props.handleLeave} />
+      <GameContainer game={props.game} socket={props.socket} />
     </div>
   );
 };
@@ -15,7 +15,7 @@ const Header = (props) => {
       <div id="headerContent">
 
         <div className="headerDiv">
-          <HamburgerMenu />
+          <HamburgerMenu handleLeave={props.handleLeave}/>
         </div>
 
         <div className="headerDiv">
@@ -47,7 +47,7 @@ const GameContainer = (props) => {
   }
 }
 
-const HamburgerMenu = () => {
+const HamburgerMenu = (props) => {
   return (
     <div id="menu">
       <input id="menuButton" type="checkbox" />
@@ -56,7 +56,7 @@ const HamburgerMenu = () => {
       <div id="menuItems">
         <ul>
           <a href="./Instructions" target="_blank"><li>How to play</li></a>
-          <li>Leave Lobby</li>
+          <li onClick={props.handleLeave}>Leave Lobby</li>
         </ul>
       </div>
     </div>
