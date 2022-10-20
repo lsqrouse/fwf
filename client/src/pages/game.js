@@ -19,15 +19,15 @@ const Header = (props) => {
         </div>
 
         <div className="headerDiv">
-        <div id="gameTitle">
-          <h1>{props.game !== undefined && props.game.toUpperCase()}</h1>
-        </div>
+          <div id="gameTitle">
+            <h1>{props.game !== undefined && props.game.toUpperCase()}</h1>
+          </div>
         </div>
 
         <div className="headerDiv">
-        <div id="lobbyCode">
-          {props.code}
-        </div>
+          <div id="lobbyCode">
+            {props.code}
+          </div>
         </div>
 
       </div>
@@ -55,7 +55,7 @@ const HamburgerMenu = () => {
       
       <div id="menuItems">
         <ul>
-          <li>How to play</li>
+          <a href="./Instructions" target="_blank"><li>How to play</li></a>
           <li>Leave Lobby</li>
         </ul>
       </div>
