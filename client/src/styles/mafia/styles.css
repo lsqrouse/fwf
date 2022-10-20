@@ -64,11 +64,8 @@
   margin: 0 auto;
 }
 
-#gameTitle h1 {
+#gameTitle h1, #lobbyCode {
   font-size: 20px;
   margin: 0;
-}
-
-#lobbyCode {
-  font-size: 20px;
+  font-weight: bold;
 }

@@ -4,8 +4,8 @@ import MenuButton from '../images/menu.png';
 const Game = (props) => {
   return (
     <div id="game">
-      <Header game={props.game} />
-      <GameContainer game={props.game} />
+      <Header game={props.game} code={props.code} />
+      <GameContainer game={props.game} socket={props.socket}/>
     </div>
   );
 };
@@ -18,10 +18,10 @@ const Header = (props) => {
           <HamburgerMenuButton />
         </div>
         <div id="gameTitle" className="headerDiv">
-          <h1>{props.game}</h1>
+          <h1>{props.game.toUpperCase()}</h1>
         </div>
         <div id="lobbyCode" className="headerDiv">
-          Lobby code
+          {props.code}
         </div>
       </div>
     </div>
