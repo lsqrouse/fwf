@@ -1,5 +1,4 @@
 import MafiaContainer from '../components/mafia/MafiaContainer';
-import MenuButton from '../images/menu.png';
 
 const Game = (props) => {
   return (
@@ -14,15 +13,23 @@ const Header = (props) => {
   return (
     <div id="header">
       <div id="headerContent">
+
         <div className="headerDiv">
-          <HamburgerMenuButton />
+          <HamburgerMenu />
         </div>
-        <div id="gameTitle" className="headerDiv">
+
+        <div className="headerDiv">
+        <div id="gameTitle">
           <h1>{props.game !== undefined && props.game.toUpperCase()}</h1>
         </div>
-        <div id="lobbyCode" className="headerDiv">
+        </div>
+
+        <div className="headerDiv">
+        <div id="lobbyCode">
           {props.code}
         </div>
+        </div>
+
       </div>
     </div>
   );
@@ -40,9 +47,19 @@ const GameContainer = (props) => {
   }
 }
 
-const HamburgerMenuButton = (props) => {
+const HamburgerMenu = () => {
   return (
-    <img src={MenuButton} width="35px" alt="menu" id="menuButtonImage" />
+    <div id="menu">
+      <input id="menuButton" type="checkbox" />
+      <label for="menuButton" />
+      
+      <div id="menuItems">
+        <ul>
+          <li>How to play</li>
+          <li>Leave Lobby</li>
+        </ul>
+      </div>
+    </div>
   );
 }
 
