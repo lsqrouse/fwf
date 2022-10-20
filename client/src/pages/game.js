@@ -18,7 +18,7 @@ const Header = (props) => {
           <HamburgerMenuButton />
         </div>
         <div id="gameTitle" className="headerDiv">
-          <h1>{props.game.toUpperCase()}</h1>
+          <h1>{props.game !== undefined && props.game.toUpperCase()}</h1>
         </div>
         <div id="lobbyCode" className="headerDiv">
           {props.code}
