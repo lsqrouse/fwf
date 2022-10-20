@@ -1,0 +1,40 @@
+.coupContainer 
+{
+  font-size: 14px;
+  height: 100%;
+  width: 100%;
+}
+
+.coupHeaderContent 
+{
+  border: 1px grey solid;
+  font-size: 35px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.coupHeader span 
+{
+  margin: 0 10px 0 10px;
+}
+
+.parent
+{
+  display: flex;
+  height: 90%;
+}
+
+.roleList 
+{
+  height: 100%;
+  width: 50%;
+  text-align: center;
+  border: 1px grey solid;
+}
+
+.settingStuff 
+{
+  width: 50%;
+  text-align: center;
+  border: 1px grey solid;
+}

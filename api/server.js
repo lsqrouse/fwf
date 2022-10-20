@@ -179,6 +179,39 @@ io.on('connection', (socket) => {
     saveGameHistory(connection, lobbyState)
   });
 
+  socket.on("start_coup_game", (data) => 
+  {
+    console.log("someone starting the game with data ", data)
+  });
+
+  socket.on("coup_next_game_version", (data) => 
+  {
+    // Update coup game state version
+    var currentGameVersion = data.coupGameState.gameVersion;
+    currentGameVersion += 1;
+
+    if (currentGameVersion > 2)
+    {
+      currentGameVersion = 0;
+    }
+
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameVersion = currentGameVersion;
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("end_coup_game", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameEnded = true;
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
   socket.on("disconnect", (data) => {
     var lobbyState = {}
     if(players.hasOwnProperty(socket.id)) {
@@ -323,6 +356,13 @@ app.get("/api/lobby/create", (req, res) => {
       ressurectionistTarget: '',
       executionerTarget: '',
       allPlayersMessage: 'Do Nothing'
+    },
+    coupGameState:
+    {
+      gameVersion: 0,
+      playerTurn: 0,
+      gameStarted: false,
+      gameEnded: false,
     },
     settings: {
       selectedRoles: ["Villager"]

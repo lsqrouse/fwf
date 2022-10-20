@@ -118,7 +118,7 @@ export default function MainLobby() {
         </Link>
       </div>
         <div className='titleBox'>
-          <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.gameState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
+          <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
         </div>
         <div className='outerBox'>
           <div className='middle'>
@@ -178,8 +178,8 @@ export default function MainLobby() {
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('fake artist') }}>FAKE ARTIST
             <p className='descMaf'>HELLO THIS IS FAKE ARTIST BABY hi</p>
           </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
-            <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Coup') }}>COUP
+            <p className='descMaf'>Lie to your friends, take their coins, and win the game. May the best poker face win.</p>
           </button>
         </div>
         <div className='middle'>
