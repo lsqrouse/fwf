@@ -69,10 +69,12 @@ export default function MainLobby() {
 
 
   const handleLeave = () => {
-    var curLobbyState = lobbyState;
-    setJoined(false)
-    dispatch({ type: 'updateLobby', payload: {}})
-    console.log("disconnecting: ");
+    if (window.confirm("Are you sure you want to leave the lobby?")) {
+      var curLobbyState = lobbyState;
+      setJoined(false)
+      dispatch({ type: 'updateLobby', payload: {}})
+      console.log("disconnecting: ");
+    }
   }
 
   const handleGameChoice = (game: string) => {
