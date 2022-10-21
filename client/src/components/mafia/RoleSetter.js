@@ -95,7 +95,7 @@ function RoleSetter(props) {
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
         </>}
-        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} />
+        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
       </div>
     </div>
   );
@@ -131,22 +131,41 @@ function AddRoleButton(props) {
 }
 
 function SelectedRoles(props) {
-  return (
-    <div>
-      {
-        props.selectedRoles && props.selectedRoles.map((roleName, index) =>
-          <span onClick={() => props.removeRoleIndex(index)}>
-            <img
-              src={props.roles[roleName].image}
-              width="35px"
-              alt={roleName}
-              title={roleName}
-            />
-          </span>
-        )
-      }
-    </div>
-  );
+  if (props.isHost) {
+    return (
+      <div>
+        {
+          props.selectedRoles && props.selectedRoles.map((roleName, index) =>
+            <span onClick={() => props.removeRoleIndex(index)}>
+              <img
+                src={props.roles[roleName].image}
+                width="35px"
+                alt={roleName}
+                title={roleName}
+              />
+            </span>
+          )
+        }
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        {
+          props.selectedRoles && props.selectedRoles.map((roleName, index) =>
+            <span>
+              <img
+                src={props.roles[roleName].image}
+                width="35px"
+                alt={roleName}
+                title={roleName}
+              />
+            </span>
+          )
+        }
+      </div>
+    );
+  }
 }
 
 export default RoleSetter;
