@@ -63,20 +63,20 @@ const roles = {
     abilities: "Block someone from using their ability. You are immune to being blocked." 
   },
 
+  "Ressurectionist": {
+    name: "Ressurectionist",
+    image: RessurectionistIcon,
+    team: "Village",
+    winCondition: `${winConditions.Village}`,
+    abilities: "Once per game, bring one player from the graveyard back alive."
+  },
+
   "Distractor": {
     name: "Distractor",
     image: DistractorIcon,
     team: "Mafia",
     winCondition: `${winConditions.Mafia}`,
     abilities: "Block someone from using their ability. You are immune to being blocked."
-  },
-
-  "Executioner": {
-    name: "Executioner",
-    image: ExecutionerIcon,
-    team: "Executioner",
-    winCondition: `${winConditions.Executioner}`,
-    abilities: "None. But you know that your target is part of the Village."
   },
 
   "Framer": {
@@ -86,13 +86,13 @@ const roles = {
     winCondition: `${winConditions.Mafia}`,
     abilities: "Make someone appear as Mafia if they are investigated during the same night."
   },
-  
-  "Ressurectionist": {
-    name: "Ressurectionist",
-    image: RessurectionistIcon,
-    team: "Village",
-    winCondition: `${winConditions.Village}`,
-    abilities: "Once per game, bring one player from the graveyard back alive."
+
+  "Executioner": {
+    name: "Executioner",
+    image: ExecutionerIcon,
+    team: "Executioner",
+    winCondition: `${winConditions.Executioner}`,
+    abilities: "None. But you know that your target is part of the Village."
   }
 };
 
