@@ -79,8 +79,7 @@ function RoleSetter(props) {
         CHOOSE:
         <br/>
         {props.roles && Object.keys(props.roles).map(key =>
-          <Role role={props.roles[key]}
-            addRole={addRole} />
+          <Role role={props.roles[key]} addRole={addRole} />
         )}
       </div>}
       <div id="selectedRolesDiv">
@@ -98,8 +97,20 @@ function RoleSetter(props) {
 
 function Role(props) {
   const role = props.role;
+  let cn = "roleDiv";
+  switch (role.team) {
+    case "Village":
+      cn += " villageRole";
+      break;
+    case "Mafia":
+      cn += " mafiaRole";
+      break;
+    default:
+      cn += " otherRole";
+  }
+
   return (
-    <div className="roleDiv">
+    <div className={cn}>
       <img src={role.image} alt={role.name} width="35px" />
       {role.name}
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
