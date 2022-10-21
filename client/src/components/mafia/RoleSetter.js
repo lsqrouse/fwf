@@ -73,6 +73,12 @@ function RoleSetter(props) {
     return newList;
   }
 
+  function removeRoleIndex(index) {
+    let newRoles = [...selectedRoles];
+    newRoles.splice(index, 1);
+    setSelectedRoles(newRoles);
+  }
+
   return (
     <div class="roleSetter">
       {isHost && <div id="chooseRolesDiv">
@@ -89,7 +95,7 @@ function RoleSetter(props) {
         <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
         <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
         </>}
-        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles}/>
+        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} />
       </div>
     </div>
   );
@@ -128,8 +134,8 @@ function SelectedRoles(props) {
   return (
     <div>
       {
-        props.selectedRoles && props.selectedRoles.map(roleName =>
-          <span onClick={() => alert("hello")}>
+        props.selectedRoles && props.selectedRoles.map((roleName, index) =>
+          <span onClick={() => props.removeRoleIndex(index)}>
             <img
               src={props.roles[roleName].image}
               width="35px"
