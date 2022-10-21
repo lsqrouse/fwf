@@ -45,7 +45,7 @@ function MafiaContainer(props) {
     let other = 0;
     for (let i = 0; i < selectedRoles.length; i++) {
       const roleName = selectedRoles[i];
-      switch (getTeam(roleName)) {
+      switch (roles[roleName].team) {
         case "Mafia":
           mafia++;
           break
@@ -75,11 +75,6 @@ function MafiaContainer(props) {
       return {message: "It is recommended to select more Mafia roles!", valid: true};
     }
     return {message: "OK", valid: true};
-  }
-
-  function getTeam(roleName) {
-    const role = roles.find(r => r.name === roleName);
-    return role.team;
   }
 
   function updateSelectedRoles(roles) {

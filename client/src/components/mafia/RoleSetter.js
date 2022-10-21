@@ -78,8 +78,8 @@ function RoleSetter(props) {
       {isHost && <div id="chooseRolesDiv">
         CHOOSE:
         <br/>
-        {props.roles && props.roles.map(role =>
-          <Role roleName={role.name} image={role.image} addRole={addRole} />
+        {props.roles && Object.keys(props.roles).map(key =>
+          <Role roleName={props.roles[key].name} image={props.roles[key].image} addRole={addRole} />
         )}
       </div>}
       <div id="selectedRolesDiv">
@@ -116,14 +116,14 @@ function SelectedRoles(props) {
     <div>
       {
         props.selectedRoles && props.selectedRoles.map(roleName =>
-          <img
-          src={
-            props.roles.find(role => {return role.name === roleName}).image
-          }
-          width="35px"
-          alt={roleName}
-          title={roleName}
-          />
+          <span onClick={() => alert("hello")}>
+            <img
+              src={props.roles[roleName].image}
+              width="35px"
+              alt={roleName}
+              title={roleName}
+            />
+          </span>
         )
       }
     </div>
