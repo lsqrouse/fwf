@@ -38,3 +38,11 @@
   text-align: center;
   border: 1px grey solid;
 }
+
+.card
+{
+  width: 50%;
+  vertical-align: text-bottom;
+  text-align: center;
+  border: 1px grey solid;
+}

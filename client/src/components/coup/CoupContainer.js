@@ -7,9 +7,9 @@ import "../../styles/coup/CoupContainer.css"
 function CoupContainer(props) 
 {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
-  const selectedRoles = useSelector((state) => state.lobbyState.settings.selectedRoles);
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
+  const playerState = useSelector((state) => state.playerState);
   const gameVersion = lobbyState.coupGameState.gameVersion;
   const gameStarted = lobbyState.coupGameState.gameStarted;
   const gameEnded = lobbyState.coupGameState.gameEnded;
@@ -21,12 +21,12 @@ function CoupContainer(props)
     // If at least two players then start
     if (numPlayers >= minPlayers)
     {
-        var startData = 
-        {
-            lobbyId: lobbyState.lobbyId,
-            selectedRoles: selectedRoles,
-        }
-        socket.emit("start_coup_game", startData);
+      socket.emit("start_coup_game", lobbyState);
+    }
+    // Else display error message
+    else
+    {
+      alert("Need at least two players!");
     }
   }
 
@@ -44,15 +44,31 @@ function CoupContainer(props)
 
   return (
     <>
-    {
+    {!gameStarted && <> 
         <div className="coupContainer">
             <CoupHeader/>
             <div class="parent">
-                <RoleList roleList={roles} gameVersion={gameVersion}/>
-                <SettingStuff startGame={startGame} endGame={endGame} nextGameVersion={nextGameVersion}/>
+              <RoleList roleList={roles} gameVersion={gameVersion}/>
+              <SettingStuff startGame={startGame} endGame={endGame} nextGameVersion={nextGameVersion}/>
             </div>
       </div>
-    }
+    </>}
+    {gameStarted && <> 
+        <div className="coupContainer">
+            <CoupHeader/>
+            <div class="parent">
+              <div class="card">
+                {playerState.card1}
+              </div>
+              <div class="card">
+                {playerState.card2}
+              </div>
+            </div>
+            <div>
+              You have {playerState.numCoins} coins
+            </div>
+      </div>
+    </>}
     </>
   );
 }

@@ -34,6 +34,9 @@ export default function MainLobby() {
       nickname: playerState.nickname,
       isAlive: playerState.isAlive,
       role: playerState.role,
+      card1: playerState.card1,
+      card2: playerState.card2,
+      numCoins: playerState.numCoins
     }
     var rejoin = false;
     for (var i =0; i < lobbyState.playerList.length; i++) {

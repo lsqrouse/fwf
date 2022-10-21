@@ -24,23 +24,6 @@ function Settings(props) {
         setSelectedRoles={setSelectedRoles}
         socket={props.socket}
       />
-
-      <div>
-        <input type="text" id="dayTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
-            var fname = document.getElementById("dayTime");
-            var time = fname.value;
-            //handleDayPhaseTime(time);
-          }}>Set day phase time in seconds </button>
-
-          <input type="text" id="nightPhaseTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
-            var fname = document.getElementById("nightPhaseTime");
-            var time = fname.value;
-            //handleNightPhaseTime(time);
-          }}>Set night phase time in seconds </button>
-      </div>
-
     </div>
   );
 }

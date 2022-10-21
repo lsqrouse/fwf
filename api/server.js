@@ -67,7 +67,7 @@ io.on('connection', (socket) => {
     }
 
 
-    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive})
+    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive, card1: data.card1, card2: data.card2, numCoins: data.numCoins})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
@@ -76,6 +76,9 @@ io.on('connection', (socket) => {
       host: data.host,
       isAlive: data.isAlive,
       nickname: data.nickname,
+      card1: data.card1,
+      card2: data.card2,
+      numCoins: data.numCoins
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
@@ -181,7 +184,12 @@ io.on('connection', (socket) => {
 
   socket.on("start_coup_game", (data) => 
   {
-    console.log("someone starting the game with data ", data)
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameStarted = true;
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
   socket.on("coup_next_game_version", (data) => 
