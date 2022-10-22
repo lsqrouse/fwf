@@ -184,9 +184,24 @@ io.on('connection', (socket) => {
 
   socket.on("start_coup_game", (data) => 
   {
-    // Update coup game state
+    // Update coup game started and player list
     var lobbyState = lobbies[data.lobbyId];
     lobbyState.coupGameState.gameStarted = true;
+    lobbyState.playerList = data.playerList;
+
+    // Get random player and assign as turn
+    lobbyState.coupGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
+
+    // Update each player state
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+    });
 
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)

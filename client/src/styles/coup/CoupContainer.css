@@ -1,7 +1,7 @@
 .coupContainer 
 {
   font-size: 14px;
-  height: 100%;
+  height: 95%;
   width: 100%;
 }
 
@@ -21,7 +21,7 @@
 .parent
 {
   display: flex;
-  height: 90%;
+  height: 75%;
 }
 
 .roleList 
@@ -45,4 +45,16 @@
   vertical-align: text-bottom;
   text-align: center;
   border: 1px grey solid;
+}
+
+.coins
+{
+  text-align: center;
+}
+
+.turnStuff
+{
+  width: 90%;
+  padding: 15px;
+  text-align: center;
 }
