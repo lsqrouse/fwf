@@ -6,6 +6,7 @@ import "../../styles/coup/CoupContainer.css"
 // Coup container
 function CoupContainer(props) 
 {
+  // Initialize stuff
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
@@ -13,8 +14,28 @@ function CoupContainer(props)
   const gameVersion = lobbyState.coupGameState.gameVersion;
   const gameStarted = lobbyState.coupGameState.gameStarted;
   const gameEnded = lobbyState.coupGameState.gameEnded;
-  const yourTurn = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id === playerState.id;
+  const isPlayerTurn = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id === playerState.id;
   const minPlayers = 2;
+  const canCoup = playerState.numCoins >= 7;
+  const playerStatsArray = []
+  // Create new player array of name, numCards, and numCoins
+  for (var i = 0; i < lobbyState.playerList.length; i++)
+  {
+    // Don't include player self
+    if (lobbyState.playerList[i].id != playerState.id)
+    {
+      var numCards = 0;
+      if (lobbyState.playerList[i].card1 !== "dead")
+      {
+        numCards++;
+      }
+      if (lobbyState.playerList[i].card2 !== "dead")
+      {
+        numCards++;
+      }
+      playerStatsArray.push({name: lobbyState.playerList[i].nickname, cards: numCards, coins: lobbyState.playerList[i].numCoins});
+    }
+  }
 
   // Start game function
   function startGame() 
@@ -57,50 +78,126 @@ function CoupContainer(props)
   {
     socket.emit("coup_next_game_version", lobbyState);
   }
+
+  // Player confirms foreign aid
+  function confirmForeignAid()
+  {
+    // Go through each player in player list and randomly assign two cards
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Get currernt player
+      if (lobbyState.playerList[i].id == playerState.id)
+      {
+        // Update num coins
+        lobbyState.playerList[i].numCoins += 1;
+      }
+    }
+    socket.emit("player_confirm_foreign_aid", lobbyState);
+
+    // Call next turn function
+    nextTurn();
+  }
+
+
+  // Go to next player turn
+  function nextTurn()
+  {
+    socket.emit("next_player_turn", lobbyState);
+  }
   
   // View all player's num cards and num coins
   function viewStats()
   {
-    // Create new player array of name, numCards, and numCoins
-    var playerStatsArray = []
-    for (var i = 0; i < lobbyState.playerList.length; i++)
+    // Get the modal
+    var modal = document.getElementById("playerStatsModal");
+
+    // When the user clicks on the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) 
     {
-      // Don't include player self
-      if (lobbyState.playerList[i].id != playerState.id)
-      {
-        var numCards = 0;
-        if (lobbyState.playerList[i].card1 !== "dead")
-        {
-          numCards++;
-        }
-        if (lobbyState.playerList[i].card2 !== "dead")
-        {
-          numCards++;
-        }
-        playerStatsArray[i] = {name: lobbyState.playerList[i].nickname, cards: numCards, coins: lobbyState.playerList[i].numCoins}
+      if (event.target == modal) {
+
+        modal.style.display = "none";
       }
     }
-
-    // Show to player
-    alert(JSON.stringify(playerStatsArray));
   }
 
   // Play player's actual cards
   function playTruth()
   {
-    alert("Playing truth");
+    // Get the modal
+    var modal = document.getElementById("playTruth");
+
+    // When the user clicks on the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) 
+    {
+      if (event.target == modal) {
+
+        modal.style.display = "none";
+      }
+    }
   }
 
   // Let player pick a card from all roles to play
   function playLie()
   {
-    alert("Playing lie");
+    // Get the modal
+    var modal = document.getElementById("playLie");
+
+    // When the user clicks on the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) 
+    {
+      if (event.target == modal) {
+
+        modal.style.display = "none";
+      }
+    }
   }
 
   // Let player draw a coin
   function playForeignAid()
   {
-    alert("Playing foreign aid");
+    // Get the modal
+    var modal = document.getElementById("playForeignAid");
+
+    // When the user clicks on the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) 
+    {
+      if (event.target == modal) {
+
+        modal.style.display = "none";
+      }
+    }
+  }
+
+  // Let player coup if have enough coins
+  function playCoup()
+  {
+    // Get the modal
+    var modal = document.getElementById("playCoup");
+
+    // When the user clicks on the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) 
+    {
+      if (event.target == modal) {
+
+        modal.style.display = "none";
+      }
+    }
   }
 
   return (
@@ -118,12 +215,12 @@ function CoupContainer(props)
     </>}
     {gameStarted && <>
         <div className="coupContainer">
-            {!yourTurn && <>
+            {!isPlayerTurn && <>
               <div className="coupHeaderContent">
                 <span>{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn</span>
               </div>
             </>}
-            {yourTurn && <>
+            {isPlayerTurn && <>
               <div className="coupHeaderContent">
                 <span>Your turn</span>
               </div>
@@ -139,16 +236,61 @@ function CoupContainer(props)
                 {playerState.card2}
               </div>
             </div>
-            {!yourTurn && <>
+            <div id="playerStatsModal" class="modal">
+              <div class="modal-content">
+                <div class="centerStuff">
+                  <h1>Player Stats</h1>
+                  {Array.from(playerStatsArray, (player) => (<span>{player.name} cards: {player.cards} coins: {player.coins} <br/> <br/> </span>))}
+                </div>
+              </div>
+            </div>
+            <div id="playTruth" class="modal">
+              <div class="modal-content">
+                <div class="centerStuff">
+                  <h1>Playing Truth</h1>
+                </div>
+              </div>
+            </div>
+            <div id="playLie" class="modal">
+              <div class="modal-content">
+                <div class="centerStuff">
+                  <h1>Playing Lie</h1>
+                </div>
+              </div>
+            </div>
+            <div id="playForeignAid" class="modal">
+              <div class="modal-content">
+                <div class="centerStuff">
+                  <h1>Playing Foreign Aid</h1>
+
+                  <button type="button" class="startGameButton" onClick={confirmForeignAid}>Confirm</button>
+                </div>
+              </div>
+            </div>
+            <div id="playCoup" class="modal">
+              <div class="modal-content">
+                <div class="centerStuff">
+                  {canCoup && <>
+                    <h1>COUP</h1>
+                    <h3>Choose player to coup</h3>
+                  </>}
+                  {!canCoup && <>
+                    <h1>Sorry, you need 7 coins to coup</h1>
+                  </>}
+                </div>
+              </div>
+            </div>
+            {!isPlayerTurn && <>
               <div class="turnStuff">
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
               </div>
             </>}
-            {yourTurn && <>
+            {isPlayerTurn && <>
               <div class="turnStuff">
               <button type="button" class="startGameButton" onClick={playTruth}>Play Truth</button>
               <button type="button" class="startGameButton" onClick={playLie}>Play Lie</button>
               <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
+              <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
               <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
               </div>
             </>}
@@ -164,11 +306,10 @@ function RoleList(props)
     // Get role list based on game version
     const gameVersion = props.gameVersion;
     const roleList = props.roleList[gameVersion];
-    const a = Array.from(roleList, (value) => (<span>{value.name} <br/> </span>));
   
     return (
       <div className="roleList">
-        {a}
+        {Array.from(roleList, (value) => (<span>{value.name} <br/> </span>))}
       </div>
     );
 }

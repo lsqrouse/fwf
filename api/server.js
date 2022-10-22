@@ -207,6 +207,43 @@ io.on('connection', (socket) => {
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
+  socket.on("player_confirm_foreign_aid", (data) => 
+  {
+    // Update coup game started and player list
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.playerList = data.playerList;
+
+    // Update each player state
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+    });
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("next_player_turn", (data) => 
+  {
+    // Update coup game turn
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerTurn += 1;
+
+    // Check that not out of bounds
+    if (lobbyState.coupGameState.playerTurn > lobbyState.playerList.length)
+    {
+      lobbyState.coupGameState.playerTurn = 0;
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
   socket.on("coup_next_game_version", (data) => 
   {
     // Update coup game state version
