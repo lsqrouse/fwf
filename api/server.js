@@ -235,7 +235,7 @@ io.on('connection', (socket) => {
     lobbyState.coupGameState.playerTurn += 1;
 
     // Check that not out of bounds
-    if (lobbyState.coupGameState.playerTurn > lobbyState.playerList.length)
+    if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
     {
       lobbyState.coupGameState.playerTurn = 0;
     }

@@ -7,7 +7,6 @@
 
 .coupHeaderContent 
 {
-  border: 1px grey solid;
   font-size: 35px;
   font-weight: bold;
   text-align: center;
@@ -29,14 +28,14 @@
   height: 100%;
   width: 50%;
   text-align: center;
-  border: 1px grey solid;
+  border: 1.5px grey solid;
 }
 
 .settingStuff 
 {
   width: 50%;
   text-align: center;
-  border: 1px grey solid;
+  border: 1.5px grey solid;
 }
 
 .card
@@ -44,7 +43,7 @@
   width: 50%;
   vertical-align: text-bottom;
   text-align: center;
-  border: 1px grey solid;
+  border: 1.5px grey solid;
 }
 
 .coins
@@ -63,16 +62,46 @@
   text-align: center;
 }
 
+.centerStuff h1
+{
+  padding-bottom: 15px;
+  border-bottom: 2px solid black;
+}
+
+.carousel
+{
+  width: 100%;
+  display: block;
+  padding-top: 15px;
+  overflow-x: scroll;
+  white-space: nowrap;
+  padding-bottom: 15px; 
+}
+
+.item 
+{
+  width: 130px;
+  height: 150px;
+  display: inline-block;
+  border: 1.5px solid grey;
+}
+
+.hoverMe:hover
+{
+  border: 3px solid grey;
+}
+
+.item h2
+{
+  text-align: center;
+}
+
 .modal 
 {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
@@ -80,24 +109,7 @@
 /* Modal Content/Box */
 .modal-content 
 {
+  width: 40%;
   background-color: #fefefe;
   border: 1px solid #888;
-  width: 40%; /* Could be more or less, depending on screen size */
-}
-
-/* The Close Button */
-.close 
-{
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus 
-{
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }

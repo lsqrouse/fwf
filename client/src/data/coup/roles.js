@@ -9,7 +9,7 @@ const roles =
 [
   // First version
   [
-    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking 1 coin"},
+    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking foreign aid"},
     {name: "Captain", image: "", ability: "Take 2 coins from a player or block a player from stealing"},
     {name: "Contessa", image: "", ability: "Block an assassination attempt"},
     {name: "Assassin", image: "", ability: "Pay 2 coins to assassinate a player"},
@@ -17,7 +17,7 @@ const roles =
   ],
   // Second version
   [
-    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking 1 coin"},
+    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking foreign aid"},
     {name: "Captain", image: "", ability: "Take 2 coins from a player or block a player from stealing"},
     {name: "Contessa", image: "", ability: "Block an assassination attempt"},
     {name: "Assassin", image: "", ability: "Pay 2 coins to assassinate a player"},
@@ -26,7 +26,7 @@ const roles =
   ],
   // Third version
   [
-    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking 1 coin"},
+    {name: "Duke", image: "", ability: "Take 3 coins from pot or stop a player from taking foreign aid"},
     {name: "Captain", image: "", ability: "Take 2 coins from a player or block a player from stealing"},
     {name: "Contessa", image: "", ability: "Block an assassination attempt"},
     {name: "Assassin", image: "", ability: "Pay 2 coins to assassinate a player"},
