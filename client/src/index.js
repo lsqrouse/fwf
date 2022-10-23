@@ -7,7 +7,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import SyncTesting from './pages/synchTesting.tsx';
 import Home from './pages/Home';
-import AccountTesting from './pages/AccountTesting.tsx';
+import Account from './pages/Account.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx'; 
 import MainLobby from './MainLobby.tsx';
@@ -28,7 +28,7 @@ root.render(
         <Route exact path="MainLobby" element={<MainLobby serverInfo={store.lobbyState}/>} /> 
         <Route exact path="/sync" element={<SyncTesting/>}/>
         <Route exact path="/home" element={<Home/>}/>
-        <Route exact path="/account" element={<AccountTesting/>}/>
+        <Route exact path="/account" element={<Account/>}/>
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
 
         

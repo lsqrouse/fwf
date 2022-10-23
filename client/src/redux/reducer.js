@@ -6,6 +6,9 @@ const initialState = {
   playerState: {},
   userState: {
     uname: 'name'
+  },
+  userState: {
+
   }
 }
 

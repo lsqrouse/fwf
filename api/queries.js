@@ -1,4 +1,6 @@
-var Request = require('tedious').Request; 
+var Request = require('tedious').Request;
+const bcrypt = require("bcrypt")
+
 
 function getUserByUsername(connection, query, res) { 
   console.log("inside the getUserbyUsername function", query.uname) 
@@ -6,7 +8,8 @@ function getUserByUsername(connection, query, res) {
     if (err) {  
         console.log(err);}  
     });  
-    var userId = "";  
+    var userId = "";
+    var sentSomething = false;  
     request.on('row', function(columns) {
         columns.forEach(function(column) { 
           if (column.metadata.colName == 'id') {  
@@ -14,7 +17,8 @@ function getUserByUsername(connection, query, res) {
           } 
           if (column.metadata.colName == 'pass') {  
             if (column.value == query.pass) {
-              res.json({uname: query.uname, token: '123'})
+              res.json({username: query.uname, userid: userId,  token: '123',})
+              sentSomething = true;
             }
           } 
 
@@ -27,7 +31,10 @@ function getUserByUsername(connection, query, res) {
     
     // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
-      console.log("completed: ", rowCount, more)
+      console.log("completed login: ", rowCount, more)
+      if (!sentSomething) {
+        res.json({ token: "BAD_LOGIN"})
+      }
     });
     connection.execSql(request);  
 }

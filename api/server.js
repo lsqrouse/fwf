@@ -8,6 +8,8 @@ const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
 const {getUserByUsername, createUser, saveGameHistory, createLobby} = require('./queries.js')
+const bcrypt = require("bcrypt")
+
 
 
 const PORT = process.env.PORT || 3001;
@@ -294,6 +296,7 @@ app.get("/api/accounts/login", (req, res) => {
 
 app.get("/api/accounts/create", (req, res) => {
   console.log("received request to create an account")
+  
   createUser(connection, req.query , res)
 })
 
