@@ -8,11 +8,13 @@ import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
 
+
 const socket = io("http://localhost:3001").connect()
 
 // @ts-ignore
 export default function MainLobby() {
   const [joined, setJoined] = useState<boolean>(false);
+  const [msg, setMsg] = useState('');
   // const [lobbyState, setLobbyState] = useState<any>(useSelector((state: any) => state.lobbyState));
   const lobbyState = useSelector((state: any) => state.lobbyState);
   const playerState = useSelector((state: any) => state.playerState);
@@ -23,6 +25,9 @@ export default function MainLobby() {
 
   const colDefs = [
     { field: 'nickname' }
+  ]
+  const chatColDefs = [
+    { field: 'msg' }
   ]
   console.log("joined %b", joined)
   console.log("host is ", lobbyState.lobbyHost)
@@ -36,20 +41,20 @@ export default function MainLobby() {
       role: playerState.role,
     }
     var rejoin = false;
-    for (var i =0; i < lobbyState.playerList.length; i++) {
+    for (var i = 0; i < lobbyState.playerList.length; i++) {
       console.log(lobbyState.playerList[i].nickname);
-      if(lobbyState.playerList[i].nickname == join_data.nickname) {
+      if (lobbyState.playerList[i].nickname == join_data.nickname) {
         console.log("BREAKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
         rejoin = true;
         break;
       }
     }
-    if(!rejoin){
+    if (!rejoin) {
       socket.emit("join_lobby", join_data)
       console.log("joined lobby ", join_data)
       setJoined(true)
     }
-    
+
   }
 
   useEffect(() => {
@@ -71,8 +76,20 @@ export default function MainLobby() {
   const handleLeave = () => {
     var curLobbyState = lobbyState;
     setJoined(false)
-    dispatch({ type: 'updateLobby', payload: {gameState: {}}})
+    dispatch({ type: 'updateLobby', payload: { gameState: {} } })
     console.log("disconnecting: ");
+  }
+  const handleChatSubmit = event => {
+    
+    var curLobbyState = lobbyState;
+    console.log("Updating Lobby State to: ", curLobbyState)
+    var newMsg = playerState.nickname + ": " + msg;
+    curLobbyState.chatLog.push({ msg: newMsg });
+    socket.emit("update_lobby_state", curLobbyState);
+    console.log("CHECKING THE STATE POST EMIT FOR FORM SUBMIT " , lobbyState);
+    setMsg('');
+    event.preventDefault();
+    
   }
 
   const handleGameChoice = (game: string) => {
@@ -109,14 +126,14 @@ export default function MainLobby() {
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
-      <div className="login">
-        <Link to="/">
-          <button className='myButton' onClick={handleLeave}>Back</button>
-        </Link>
-        <Link to="/Instructions">
-          <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
-        </Link>
-      </div>
+        <div className="login">
+          <Link to="/">
+            <button className='myButton' onClick={handleLeave}>Back</button>
+          </Link>
+          <Link to="/Instructions">
+            <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
+          </Link>
+        </div>
         <div className='titleBox'>
           <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.gameState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
         </div>
@@ -134,7 +151,19 @@ export default function MainLobby() {
               <Game game={lobbyState.game} socket={socket} />
             </div>
             <div className='chat'>chat
-
+              <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
+                <AgGridReact
+                  rowData={lobbyState.chatLog}
+                  columnDefs={chatColDefs}>
+                </AgGridReact>
+                <form onSubmit={handleChatSubmit}>
+                  <div id='chatBox'>
+                    <hr></hr>
+                    <input className='textBox' value={msg} type="text" placeholder="UserName" onChange={(e) => setMsg(e.target.value)} />
+                    <button className='myB' type='submit'>send</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
 
@@ -193,40 +222,36 @@ export default function MainLobby() {
                   <button className='myB' type='submit'>Invite</button>
                 </div>
               </form> */}
-              
-              
+
+
               <AgGridReact
                 rowData={lobbyState.playerList}
                 columnDefs={colDefs}>
               </AgGridReact>
-              
+
             </div>
           </div>
           <div className='screen'>
             <Game game={lobbyState.game} socket={socket} />
           </div>
           <div className='chat'>chat
-            <ul className="list-group">
-              {/* {this.state.log.map(listitem => (
-                <li key={listitem}>
-                  {listitem}
-                </li>
-              ))} */}
-            </ul>
-            <div>
-              {/* <form onSubmit={this.handleSubmit}>
+            <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
 
+
+              <AgGridReact
+                rowData={lobbyState.chatLog}
+                columnDefs={chatColDefs}>
+              </AgGridReact>
+              <form onSubmit={handleChatSubmit}>
                 <div id='chatBox'>
                   <hr></hr>
-                  <input className='textBox' type="text" placeholder="type message" onChange={(e) => this.setState({ msg: e.target.value })} />
+                  <input className='textBox' value={msg} type="text" placeholder="UserName" onChange={(e) => setMsg(e.target.value)} />
                   <button className='myB' type='submit'>send</button>
                 </div>
-
-              </form> */}
+              </form>
             </div>
           </div>
         </div>
-
         <div className="box">log</div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
         </div>
