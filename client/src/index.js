@@ -16,9 +16,11 @@ import MafiaContainer from './components/mafia/MafiaContainer';
 import store from './redux/store'
 
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store} >
+    <link rel="stylesheet" href= "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
      <Router> 
       <Routes>
         <Route exact path="/" element={<App/>}></Route>
@@ -28,13 +30,14 @@ root.render(
         <Route exact path="MainLobby" element={<MainLobby serverInfo={store.lobbyState}/>} /> 
         <Route exact path="/sync" element={<SyncTesting/>}/>
         <Route exact path="/home" element={<Home/>}/>
-        <Route exact path="/account" element={<Account/>}/>
+        <Route exact path="/account?userId=:userId" element={<Account/>}/>
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
 
         
       </Routes>
     </Router>
   </Provider> 
+  
 );
 
 // If you want to start measuring performance in your app, pass a function

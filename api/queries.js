@@ -17,7 +17,7 @@ function getUserByUsername(connection, query, res) {
           } 
           if (column.metadata.colName == 'pass') {  
             if (column.value == query.pass) {
-              res.json({username: query.uname, userid: userId,  token: '123',})
+              res.json({username: query.uname, userId: userId,  token: '123',})
               sentSomething = true;
             }
           } 
@@ -45,17 +45,14 @@ function createUser(connection, query, res) {
     if (err) {  
         console.log(err);}  
     });  
-
-    request.on('done', function(rowCount, more) {
-      console.log(rowCount + ' rows returned', more);  
-    });  
     
     // Close the connection after the final event emitted by the request, after the callback passes
     request.on("requestCompleted", function (rowCount, more) {
       
       console.log("completed: ", rowCount, more)
       console.log("added new user")
-      res.json({uname: query.uname, token: '123'})
+      //TODO: get the actual userId and not just hard code it
+      res.json({username: query.uname, userId: 1,  token: '123',})
 
     });
     connection.execSql(request);
