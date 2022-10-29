@@ -82,27 +82,6 @@ export default function MainLobby() {
     socket.emit("update_lobby_state", curLobbyState);
   }
 
-  const handleFramerTarget = (name: string) => {
-    var curLobbyState = lobbyState;
-    curLobbyState.gameState.framerTarget = name;
-    console.log("Updating Lobby State Framer Target to: ", curLobbyState)
-    socket.emit("update_lobby_state", curLobbyState);
-  }
-
-  const handleRessurectionistTarget = (name: string) => {
-    var curLobbyState = lobbyState;
-    curLobbyState.gameState.ressurectionistTarget = name;
-    console.log("Updating Lobby State Ressurectionist Target to: ", curLobbyState)
-    socket.emit("update_lobby_state", curLobbyState);
-  }
-
-  const handleExecutionerTarget = (name: string) => {
-    var curLobbyState = lobbyState;
-    curLobbyState.gameState.executionerTarget = name;
-    console.log("Updating Lobby State Ressurectionist Target to: ", curLobbyState)
-    socket.emit("update_lobby_state", curLobbyState);
-  }
-
   // If just player return player screen
   console.log(playerState.host == false)
   console.log(playerState.id != lobbyState.lobbyHost)

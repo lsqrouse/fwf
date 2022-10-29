@@ -12,14 +12,14 @@ function InGame(props) {
   const [topScreen, setTopScreen] = useState("chat");
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
-
+  const [socket, setSocket] = useState(props.socket);
   const playerRole = useSelector((state) => state.playerState.role);
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
-      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
       <RoleCard role={roles.find(r => r.name === playerRole)} />
     </div>
   );
@@ -31,6 +31,7 @@ function Phase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
 
   switch (phase) {
     case "day":
@@ -42,7 +43,7 @@ function Phase(props) {
     case "night":
       return (
         <div className="phase">
-          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     default:
@@ -80,12 +81,13 @@ function NightPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
+  const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
 
   return (
     <>
     <div className="mainInfo">
-      <TopScreen props={topScreen} />
+      <TopScreen props={topScreen} socket={socket} />
       <BottomScreen props={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -146,14 +148,17 @@ function RoleList(props) {
 }
 
 function TopScreen(props) {
+
   const screen = props.screen;
+  const socket = props.socket;
+
   switch (screen) {
     case "chat":
       return <Chat />
     case "vote":
       return <Vote />
     case "ability":
-      return <Ability />
+      return <Ability socket={socket}/>
     case "notes":
       return <Notes />
     case "alerts":
@@ -187,10 +192,56 @@ function Vote(props) {
   );
 }
 
-function Ability(props) {
+function doRoleAbility(playerRole, lobbyState, socket)
+{
+  // Get player
+  var playerChooser = document.getElementById("playerChosen");
+  var playerChosen = playerChooser.options[playerChooser.selectedIndex].text;
+
+  // Based on player role update game state
+  if (playerRole == "Framer")
+  {
+    lobbyState.gameState.framerTarget = playerChosen;
+    socket.emit("update_lobby_state", lobbyState);
+  }
+  else if (playerRole == "Executioner")
+  {
+    lobbyState.gameState.executionerTarget = playerChosen;
+    socket.emit("update_lobby_state", lobbyState);
+  }
+  else if (playerRole == "Framer")
+  {
+    lobbyState.gameState.framerTarget = playerChosen;
+    socket.emit("update_lobby_state", lobbyState);
+  }
+}
+
+function Ability(props) 
+{
+  // Get lobby state
+  const socket = props.socket;
+  const lobbyState = useSelector((state) => state.lobbyState);
+  const players = lobbyState.playerList;
+  const playerState = useSelector((state) => state.playerState);
+
+  // If not a villager
+  if (playerState.role != "Villager")
+  {
+    return (
+      <div className="topScreen ability">
+        <label for="voteChoice"><b>Choose a player {playerState.role}:</b></label>
+        <select name="voteChoice">
+          <option value={null}></option>
+          {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+        </select>
+        <input type="submit" value="Confirm" onClick={doRoleAbility(playerState.role, lobbyState, socket)}></input>
+      </div>
+    );
+  }
+  
   return (
     <div className="topScreen ability">
-      Use your ability
+      <h3>{playerState.role} has no abilities</h3>
     </div>
   );
 }

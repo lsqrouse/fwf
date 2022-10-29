@@ -59,6 +59,7 @@ function MafiaContainer(props) {
         <GameScreen
           roles={roles}
           roleList={selectedRoles}
+          socket={socket}
         />)
       ||
       (gameScreen === "Settings" &&
@@ -103,9 +104,12 @@ function SettingsScreen(props) {
 }
 
 function GameScreen(props) {
+
+  const socket = props.socket;
+
   return (
     <>
-      <InGame roleList={props.roleList} />
+      <InGame roleList={props.roleList} socket={socket} />
     </>
   );
 }
