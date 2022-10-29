@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton, MafiaButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
+import teams from "../../data/mafia/teams";
 import SunIcon from "../../images/mafia/sun.png";
 import MoonIcon from "../../images/mafia/moon.png";
 
@@ -191,12 +192,43 @@ function Vote(props) {
 
 function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
+  const players = useSelector((state) => state.lobbyState.playerList);
   const role = playerState.role;
 
-  function individualAbilityDiv() {
+  function TeamAbilityDiv() {
     return (
-      <div className="individualAbility">
+      <div className="abilityItem">
+        <h3>{roles[role].team} Meeting</h3>
+        {teams[roles[role].team].meetingAbility}
+        <form>
+          <label for="teamChoice"><b>You vote: </b></label>
+          <select name="teamChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
+  // TODO: Only make alive players selectable (unless player is ressurectionist)
+  function IndividualAbilityDiv() {
+    return (
+      <div className="ability">
+        <h3>{role} Ability</h3>
         {roles[role].abilityMessage}
+        <br />
+        <form>
+          <label for="abilityChoice"><b>You choose: </b></label>
+          <select name="abilityChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
       </div>
     )
   };
@@ -204,8 +236,10 @@ function Ability(props) {
   return (
     <div className="topScreen ability">
       {
-        roles[role].abilityMessage &&
-        individualAbilityDiv()
+        roles[role].team === "Mafia" && roles[role].team && <TeamAbilityDiv />
+      }
+      {
+        roles[role].abilityMessage && <IndividualAbilityDiv />
       }
     </div>
   );
