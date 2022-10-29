@@ -28,7 +28,7 @@ const roles = {
   "Mafia": {
     name: "Mafia", image: MafiaIcon,
     team: "Mafia", winCondition: `${winConditions.Mafia}`,
-    abilities: "Vote with the other Mafia to kill someone at night!"
+    abilities: "Vote with the other Mafia to kill someone at night!",
   },
 
   "Detective": {
@@ -36,7 +36,8 @@ const roles = {
     image: DetectiveIcon,
     team: "Village",
     winCondition: `${winConditions.Village}`,
-    abilities: "Investigate someone to figure out their team."
+    abilities: "Investigate someone to figure out their team.",
+    abilityMessage: "Choose some to investigate tonight."
   },
 
   "Doctor": {
@@ -44,7 +45,8 @@ const roles = {
     image: DoctorIcon,
     team: "Village",
     winCondition: `${winConditions.Village}`,
-    abilities: "Protect someone from dying one night."
+    abilities: "Protect someone from dying one night.",
+    abilityMessage: "Choose someone to protect tonight."
   },
 
   "Vigilante": {
@@ -52,7 +54,8 @@ const roles = {
     image: VigilanteIcon,
     team: "Village",
     winCondition: `${winConditions.Village}`,
-    abilities: "Use your gun to kill someone."
+    abilities: "Use your gun to kill someone.",
+    abilityMessage: "Choose someone to kill tonight."
   },
 
   "Drunk": {
@@ -60,7 +63,8 @@ const roles = {
     image: DrunkIcon,
     team: "Village",
     winCondition: `${winConditions.Village}`, 
-    abilities: "Block someone from using their ability. You are immune to being blocked." 
+    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    abilityMessage: "Choose someone to block their ability tonight."
   },
 
   "Ressurectionist": {
@@ -68,7 +72,8 @@ const roles = {
     image: RessurectionistIcon,
     team: "Village",
     winCondition: `${winConditions.Village}`,
-    abilities: "Once per game, bring one player from the graveyard back alive."
+    abilities: "Once per game, bring one player from the graveyard back alive.",
+    abilityMessage: "Choose someone ressurect tonight."
   },
 
   "Distractor": {
@@ -76,7 +81,8 @@ const roles = {
     image: DistractorIcon,
     team: "Mafia",
     winCondition: `${winConditions.Mafia}`,
-    abilities: "Block someone from using their ability. You are immune to being blocked."
+    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    abilityMessage: "Choose someone to block their ability tonight."
   },
 
   "Framer": {
@@ -84,7 +90,8 @@ const roles = {
     image: FramerIcon,
     team: "Mafia",
     winCondition: `${winConditions.Mafia}`,
-    abilities: "Make someone appear as Mafia if they are investigated during the same night."
+    abilities: "Make someone appear as Mafia if they are investigated during the same night.",
+    abilityMessage: "Choose someone to frame tonight."
   },
 
   "Executioner": {

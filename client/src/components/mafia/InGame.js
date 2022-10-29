@@ -26,8 +26,7 @@ function InGame(props) {
 }
 
 function Phase(props) {
-  //const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
-  const phase = "night";
+  const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
@@ -189,9 +188,23 @@ function Vote(props) {
 }
 
 function Ability(props) {
+  const playerState = useSelector((state) => state.playerState);
+  const role = playerState.role;
+
+  function individualAbilityDiv() {
+    return (
+      <div className="individualAbility">
+        {roles[role].abilityMessage}
+      </div>
+    )
+  };
+
   return (
     <div className="topScreen ability">
-      Use your ability
+      {
+        roles[role].abilityMessage &&
+        individualAbilityDiv()
+      }
     </div>
   );
 }
