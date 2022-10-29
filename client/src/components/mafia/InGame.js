@@ -135,7 +135,9 @@ function RoleList(props) {
     }
   });
 
-  const a = Array.from(roleCount).map(([key, value]) => (<span>{value}x {key}</span>));
+  const a = Array.from(roleCount).map(([key, value]) => (
+    <div class="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    );
 
   return (
     <div className="roleList">
