@@ -18,6 +18,8 @@ function CoupContainer(props)
   const minPlayers = 2;
   const canCoup = playerState.numCoins >= 7;
   const playerStatsArray = []
+  const [playerSelectedCard, setPlayerSelectedCard] = useState(-1);
+  
   // Create new player array of name, numCards, and numCoins
   for (var i = 0; i < lobbyState.playerList.length; i++)
   {
@@ -102,6 +104,19 @@ function CoupContainer(props)
     modal.style.display = "none";
   }
 
+  function confirmSelectedCard()
+  {
+    // Call next turn function
+    nextTurn();
+
+    // Close modal
+    var modal = document.getElementById("playTruth");
+    modal.style.display = "none";
+
+    // Update variables
+    setPlayerSelectedCard(-1);
+  }
+
   // Go to next player turn
   function nextTurn()
   {
@@ -139,9 +154,10 @@ function CoupContainer(props)
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) 
     {
-      if (event.target == modal) {
-
+      if (event.target == modal) 
+      {
         modal.style.display = "none";
+        setPlayerSelectedCard(-1);
       }
     }
   }
@@ -149,13 +165,15 @@ function CoupContainer(props)
   // Play player's actual cards
   function playTruthCard1()
   {
-    alert("Playing truth card 1");
+    // Update player selected card
+    setPlayerSelectedCard(playerState.card1);
   }
 
   // Play player's actual cards
   function playTruthCard2()
   {
-    alert("Playing truth card 2");
+    // Update player selected card
+    setPlayerSelectedCard(playerState.card2);
   }
 
   // Let player pick a card from all roles to play
@@ -170,9 +188,10 @@ function CoupContainer(props)
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) 
     {
-      if (event.target == modal) {
-
+      if (event.target == modal) 
+      {
         modal.style.display = "none";
+        setPlayerSelectedCard(-1);
       }
     }
   }
@@ -277,12 +296,20 @@ function CoupContainer(props)
                   <h1>Playing Truth</h1>
                   <div class="parent">
                     <div class="card hoverMe" onClick={playTruthCard1}>
-                      {roles[gameVersion][playerState.card1].name}
+                      <h1>{roles[gameVersion][playerState.card1].name}</h1>
+                      <h3>{roles[gameVersion][playerState.card1].ability}</h3>
                     </div>
                     <div class="card hoverMe" onClick={playTruthCard2}>
-                      {roles[gameVersion][playerState.card2].name}
+                      <h1>{roles[gameVersion][playerState.card2].name}</h1>
+                      <h3>{roles[gameVersion][playerState.card2].ability}</h3>
                     </div>
                   </div>
+                  {(playerSelectedCard >= 0) && <>
+                      <div>
+                        <h3>You have selected to play as the {roles[gameVersion][playerSelectedCard].name}</h3>
+                        <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
+                      </div>
+                  </>}
                 </div>
               </div>
             </div>
@@ -295,6 +322,12 @@ function CoupContainer(props)
                     (<div class="item hoverMe"> <h2>{role.name}</h2></div>)
                     )}
                   </div>
+                  {(playerSelectedCard >= 0) && <>
+                      <div>
+                        <h3>You have selected to play as the {roles[gameVersion][playerSelectedCard].name}</h3>
+                        <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
+                      </div>
+                  </>}
                 </div>
               </div>
             </div>
@@ -319,7 +352,7 @@ function CoupContainer(props)
                   </div>
                   </>}
                   {!canCoup && <>
-                    <h1>Sorry, you need 7 coins to coup</h1>
+                    <h1>You need 7 coins to coup</h1>
                   </>}
                 </div>
               </div>
