@@ -26,7 +26,8 @@ function InGame(props) {
 }
 
 function Phase(props) {
-  const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
+  //const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
+  const phase = "night";
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
@@ -80,13 +81,12 @@ function NightPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
-
+  const setBottomScreen = props.setBottomScreen;
   return (
     <>
     <div className="mainInfo">
-      <TopScreen props={topScreen} />
-      <BottomScreen props={bottomScreen} />
+      <TopScreen screen={topScreen} />
+      <BottomScreen screen={bottomScreen} />
     </div>
     <div className="sideButtons">
       <ChatButton setScreen={setTopScreen} />
@@ -147,6 +147,7 @@ function RoleList(props) {
 
 function TopScreen(props) {
   const screen = props.screen;
+
   switch (screen) {
     case "chat":
       return <Chat />
