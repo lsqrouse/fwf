@@ -196,7 +196,31 @@ io.on('connection', (socket) => {
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
         data.playerList.forEach((newPlayerState) => {
-          if (newPlayerState.id == socket.id) {
+          if (newPlayerState.id == socket.id) 
+          {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+    });
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("update_coup_game", (data) => 
+  {
+    // Update coup game started and player list
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameStarted = true;
+    lobbyState.playerList = data.playerList;
+
+    // Update each player state
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
             socket.emit("recieve_player_state", newPlayerState);
           }
         })  

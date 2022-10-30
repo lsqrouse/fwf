@@ -109,6 +109,20 @@ function CoupContainer(props)
     // Call next turn function
     nextTurn();
 
+    // Go through each player in player list and find curent player
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If current player
+      if (lobbyState.playerList[i].id == playerState.id)
+      {
+        // Update player num coins based on role chosen
+        lobbyState.playerList[i].numCoins += roles[gameVersion][playerSelectedCard].coinAction;
+      }
+    }
+  
+    // Update coup game
+    socket.emit("update_coup_game", lobbyState);
+
     // Close modal
     var modal = document.getElementById("playTruth");
     modal.style.display = "none";
@@ -197,7 +211,7 @@ function CoupContainer(props)
   }
 
   // Do user chosen lie role 
-  function doLieRole()
+  function playLieRole()
   {
     alert("hey");
   }
@@ -242,6 +256,7 @@ function CoupContainer(props)
 
   return (
     <>
+    {/* Game not started */}
     {!gameStarted && <>
         <div className="coupContainer">
             <div className="coupHeaderContent">
@@ -253,6 +268,7 @@ function CoupContainer(props)
             </div>
       </div>
     </>}
+    {/* Game started */}
     {gameStarted && <>
         <div className="coupContainer">
             {!isPlayerTurn && <>
@@ -278,6 +294,7 @@ function CoupContainer(props)
                 <h3>{roles[gameVersion][playerState.card2].ability}</h3>
               </div>
             </div>
+            {/* Pop up modals set to hidden by default */}
             <div id="playerStatsModal" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
@@ -307,7 +324,17 @@ function CoupContainer(props)
                   {(playerSelectedCard >= 0) && <>
                       <div>
                         <h3>You have selected to play as the {roles[gameVersion][playerSelectedCard].name}</h3>
-                        <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
+                        {roles[gameVersion][playerSelectedCard].pvp && <>
+                          <h3>Choose target</h3>
+                          <div class="carousel">
+                            {Array.from(playerStatsArray, (player) => 
+                            (<div class="item hoverMe"> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>)
+                            )}
+                          </div>
+                        </>}
+                        {!roles[gameVersion][playerSelectedCard].pvp && <>
+                          <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
+                        </>}
                       </div>
                   </>}
                 </div>
@@ -346,10 +373,10 @@ function CoupContainer(props)
                   {canCoup && <>
                     <h1>COUP who?</h1>
                     <div class="carousel">
-                    {Array.from(playerStatsArray, (player) => 
-                    (<div class="item hoverMe"> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>)
-                    )}
-                  </div>
+                      {Array.from(playerStatsArray, (player) => 
+                      (<div class="item hoverMe"> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>)
+                      )}
+                    </div>
                   </>}
                   {!canCoup && <>
                     <h1>You need 7 coins to coup</h1>
@@ -357,11 +384,14 @@ function CoupContainer(props)
                 </div>
               </div>
             </div>
+
+            {/* If not player turn only let them see stats */}
             {!isPlayerTurn && <>
               <div class="turnStuff">
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
               </div>
             </>}
+            {/* If player turn let them do turn stuff */}
             {isPlayerTurn && <>
               <div class="turnStuff">
               <button type="button" class="startGameButton" onClick={playTruth}>Play Truth</button>
