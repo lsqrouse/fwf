@@ -107,6 +107,7 @@ io.on('connection', (socket) => {
           lobbyId: data.lobbyId,
           role: left[ran],
           host: i.host,
+          isAlive: true,
           nickname: i.nickname
         }
         left.splice(ran, 1);
@@ -117,6 +118,7 @@ io.on('connection', (socket) => {
           lobbyId: data.lobbyId,
           role: 'Villager',
           host: i.host,
+          isAlive: true,
           nickname: i.nickname
         }
         assignments.push(newPlayerState)
