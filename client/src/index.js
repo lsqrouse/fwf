@@ -30,7 +30,7 @@ root.render(
         <Route exact path="MainLobby" element={<MainLobby serverInfo={store.lobbyState}/>} /> 
         <Route exact path="/sync" element={<SyncTesting/>}/>
         <Route exact path="/home" element={<Home/>}/>
-        <Route exact path="/account?userId=:userId" element={<Account/>}/>
+        <Route exact path="/account" element={<Account/>}/>
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
 
         

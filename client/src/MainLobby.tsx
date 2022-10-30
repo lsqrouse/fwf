@@ -16,6 +16,8 @@ export default function MainLobby() {
   // const [lobbyState, setLobbyState] = useState<any>(useSelector((state: any) => state.lobbyState));
   const lobbyState = useSelector((state: any) => state.lobbyState);
   const playerState = useSelector((state: any) => state.playerState);
+  const userState = useSelector((state: any) => state.userState);
+
 
   console.log("lobby state is, ", lobbyState)
 
@@ -56,12 +58,23 @@ export default function MainLobby() {
     socket.on("receive_lobby_state", (data) => {
       console.log("Recieved updated lobby state from server: ", data)
       var newLobbyState = data;
+      //if we're logged in, find us in the player list and set the db id
+      if (userState.token != "") {
+        data.playerList.forEach((player) => {
+          if (player.id == socket.id && player.db_id == "NONE") {
+            console.log("found our player and it says we have no db_id")
+            player.db_id = userState.userId
+          }
+        })
+      }
+      console.log("new lobby state of ", data)
       dispatch({ type: 'updateLobby', payload: newLobbyState })
     });
 
     socket.on("recieve_player_state", (data) => {
       console.log("Recieved updated player state from server: ", data)
       var newPlayerState = data;
+
       dispatch({ type: 'updatePlayer', payload: newPlayerState })
     });
 
