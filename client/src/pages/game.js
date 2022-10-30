@@ -14,7 +14,13 @@ const Game = (props) => {
       <CoupContainer socket={props.socket} />
       );
   } 
-  else 
+  else if (props.host == false)
+  {
+    return (
+      <p>Tell {props.hostName} to choose a game</p>
+    );
+  }
+  else
   {
     return (
       <p>Please choose a game</p>

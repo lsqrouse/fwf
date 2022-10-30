@@ -64,6 +64,7 @@ io.on('connection', (socket) => {
     //TODO this should get set at lobby creation time
     if (gameState.lobbyHost == undefined) {
       gameState.lobbyHost = socket.id;
+      gameState.lobbyHostName = data.nickname;
     }
 
 
@@ -191,6 +192,7 @@ io.on('connection', (socket) => {
 
     // Get random player and assign as turn
     lobbyState.coupGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
+    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
 
     // Update each player state
     io.in(data.lobbyId).fetchSockets().then((response) => {
@@ -208,11 +210,10 @@ io.on('connection', (socket) => {
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
-  socket.on("update_coup_game", (data) => 
+  socket.on("update_coup_players", (data) => 
   {
-    // Update coup game started and player list
+    // Update coup player list
     var lobbyState = lobbies[data.lobbyId];
-    lobbyState.coupGameState.gameStarted = true;
     lobbyState.playerList = data.playerList;
 
     // Update each player state
@@ -221,27 +222,6 @@ io.on('connection', (socket) => {
         data.playerList.forEach((newPlayerState) => {
           if (newPlayerState.id == socket.id) 
           {
-            socket.emit("recieve_player_state", newPlayerState);
-          }
-        })  
-      })
-    });
-
-    // Reflect changes across other cleints
-    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
-  });
-
-  socket.on("player_confirm_foreign_aid", (data) => 
-  {
-    // Update coup game started and player list
-    var lobbyState = lobbies[data.lobbyId];
-    lobbyState.playerList = data.playerList;
-
-    // Update each player state
-    io.in(data.lobbyId).fetchSockets().then((response) => {
-      response.forEach((socket) => {
-        data.playerList.forEach((newPlayerState) => {
-          if (newPlayerState.id == socket.id) {
             socket.emit("recieve_player_state", newPlayerState);
           }
         })  
@@ -254,8 +234,14 @@ io.on('connection', (socket) => {
 
   socket.on("next_player_turn", (data) => 
   {
-    // Update coup game turn
+    // Get lobby state
     var lobbyState = lobbies[data.lobbyId];
+
+    // Update previous player
+    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
+    lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
+
+    // Update coup game turn
     lobbyState.coupGameState.playerTurn += 1;
 
     // Check that not out of bounds
@@ -266,6 +252,9 @@ io.on('connection', (socket) => {
 
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+
+    // Open popup modal in clients
+    //io.in(lobbyState.lobbyId).emit("open_prev_turn_modal", lobbyState)
   });
 
   socket.on("coup_next_game_version", (data) => 
@@ -291,6 +280,7 @@ io.on('connection', (socket) => {
     // Update coup game state
     var lobbyState = lobbies[data.lobbyId];
     lobbyState.coupGameState.gameEnded = true;
+    lobbyState.coupGameState.gameStarted = false;
 
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
@@ -422,6 +412,7 @@ app.get("/api/lobby/create", (req, res) => {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
     lobbyHost: undefined,
+    lobbyHostName: '',
     lobbyCode: curLobbyId.toString(),
     gameState: {
       whoseTurn: '',
@@ -447,6 +438,10 @@ app.get("/api/lobby/create", (req, res) => {
       playerTurn: 0,
       gameStarted: false,
       gameEnded: false,
+      lastTurnPlayer: -1,
+      lastTurnPlayerId: '',
+      lastTurnPlayerRole: -1,
+      canChallenge: false,
     },
     settings: {
       selectedRoles: ["Villager"]
