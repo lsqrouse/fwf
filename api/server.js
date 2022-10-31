@@ -314,7 +314,7 @@ app.get("/api/lobby/create", (req, res) => {
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
-      currentPhase: 'day',
+      currentPhase: 'night',
       phaseNum: 0,
       dayPhaseTimeLimit: 90,
       nightPhaseTimeLimit: 90,
