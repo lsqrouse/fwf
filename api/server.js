@@ -313,8 +313,8 @@ app.get("/api/lobby/create", (req, res) => {
     playerList: [],
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
-    game: 'mafia',
-    gameState: {
+    game: 'mafia', // name of the game (must correspond to game represented by gameState object)
+    gameState: { // this object gets swapped out depending on the game
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
