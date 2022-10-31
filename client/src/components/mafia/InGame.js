@@ -102,6 +102,10 @@ function NightPhase(props) {
   );
 }
 
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function MafiaHeader(props) {
   const gameState = useSelector((state) => state.lobbyState.gameState);
   const icon = gameState.currentPhase === "day" ? SunIcon : MoonIcon;
@@ -109,18 +113,14 @@ function MafiaHeader(props) {
   return (
     <div className="mafiaHeader">
       <div className="mafiaHeaderContent">
-        <span>MAFIA</span>
-        <img src={icon} width="25px" height="25px" alt={capitaliseFirst(gameState.currentPhase)} />
+        <span>{capitalizeFirst(gameState.currentPhase)}</span>
+        <img src={icon} width="25px" height="25px" alt={capitalizeFirst(gameState.currentPhase)} />
         <span>
           {gameState.phaseNum}
         </span>
       </div>
     </div>
   );
-}
-
-function capitaliseFirst(str) {
-  return str.charAt(0).toUpperCase + str.slice(1);
 }
 
 function RoleList(props) {
