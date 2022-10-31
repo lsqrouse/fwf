@@ -14,7 +14,7 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
-  const playerRole = useSelector((state) => state.playerState.role);
+  const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
 
   return (
     <div className="inGame">
@@ -193,7 +193,7 @@ function Vote(props) {
 function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
   const players = useSelector((state) => state.lobbyState.playerList);
-  const role = playerState.role;
+  const role = playerState.gamePlayerState.role;
 
   function TeamAbilityDiv() {
     return (
@@ -298,7 +298,7 @@ function AliveList() {
   const players = lobbyState.playerList;
   const alivePlayers = [];
   for (const player of players) {
-    if (player.isAlive === true) {
+    if (player.gamePlayerState.isAlive === true) {
       alivePlayers.push(player);
     }
   }
@@ -318,7 +318,7 @@ function DeadList() {
   const players = lobbyState.playerList;
   const deadPlayers = [];
   for (const player of players) {
-    if (player.isAlive == false) {
+    if (player.gamePlayerState.isAlive == false) {
       deadPlayers.push(player);
     }
   }
@@ -338,7 +338,7 @@ function MafiaList() {
   // TODO: Check which players are dead
   const mafiaPlayers = lobbyState.gameState.mafiaList;
 
-  if (playerState.role != "mafia")
+  if (playerState.gamePlayerState.role != "mafia")
   {
     return (
       <div className="bottomScreen mafiaList">

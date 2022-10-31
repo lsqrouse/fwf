@@ -66,16 +66,17 @@ io.on('connection', (socket) => {
       gameState.lobbyHost = socket.id;
     }
 
-
-    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive})
+  gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       lobbyId: data.lobbyId,
-      role: '',
-      host: data.host,
-      isAlive: data.isAlive,
       nickname: data.nickname,
+      host: data.host,
+      gamePlayerState: {
+        role: '',
+        isAlive: true
+      }
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
@@ -105,10 +106,12 @@ io.on('connection', (socket) => {
         var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
-          role: left[ran],
+          nickname: i.nickname,
           host: i.host,
-          isAlive: true,
-          nickname: i.nickname
+          gamePlayerState: {
+            role: left[ran],
+            isAlive: true
+          }
         }
         left.splice(ran, 1);
         assignments.push(newPlayerState)
@@ -116,10 +119,12 @@ io.on('connection', (socket) => {
         var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
-          role: 'Villager',
+          nickname: i.nickname,
           host: i.host,
-          isAlive: true,
-          nickname: i.nickname
+          gamePlayerState: {
+            role: 'Villager',
+            isAlive: true
+          }
         }
         assignments.push(newPlayerState)
       }
@@ -308,29 +313,23 @@ app.get("/api/lobby/create", (req, res) => {
     playerList: [],
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
-    gameState: {
-      whoseTurn: '',
-      game: 'mafia',
+    game: 'mafia', // name of the game (must correspond to game represented by gameState object)
+    gameState: { // this object gets swapped out depending on the game
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
-      currentPhase: 'night',
-      phaseNum: 0,
+      currentPhase: 'night',     // 'day' or 'night'
+      phaseNum: 1, // the nth 'day' or 'night', starting with Night 1, followed by Day 1, Night 2, Day 2, etc.
       dayPhaseTimeLimit: 90,
       nightPhaseTimeLimit: 90,
-      nightPhaseStarted: false,
-      nightPhaseEnded: false,
-      nightEventSummary: '',
-      framerTarget: '',
-      ressurectionistTarget: '',
-      executionerTarget: '',
-      allPlayersMessage: 'Do Nothing'
-    },
-    settings: {
-      selectedRoles: ["Villager"]
-    },
-    gameScreen: 'Settings',
-    game: ''
+      nightPhaseStarted: false, // flag
+      nightPhaseEnded: false,   // flag
+      allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
+      settings: {
+        selectedRoles: ["Villager"]
+      },
+      gameScreen: 'Settings'
+    }
   }
   curLobbyId++
   res.json(newLobby)

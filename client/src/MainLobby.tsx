@@ -32,8 +32,7 @@ export default function MainLobby() {
       lobbyId: lobbyState.lobbyId,
       host: playerState.host,
       nickname: playerState.nickname,
-      isAlive: playerState.isAlive,
-      role: playerState.role,
+      gamePlayerState: playerState.gamePlayerState
     }
     var rejoin = false;
     for (var i =0; i < lobbyState.playerList.length; i++) {
