@@ -14,7 +14,7 @@ const socket = io("http://localhost:3001").connect()
 // @ts-ignore
 export default function MainLobby() {
   const [joined, setJoined] = useState<boolean>(false);
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState<string>('');
   // const [lobbyState, setLobbyState] = useState<any>(useSelector((state: any) => state.lobbyState));
   const lobbyState = useSelector((state: any) => state.lobbyState);
   const playerState = useSelector((state: any) => state.playerState);
@@ -159,7 +159,7 @@ export default function MainLobby() {
                 <form onSubmit={handleChatSubmit}>
                   <div id='chatBox'>
                     <hr></hr>
-                    <input className='textBox' value={msg} type="text" placeholder="UserName" onChange={(e) => setMsg(e.target.value)} />
+                    <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
                     <button className='myB' type='submit'>send</button>
                   </div>
                 </form>
@@ -245,7 +245,7 @@ export default function MainLobby() {
               <form onSubmit={handleChatSubmit}>
                 <div id='chatBox'>
                   <hr></hr>
-                  <input className='textBox' value={msg} type="text" placeholder="UserName" onChange={(e) => setMsg(e.target.value)} />
+                  <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
                   <button className='myB' type='submit'>send</button>
                 </div>
               </form>
