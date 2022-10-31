@@ -233,6 +233,18 @@ function Ability(props) {
     )
   };
 
+  function NoAbilityDiv() {
+    return (
+      <div className="ability">
+        You have no ability. Sweet dreams! <br />
+        Press the OK button to continue.
+        <form>
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="topScreen ability">
       {
@@ -240,6 +252,9 @@ function Ability(props) {
       }
       {
         roles[role].abilityMessage && <IndividualAbilityDiv />
+      }
+      {
+        roles[role].team !== "Mafia" && !roles[role].abilityMessage && <NoAbilityDiv />
       }
     </div>
   );
