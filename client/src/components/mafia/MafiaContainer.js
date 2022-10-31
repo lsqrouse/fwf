@@ -8,7 +8,7 @@ function MafiaContainer(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
   const selectedRoles = useSelector((state) => state.lobbyState.settings.selectedRoles);
   const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
-  const [socket, setSocket] = useState(props.socket);
+  const socket = props.socket;
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
   const minPlayers = 4;
@@ -133,15 +133,19 @@ function SettingsScreen(props) {
         setSelectedRoles={setSelectedRoles}
         socket={socket}
       />
-      {isHost && <>
-      <div>
-        <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
-      </div>
-      <div>
-        <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
-      </div>
-      <div id="warnMessage">{warnMessage}</div>
-      </>}
+      {isHost &&
+        <>
+          <div>
+            <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+          </div>
+          <div>
+            <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
+          </div>
+          <div id="warnMessage">
+            {warnMessage}
+          </div>
+        </>
+      }
     </>
   );
 }
