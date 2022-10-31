@@ -25,6 +25,13 @@
   display: block;
   border: 1px grey solid;
   height: 40px;
+  overflow: hidden;
+}
+
+.roleListItem {
+  display: inline-block;
+  margin: 8px 4px;
+  font-size: 20px;
 }
 
 .sideButtons {

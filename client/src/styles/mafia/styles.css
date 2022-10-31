@@ -8,12 +8,23 @@
 }
 
 .roleDiv {
-  background-color: azure;
   border-radius: 10px;
   border: 1px darkgray solid;
   height: 30px;
   margin-top: 4px;
   padding: 6px;
+}
+
+.villageRole {
+  background-color: #B5EBF9;
+}
+
+.mafiaRole {
+  background-color: #F6A2A2;
+}
+
+.otherRole {
+  background-color: #F9EB9E;
 }
 
 .roleDiv img {

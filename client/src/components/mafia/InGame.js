@@ -20,7 +20,7 @@ function InGame(props) {
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
       <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
-      <RoleCard role={roles.find(r => r.name === playerRole)} />
+      <RoleCard role={roles[playerRole]} />
     </div>
   );
 }
@@ -80,13 +80,12 @@ function NightPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
-
+  const setBottomScreen = props.setBottomScreen;
   return (
     <>
     <div className="mainInfo">
-      <TopScreen props={topScreen} />
-      <BottomScreen props={bottomScreen} />
+      <TopScreen screen={topScreen} />
+      <BottomScreen screen={bottomScreen} />
     </div>
     <div className="sideButtons">
       <ChatButton setScreen={setTopScreen} />
@@ -136,7 +135,9 @@ function RoleList(props) {
     }
   });
 
-  const a = Array.from(roleCount).map(([key, value]) => (<span>{value}x {key}</span>));
+  const a = Array.from(roleCount).map(([key, value]) => (
+    <div class="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    );
 
   return (
     <div className="roleList">
@@ -147,6 +148,7 @@ function RoleList(props) {
 
 function TopScreen(props) {
   const screen = props.screen;
+
   switch (screen) {
     case "chat":
       return <Chat />
@@ -188,9 +190,23 @@ function Vote(props) {
 }
 
 function Ability(props) {
+  const playerState = useSelector((state) => state.playerState);
+  const role = playerState.role;
+
+  function individualAbilityDiv() {
+    return (
+      <div className="individualAbility">
+        {roles[role].abilityMessage}
+      </div>
+    )
+  };
+
   return (
     <div className="topScreen ability">
-      Use your ability
+      {
+        roles[role].abilityMessage &&
+        individualAbilityDiv()
+      }
     </div>
   );
 }
@@ -230,8 +246,13 @@ function BottomScreen(props) {
 function AliveList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are alive
-  const alivePlayers = lobbyState.playerList;
-
+  const players = lobbyState.playerList;
+  const alivePlayers = [];
+  for (const player of players) {
+    if (player.isAlive === true) {
+      alivePlayers.push(player);
+    }
+  }
   return (
     <div className="bottomScreen aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
@@ -245,8 +266,13 @@ function AliveList() {
 function DeadList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are dead
-  const deadPlayers = lobbyState.playerList;
-
+  const players = lobbyState.playerList;
+  const deadPlayers = [];
+  for (const player of players) {
+    if (player.isAlive == false) {
+      deadPlayers.push(player);
+    }
+  }
   return (
     <div className="bottomScreen deadList">
       <h3>Dead: {deadPlayers.length}</h3>
