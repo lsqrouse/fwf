@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton, MafiaButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
+import teams from "../../data/mafia/teams";
 import SunIcon from "../../images/mafia/sun.png";
 import MoonIcon from "../../images/mafia/moon.png";
 
@@ -101,6 +102,10 @@ function NightPhase(props) {
   );
 }
 
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function MafiaHeader(props) {
   const gameState = useSelector((state) => state.lobbyState.gameState);
   const icon = gameState.currentPhase === "day" ? SunIcon : MoonIcon;
@@ -108,18 +113,14 @@ function MafiaHeader(props) {
   return (
     <div className="mafiaHeader">
       <div className="mafiaHeaderContent">
-        <span>MAFIA</span>
-        <img src={icon} width="25px" height="25px" alt={capitaliseFirst(gameState.currentPhase)} />
+        <span>{capitalizeFirst(gameState.currentPhase)}</span>
+        <img src={icon} width="25px" height="25px" alt={capitalizeFirst(gameState.currentPhase)} />
         <span>
           {gameState.phaseNum}
         </span>
       </div>
     </div>
   );
-}
-
-function capitaliseFirst(str) {
-  return str.charAt(0).toUpperCase + str.slice(1);
 }
 
 function RoleList(props) {
@@ -191,21 +192,69 @@ function Vote(props) {
 
 function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
+  const players = useSelector((state) => state.lobbyState.playerList);
   const role = playerState.role;
 
-  function individualAbilityDiv() {
+  function TeamAbilityDiv() {
     return (
-      <div className="individualAbility">
+      <div className="abilityItem">
+        <h3>{roles[role].team} Meeting</h3>
+        {teams[roles[role].team].meetingAbility}
+        <form>
+          <label for="teamChoice"><b>You vote: </b></label>
+          <select name="teamChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
+  // TODO: Only make alive players selectable (unless player is ressurectionist)
+  function IndividualAbilityDiv() {
+    return (
+      <div className="ability">
+        <h3>{role} Ability</h3>
         {roles[role].abilityMessage}
+        <br />
+        <form>
+          <label for="abilityChoice"><b>You choose: </b></label>
+          <select name="abilityChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
       </div>
     )
   };
 
+  function NoAbilityDiv() {
+    return (
+      <div className="ability">
+        You have no ability. Sweet dreams! <br />
+        Press the OK button to continue.
+        <form>
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="topScreen ability">
       {
-        roles[role].abilityMessage &&
-        individualAbilityDiv()
+        roles[role].team === "Mafia" && roles[role].team && <TeamAbilityDiv />
+      }
+      {
+        roles[role].abilityMessage && <IndividualAbilityDiv />
+      }
+      {
+        roles[role].team !== "Mafia" && !roles[role].abilityMessage && <NoAbilityDiv />
       }
     </div>
   );
