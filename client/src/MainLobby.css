@@ -69,7 +69,8 @@
   
   }
 
-  .screen {
+  
+  .screen, .playerScreen {
     display: flex;
     height: 600px;
     width: 75%;
@@ -80,18 +81,6 @@
     margin-top: 2%;
     border-radius: 5%;
     overflow-y:auto
-  }
-
-  .playerScreen
-  {
-    width: 75%;
-    height: 600px;
-    border: 8px solid blue;
-    padding: 2%;
-    margin: 0 auto;
-    margin-bottom: 2%;
-    margin-top: 2%;
-    border-radius: 5%;
   }
 
   .navBar {
