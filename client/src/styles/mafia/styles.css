@@ -47,3 +47,98 @@
 #selectedRolesDiv {
   float: left;
 }
+
+#header {
+  width: 450px;
+  border: 1px black solid;
+  height: 55px;
+}
+
+#headerContent {
+  width: 100%;
+  padding: 10px 0 10px 0;
+}
+
+.headerDiv {
+  width: 33%;
+  height: 35px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+
+.headerDiv div {
+  line-height: 35px;
+}
+
+#gameTitle {
+  margin: 0 auto;
+}
+
+#gameTitle h1, #lobbyCode {
+  font-size: 20px;
+  margin: 0;
+  font-weight: bold;
+}
+
+/** Menu **/
+#menuButton {
+  display: none;
+}
+
+#menuButton + label {
+  background: url("../../images/menu.png") no-repeat;
+  background-size: contain;
+  height: 35px;
+  width: 35px;
+  display: block;
+  padding: 0;
+  margin: 0px 10px 0px 10px;
+}
+
+#menuButton:checked + label {
+  background: url("../../images/menu.png") no-repeat;
+  background-size: contain;
+  height: 35px;
+  width: 35px;
+  display: block;
+  padding: 0;
+  margin: 0px 10px 0px 10px;
+}
+
+#menuButton:checked ~ #menuItems {
+  display: block;
+  position: relative;
+}
+
+#menuItems {
+  display: none;
+  border: 1px solid black;
+  background-color: white;
+  color: gray;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: left;
+}
+
+#menuItems ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#menuItems ul li {
+  padding: 10px;
+}
+
+#menuItems ul li:hover {
+  background-color: whitesmoke;
+}
+
+#menuItems a {
+  text-decoration: none;
+}
+
+#menuItems a:visited {
+  color: gray;
+}

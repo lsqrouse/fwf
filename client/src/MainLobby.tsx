@@ -69,10 +69,12 @@ export default function MainLobby() {
 
 
   const handleLeave = () => {
-    var curLobbyState = lobbyState;
-    setJoined(false)
-    dispatch({ type: 'updateLobby', payload: {gameState: {}}})
-    console.log("disconnecting: ");
+    if (window.confirm("Are you sure you want to leave the lobby?")) {
+      var curLobbyState = lobbyState;
+      setJoined(false)
+      dispatch({ type: 'updateLobby', payload: {gameState: {}}})
+      console.log("disconnecting: ");
+    }
   }
 
   const handleGameChoice = (game: string) => {
@@ -131,7 +133,12 @@ export default function MainLobby() {
               </div>
             </div>
             <div className='playerScreen'>
-              <Game game={lobbyState.game} socket={socket} />
+              <Game
+                game={lobbyState.game}
+                code={lobbyState.lobbyId}
+                socket={socket}
+                handleLeave={handleLeave}
+              />
             </div>
             <div className='chat'>chat
 
@@ -203,7 +210,12 @@ export default function MainLobby() {
             </div>
           </div>
           <div className='screen'>
-            <Game game={lobbyState.game} socket={socket} />
+            <Game
+              game={lobbyState.game}
+              code={lobbyState.lobbyId}
+              socket={socket}
+              handleLeave={handleLeave}
+            />
           </div>
           <div className='chat'>chat
             <ul className="list-group">
