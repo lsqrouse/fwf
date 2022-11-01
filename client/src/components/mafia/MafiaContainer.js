@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
-  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
-  const selectedRoles = useSelector((state) => state.lobbyState.settings.selectedRoles);
-  const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
-  const [socket, setSocket] = useState(props.socket);
+  console.log("LOADED MAFIA");
+
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
+  const selectedRoles = useSelector((state) => state.lobbyState.gameState.settings.selectedRoles);
+  const gameScreen = useSelector((state) => state.lobbyState.gameState.gameScreen);
+  const socket = props.socket;
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
   const minPlayers = 4;
@@ -79,7 +81,7 @@ function MafiaContainer(props) {
 
   function updateSelectedRoles(roles) {
     const newSelectedRoles = roles;
-    lobbyState.settings.selectedRoles = newSelectedRoles;
+    lobbyState.gameState.settings.selectedRoles = newSelectedRoles;
     socket.emit("update_lobby_state", lobbyState);
     setWarnMessage("");
   }
@@ -133,15 +135,19 @@ function SettingsScreen(props) {
         setSelectedRoles={setSelectedRoles}
         socket={socket}
       />
-      {isHost && <>
-      <div>
-        <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
-      </div>
-      <div>
-        <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
-      </div>
-      <div id="warnMessage">{warnMessage}</div>
-      </>}
+      {isHost &&
+        <>
+          <div>
+            <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+          </div>
+          <div>
+            <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
+          </div>
+          <div id="warnMessage">
+            {warnMessage}
+          </div>
+        </>
+      }
     </>
   );
 }

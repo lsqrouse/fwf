@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton, MafiaButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
 import roles from "../../data/mafia/roles";
+import teams from "../../data/mafia/teams";
 import SunIcon from "../../images/mafia/sun.png";
 import MoonIcon from "../../images/mafia/moon.png";
 
@@ -13,7 +14,7 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
-  const playerRole = useSelector((state) => state.playerState.role);
+  const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
 
   return (
     <div className="inGame">
@@ -80,13 +81,12 @@ function NightPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
-
+  const setBottomScreen = props.setBottomScreen;
   return (
     <>
     <div className="mainInfo">
-      <TopScreen props={topScreen} />
-      <BottomScreen props={bottomScreen} />
+      <TopScreen screen={topScreen} />
+      <BottomScreen screen={bottomScreen} />
     </div>
     <div className="sideButtons">
       <ChatButton setScreen={setTopScreen} />
@@ -102,6 +102,10 @@ function NightPhase(props) {
   );
 }
 
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function MafiaHeader(props) {
   const gameState = useSelector((state) => state.lobbyState.gameState);
   const icon = gameState.currentPhase === "day" ? SunIcon : MoonIcon;
@@ -109,18 +113,14 @@ function MafiaHeader(props) {
   return (
     <div className="mafiaHeader">
       <div className="mafiaHeaderContent">
-        <span>MAFIA</span>
-        <img src={icon} width="25px" height="25px" alt={capitaliseFirst(gameState.currentPhase)} />
+        <span>{capitalizeFirst(gameState.currentPhase)}</span>
+        <img src={icon} width="25px" height="25px" alt={capitalizeFirst(gameState.currentPhase)} />
         <span>
           {gameState.phaseNum}
         </span>
       </div>
     </div>
   );
-}
-
-function capitaliseFirst(str) {
-  return str.charAt(0).toUpperCase + str.slice(1);
 }
 
 function RoleList(props) {
@@ -136,7 +136,9 @@ function RoleList(props) {
     }
   });
 
-  const a = Array.from(roleCount).map(([key, value]) => (<span>{value}x {key}</span>));
+  const a = Array.from(roleCount).map(([key, value]) => (
+    <div class="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    );
 
   return (
     <div className="roleList">
@@ -147,6 +149,7 @@ function RoleList(props) {
 
 function TopScreen(props) {
   const screen = props.screen;
+
   switch (screen) {
     case "chat":
       return <Chat />
@@ -188,9 +191,71 @@ function Vote(props) {
 }
 
 function Ability(props) {
+  const playerState = useSelector((state) => state.playerState);
+  const players = useSelector((state) => state.lobbyState.playerList);
+  const role = playerState.gamePlayerState.role;
+
+  function TeamAbilityDiv() {
+    return (
+      <div className="abilityItem">
+        <h3>{roles[role].team} Meeting</h3>
+        {teams[roles[role].team].meetingAbility}
+        <form>
+          <label for="teamChoice"><b>You vote: </b></label>
+          <select name="teamChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
+  // TODO: Only make alive players selectable (unless player is ressurectionist)
+  function IndividualAbilityDiv() {
+    return (
+      <div className="ability">
+        <h3>{role} Ability</h3>
+        {roles[role].abilityMessage}
+        <br />
+        <form>
+          <label for="abilityChoice"><b>You choose: </b></label>
+          <select name="abilityChoice">
+            <option value={null}>No one (skip)</option>
+            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          </select>
+          <br />
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    )
+  };
+
+  function NoAbilityDiv() {
+    return (
+      <div className="ability">
+        You have no ability. Sweet dreams! <br />
+        Press the OK button to continue.
+        <form>
+          <input type="submit" value="OK" />
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="topScreen ability">
-      Use your ability
+      {
+        roles[role].team === "Mafia" && roles[role].team && <TeamAbilityDiv />
+      }
+      {
+        roles[role].abilityMessage && <IndividualAbilityDiv />
+      }
+      {
+        roles[role].team !== "Mafia" && !roles[role].abilityMessage && <NoAbilityDiv />
+      }
     </div>
   );
 }
@@ -230,8 +295,13 @@ function BottomScreen(props) {
 function AliveList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are alive
-  const alivePlayers = lobbyState.playerList;
-
+  const players = lobbyState.playerList;
+  const alivePlayers = [];
+  for (const player of players) {
+    if (player.gamePlayerState.isAlive === true) {
+      alivePlayers.push(player);
+    }
+  }
   return (
     <div className="bottomScreen aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
@@ -245,8 +315,13 @@ function AliveList() {
 function DeadList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are dead
-  const deadPlayers = lobbyState.playerList;
-
+  const players = lobbyState.playerList;
+  const deadPlayers = [];
+  for (const player of players) {
+    if (player.gamePlayerState.isAlive == false) {
+      deadPlayers.push(player);
+    }
+  }
   return (
     <div className="bottomScreen deadList">
       <h3>Dead: {deadPlayers.length}</h3>
@@ -263,7 +338,7 @@ function MafiaList() {
   // TODO: Check which players are dead
   const mafiaPlayers = lobbyState.gameState.mafiaList;
 
-  if (playerState.role != "mafia")
+  if (playerState.gamePlayerState.role != "mafia")
   {
     return (
       <div className="bottomScreen mafiaList">

@@ -1,5 +1,5 @@
 .inGame {
-  font-size: 14px;
+  font-size: 16px;
   height: 100%;
 }
 
@@ -25,6 +25,13 @@
   display: block;
   border: 1px grey solid;
   height: 40px;
+  overflow: hidden;
+}
+
+.roleListItem {
+  display: inline-block;
+  margin: 8px 4px;
+  font-size: 20px;
 }
 
 .sideButtons {
@@ -46,6 +53,7 @@
   height: 190px;
   border: 1px grey solid;
   padding: 20px;
+  overflow: auto;
 }
 
 .bottomScreen {
@@ -53,6 +61,14 @@
   border: 1px grey solid;
   padding: 20px;
   overflow: auto;
+}
+
+.topScreen h3 {
+  margin: 0;
+}
+
+.abilityItem {
+  margin-bottom: 5px;
 }
 
 .aliveList ul, .deadList ul {

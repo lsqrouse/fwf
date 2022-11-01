@@ -9,89 +9,90 @@ import DistractorIcon from "../../images/mafia/icons/distractor.png"
 import ExecutionerIcon from "../../images/mafia/icons/executioner.png";
 import FramerIcon from "../../images/mafia/icons/framer.png";
 import RessurectionistIcon from "../../images/mafia/icons/ressurectionist.png";
-
-const winConditions = {
-  Village: "Stop the Mafia from killing the Village!",
-  Mafia: "Eliminate the Village before they eliminate you and the other Mafia!",
-  Jester: "Get voted out, whatever the cost!",
-  Executioner: "Get your target voted out, whatever the cost!"
-}
+import teams from "./teams";
 
 const roles = {
   "Villager": {
     name: "Villager",
     image: VillagerIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`
+    winCondition: `${teams.Village.winCondition}`
   },
 
   "Mafia": {
     name: "Mafia", image: MafiaIcon,
-    team: "Mafia", winCondition: `${winConditions.Mafia}`,
-    abilities: "Vote with the other Mafia to kill someone at night!"
+    team: "Mafia", winCondition: `${teams.Mafia.winCondition}`,
+    abilities: "Vote with the other Mafia to kill someone at night!",
   },
 
   "Detective": {
     name: "Detective",
     image: DetectiveIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`,
-    abilities: "Investigate someone to figure out their team."
+    winCondition: `${teams.Village.winCondition}`,
+    abilities: "Investigate someone to figure out their team.",
+    abilityMessage: "Choose some to investigate tonight."
   },
 
   "Doctor": {
     name: "Doctor",
     image: DoctorIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`,
-    abilities: "Protect someone from dying one night."
+    winCondition: `${teams.Village.winCondition}`,
+    abilities: "Protect someone from dying one night.",
+    abilityMessage: "Choose someone to protect tonight."
   },
 
   "Vigilante": {
     name: "Vigilante",
     image: VigilanteIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`,
-    abilities: "Use your gun to kill someone."
+    winCondition: `${teams.Village.winCondition}`,
+    abilities: "Use your gun to kill someone.",
+    abilityMessage: "Choose someone to kill tonight."
   },
 
   "Drunk": {
     name: "Drunk",
     image: DrunkIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`, 
-    abilities: "Block someone from using their ability. You are immune to being blocked." 
+    winCondition: `${teams.Village.winCondition}`, 
+    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    abilityMessage: "Choose someone to block their ability tonight."
   },
 
   "Ressurectionist": {
     name: "Ressurectionist",
     image: RessurectionistIcon,
     team: "Village",
-    winCondition: `${winConditions.Village}`,
-    abilities: "Once per game, bring one player from the graveyard back alive."
+    winCondition: `${teams.Village.winCondition}`,
+    abilities: "Once per game, bring one player from the graveyard back alive.",
+    abilityMessage: "Choose someone ressurect tonight."
   },
 
   "Distractor": {
     name: "Distractor",
     image: DistractorIcon,
     team: "Mafia",
-    winCondition: `${winConditions.Mafia}`,
-    abilities: "Block someone from using their ability. You are immune to being blocked."
+    winCondition: `${teams.Mafia.winCondition}`,
+    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    abilityMessage: "Choose someone to block their ability tonight."
   },
 
   "Framer": {
     name: "Framer",
     image: FramerIcon,
     team: "Mafia",
-    winCondition: `${winConditions.Mafia}`,
-    abilities: "Make someone appear as Mafia if they are investigated during the same night."
+    winCondition: `${teams.Mafia.winCondition}`,
+    abilities: "Make someone appear as Mafia if they are investigated during the same night.",
+    abilityMessage: "Choose someone to frame tonight."
   },
 
   "Executioner": {
     name: "Executioner",
     image: ExecutionerIcon,
     team: "Executioner",
-    winCondition: `${winConditions.Executioner}`,
+    winCondition: `${teams.Executioner.winCondition}`,
     abilities: "None. But you know that your target is part of the Village."
   }
 };

@@ -37,8 +37,7 @@ export default function MainLobby() {
       lobbyId: lobbyState.lobbyId,
       host: playerState.host,
       nickname: playerState.nickname,
-      isAlive: playerState.isAlive,
-      role: playerState.role,
+      gamePlayerState: playerState.gamePlayerState
     }
     var rejoin = false;
     for (var i = 0; i < lobbyState.playerList.length; i++) {
@@ -74,10 +73,19 @@ export default function MainLobby() {
 
 
   const handleLeave = () => {
+
     var curLobbyState = lobbyState;
     setJoined(false)
     dispatch({ type: 'updateLobby', payload: { gameState: {} } })
     console.log("disconnecting: ");
+
+    if (window.confirm("Are you sure you want to leave the lobby?")) {
+      var curLobbyState = lobbyState;
+      setJoined(false)
+      dispatch({ type: 'updateLobby', payload: {gameState: {}}})
+      console.log("disconnecting: ");
+    }
+
   }
   const handleChatSubmit = event => {
     event.preventDefault();
@@ -162,7 +170,12 @@ export default function MainLobby() {
               </div>
             </div>
             <div className='playerScreen'>
-              <Game game={lobbyState.game} socket={socket} />
+              <Game
+                game={lobbyState.game}
+                code={lobbyState.lobbyId}
+                socket={socket}
+                handleLeave={handleLeave}
+              />
             </div>
             <div className='chat'>chat
               
@@ -233,7 +246,12 @@ export default function MainLobby() {
               </div>
           </div>
           <div className='screen'>
-            <Game game={lobbyState.game} socket={socket} />
+            <Game
+              game={lobbyState.game}
+              code={lobbyState.lobbyId}
+              socket={socket}
+              handleLeave={handleLeave}
+            />
           </div>
           <div className='chat'>
           <hr id = 'chatBox'></hr>
