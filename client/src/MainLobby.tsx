@@ -80,16 +80,18 @@ export default function MainLobby() {
     console.log("disconnecting: ");
   }
   const handleChatSubmit = event => {
-    
+    event.preventDefault();
     var curLobbyState = lobbyState;
     console.log("Updating Lobby State to: ", curLobbyState)
     var newMsg = playerState.nickname + ": " + msg;
     curLobbyState.chatLog.push({ msg: newMsg });
+    console.log("CHECKING THE STATE POST EMIT FOR FORM SUBMIT " , curLobbyState);
     socket.emit("update_lobby_state", curLobbyState);
-    console.log("CHECKING THE STATE POST EMIT FOR FORM SUBMIT " , lobbyState);
+    refreshChat();
+  }
+
+  const refreshChat = () => {
     setMsg('');
-    event.preventDefault();
-    
   }
 
   const handleGameChoice = (game: string) => {
@@ -123,6 +125,18 @@ export default function MainLobby() {
   // If just player return player screen
   console.log(playerState.host == false)
   console.log(playerState.id != lobbyState.lobbyHost)
+  var result = [''];
+  console.log(lobbyState.chatLog, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  //console.log(lobbyState.chatLog.length, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  if(lobbyState.chatLog != undefined)
+  for(var i = 0; i < lobbyState.chatLog.length; i++){
+    result.push(lobbyState.chatLog[i].msg);
+  }
+  console.log(result, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
+  const listItems = result.map((msg) =>
+    <li>{msg}</li>
+  );
+  
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
@@ -151,11 +165,8 @@ export default function MainLobby() {
               <Game game={lobbyState.game} socket={socket} />
             </div>
             <div className='chat'>chat
-              <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.chatLog}
-                  columnDefs={chatColDefs}>
-                </AgGridReact>
+              
+              <ul>{listItems}</ul>
                 <form onSubmit={handleChatSubmit}>
                   <div id='chatBox'>
                     <hr></hr>
@@ -163,7 +174,7 @@ export default function MainLobby() {
                     <button className='myB' type='submit'>send</button>
                   </div>
                 </form>
-              </div>
+              
             </div>
           </div>
 
@@ -214,34 +225,23 @@ export default function MainLobby() {
         <div className='middle'>
           <div className='chat'>Players:
 
-            <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-              {/* <form onSubmit={this.handleSubmit}>
-                <div id='chatBox'>
-                  <hr></hr>
-                  <input className='textBox' type="text" placeholder="UserName" onChange={(e) => this.setState({ msg: e.target.value })} />
-                  <button className='myB' type='submit'>Invite</button>
-                </div>
-              </form> */}
-
-
-              <AgGridReact
-                rowData={lobbyState.playerList}
-                columnDefs={colDefs}>
-              </AgGridReact>
-
-            </div>
+          <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
+                <AgGridReact
+                  rowData={lobbyState.playerList}
+                  columnDefs={colDefs}>
+                </AgGridReact>
+              </div>
           </div>
           <div className='screen'>
             <Game game={lobbyState.game} socket={socket} />
           </div>
-          <div className='chat'>chat
-            <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
+          <div className='chat'>
+          <hr id = 'chatBox'></hr>
+            <div >
+            
 
 
-              <AgGridReact
-                rowData={lobbyState.chatLog}
-                columnDefs={chatColDefs}>
-              </AgGridReact>
+            <ul>{listItems}</ul>
               <form onSubmit={handleChatSubmit}>
                 <div id='chatBox'>
                   <hr></hr>
