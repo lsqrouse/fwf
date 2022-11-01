@@ -9,6 +9,7 @@ import SyncTesting from './pages/synchTesting.tsx';
 import Home from './pages/Home';
 import Account from './pages/Account.tsx';
 import FrontPage from './FrontPage.tsx';
+import UserPage from './pages/UserPage.tsx';
 import Login from './Login.tsx'; 
 import MainLobby from './MainLobby.tsx';
 import Instructions from './Instructions.tsx';
@@ -24,13 +25,15 @@ root.render(
      <Router> 
       <Routes>
         <Route exact path="/" element={<App/>}></Route>
-        <Route exact path="Login" element={<Login />} />
+        <Route exact path="/Login" element={<Login />} />
         <Route exact path="Instructions" element={<Instructions />} />
         <Route exact path="FrontPage" element={<FrontPage />} /> 
         <Route exact path="MainLobby" element={<MainLobby serverInfo={store.lobbyState}/>} /> 
         <Route exact path="/sync" element={<SyncTesting/>}/>
         <Route exact path="/home" element={<Home/>}/>
         <Route exact path="/account" element={<Account/>}/>
+        <Route exact path="/u/:userId" element={<UserPage/>}/>
+
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
 
         

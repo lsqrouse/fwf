@@ -29,6 +29,8 @@ export default function Account(props: accountProps) {
                 <Col><button onClick={() => {setView("info")}}>Info</button></Col>
                 <Col><button onClick={() => {setView("stats")}}>Statistics</button></Col>
                 <Col><button onClick={() => {setView("history")}}>Game History</button></Col>
+                <Col><button onClick={() => {setView("info")}}>Search</button></Col>
+
             </Row>
         </Container>
     {view == "info" ? (<AccountInfo userState={userState}/>) : (<></>)}

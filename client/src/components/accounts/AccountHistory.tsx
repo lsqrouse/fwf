@@ -7,14 +7,14 @@ type accountStatisticsProps = {
 }
 
 export default function AccountHistory(props: accountStatisticsProps) {
-    const [statData, setStatData] = useState([]);
+    const [statData, setStatData] = useState(null);
 
     const colDefs = [
         {field: 'game_name'},
         {field: 'winners'},
         {field: 'losers'}
     ]
-    if (statData.length == 0) {
+    if (statData == null) {
         fetch(`/api/accounts/history?userId=${props.userId}`)
         .then((res) => res.json())
         .then((data) => {
