@@ -108,7 +108,7 @@ export default function MainLobby() {
   console.log(playerState.id != lobbyState.lobbyHost)
   var logs = [''];
   if(lobbyState.log != undefined){
-   for(var i = 0; i < lobbyState.chatLog.length; i++){
+   for(var i = 0; i < lobbyState.log.length; i++){
      logs.push(lobbyState.log[i].msg);
     }
   }
