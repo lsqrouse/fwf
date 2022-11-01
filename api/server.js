@@ -32,6 +32,7 @@ var lobbies = {
   'ABC' : {
     lobbyId: 'ABC',
     playerList: [],
+    log: [],
     whoseTurn: '',
     counter: 0,
     lobbyHost: undefined,
@@ -306,6 +307,7 @@ app.get("/api/lobby/create", (req, res) => {
   var newLobby = {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
+    log: [],
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
     gameState: {

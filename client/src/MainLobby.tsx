@@ -106,6 +106,16 @@ export default function MainLobby() {
   // If just player return player screen
   console.log(playerState.host == false)
   console.log(playerState.id != lobbyState.lobbyHost)
+  var logs = [''];
+  if(lobbyState.log != undefined){
+   for(var i = 0; i < lobbyState.chatLog.length; i++){
+     logs.push(lobbyState.log[i].msg);
+    }
+  }
+  const logItems = logs.map((msg) =>
+    <li>{msg}</li>
+  );
+
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
@@ -227,7 +237,9 @@ export default function MainLobby() {
           </div>
         </div>
 
-        <div className="box">log</div>
+        <div className="box">log
+        <ul>{logItems}</ul>
+        </div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
         </div>
       </div>
