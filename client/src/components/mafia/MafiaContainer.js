@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
-  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
-  const selectedRoles = useSelector((state) => state.lobbyState.settings.selectedRoles);
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
+  const selectedRoles = useSelector((state) => state.lobbyState.gameState.settings.selectedRoles);
   const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
   const socket = props.socket;
   const lobbyState = useSelector((state) => state.lobbyState);
