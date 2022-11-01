@@ -29,7 +29,7 @@ function RoleCardOpen(props) {
       <hr />
       <p><b>Team:</b> {role.team}</p>
       <p><b>Win Condition:</b> {role.winCondition}</p>
-      {role.abilities && <p><b>Abilities:</b> {role.abilities}</p>}
+      {role.abilitiesDesc && <p><b>Abilities:</b> {role.abilitiesDesc}</p>}
       <div className="tapToHideLabel">
         TAP TO HIDE
       </div>

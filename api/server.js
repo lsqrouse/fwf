@@ -144,7 +144,7 @@ io.on('connection', (socket) => {
         })  
       })
         lobbyState.playerList = assignments;
-        lobbyState.gameScreen = "Game";
+        lobbyState.gameState.gameScreen = "Game";
         lobbies[data.lobbyId] = lobbyState
         console.log("updated lobby state is ", lobbyState)
         io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)

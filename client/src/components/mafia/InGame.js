@@ -147,6 +147,76 @@ function RoleList(props) {
   );
 }
 
+function getTargetTypesFromAbility(ability) {
+  switch (ability) {
+    case "block":
+      return [["alive"]];
+    case "save":
+      return [["alive", "self"]];
+    case "kill":
+      return [["alive"]];
+    case "investigate":
+      return [["alive"]];
+    case "swap":
+      return [["alive", "self"], ["alive", "self"]];
+    case "ressurect":
+      return [["dead"]];
+    case "frame":
+      return [["alive", "nonmafia"]];
+    default:
+      return []; // no ability
+  }
+}
+
+function filterTargets(ability, allPlayers, selfPlayerState) {
+  const types = getTargetTypesFromAbility(ability);
+  let results = [];
+
+  for (let i = 0; i < types.length; i++) {
+    const target = types[i];
+    let list = [...allPlayers];
+    let includeSelf = false;
+
+    for (let j = 0; j < types.length; j++) {
+      const type = target[j];
+      
+      switch (type) {
+        case "alive":
+          list = list.filter(player => player.gamePlayerState.isAlive);
+          break;
+        case "dead":
+          list = list.filter(player => player);
+          break;
+        case "mafia":
+          list = list.filter(player => roles[player.gamePlayerState.role].team === "mafia");
+          break;
+        case "nonmafia":
+          list = list.filter(player => roles[player.gamePlayerState.role].team !== "mafia");
+          break;
+        case "self":
+          includeSelf = true;
+          break;
+        case "any":
+          break;
+        default:
+          // pass
+      }
+    }
+    if (includeSelf) {
+      // Add self to targets if not already included
+      if (!list.includes(selfPlayerState)) {
+        selfPlayerState.unshift(selfPlayerState);
+      }
+    } else {
+      // Remove self from targets
+      list = list.filter(player => player.id !== selfPlayerState.id);
+    }
+    results.push(list);
+  }
+
+  return results;
+}
+
 function TopScreen(props) {
   const screen = props.screen;
 
@@ -215,6 +285,7 @@ function Ability(props) {
 
   // TODO: Only make alive players selectable (unless player is ressurectionist)
   function IndividualAbilityDiv() {
+    const targets = filterTargets(roles[playerState.gamePlayerState.role].ability, players, playerState);
     return (
       <div className="ability">
         <h3>{role} Ability</h3>
@@ -222,10 +293,15 @@ function Ability(props) {
         <br />
         <form>
           <label for="abilityChoice"><b>You choose: </b></label>
-          <select name="abilityChoice">
+          {targets.map(
+            target =>
+            <select name="abilityChoice">
             <option value={null}>No one (skip)</option>
-            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
-          </select>
+            {target.map(player => 
+                <option value={player.id}>{player.nickname}</option>
+            )}
+            </select>
+          )}
           <br />
           <input type="submit" value="OK" />
         </form>
@@ -251,7 +327,7 @@ function Ability(props) {
         roles[role].team === "Mafia" && roles[role].team && <TeamAbilityDiv />
       }
       {
-        roles[role].abilityMessage && <IndividualAbilityDiv />
+        roles[role].ability && <IndividualAbilityDiv />
       }
       {
         roles[role].team !== "Mafia" && !roles[role].abilityMessage && <NoAbilityDiv />

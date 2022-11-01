@@ -22,7 +22,7 @@ const roles = {
   "Mafia": {
     name: "Mafia", image: MafiaIcon,
     team: "Mafia", winCondition: `${teams.Mafia.winCondition}`,
-    abilities: "Vote with the other Mafia to kill someone at night!",
+    abilitiesDesc: "Vote with the other Mafia to kill someone at night!",
   },
 
   "Detective": {
@@ -30,7 +30,8 @@ const roles = {
     image: DetectiveIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
-    abilities: "Investigate someone to figure out their team.",
+    ability: "investigate",
+    abilitiesDesc: "Investigate someone to figure out their team.",
     abilityMessage: "Choose some to investigate tonight."
   },
 
@@ -39,7 +40,8 @@ const roles = {
     image: DoctorIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
-    abilities: "Protect someone from dying one night.",
+    ability: "save",
+    abilitiesDesc: "Protect someone from dying one night.",
     abilityMessage: "Choose someone to protect tonight."
   },
 
@@ -48,7 +50,8 @@ const roles = {
     image: VigilanteIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
-    abilities: "Use your gun to kill someone.",
+    ability: "kill",
+    abilitiesDesc: "Use your gun to kill someone.",
     abilityMessage: "Choose someone to kill tonight."
   },
 
@@ -56,8 +59,9 @@ const roles = {
     name: "Drunk",
     image: DrunkIcon,
     team: "Village",
-    winCondition: `${teams.Village.winCondition}`, 
-    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    winCondition: `${teams.Village.winCondition}`,
+    ability: "block",
+    abilitiesDesc: "Block someone from using their ability. You are immune to being blocked.",
     abilityMessage: "Choose someone to block their ability tonight."
   },
 
@@ -66,7 +70,8 @@ const roles = {
     image: RessurectionistIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
-    abilities: "Once per game, bring one player from the graveyard back alive.",
+    ability: "ressurect",
+    abilitiesDesc: "Once per game, bring one player from the graveyard back alive.",
     abilityMessage: "Choose someone ressurect tonight."
   },
 
@@ -75,7 +80,8 @@ const roles = {
     image: DistractorIcon,
     team: "Mafia",
     winCondition: `${teams.Mafia.winCondition}`,
-    abilities: "Block someone from using their ability. You are immune to being blocked.",
+    ability: "block",
+    abilitiesDesc: "Block someone from using their ability. You are immune to being blocked.",
     abilityMessage: "Choose someone to block their ability tonight."
   },
 
@@ -84,7 +90,8 @@ const roles = {
     image: FramerIcon,
     team: "Mafia",
     winCondition: `${teams.Mafia.winCondition}`,
-    abilities: "Make someone appear as Mafia if they are investigated during the same night.",
+    ability: "frame",
+    abilitiesDesc: "Make someone appear as Mafia if they are investigated during the same night.",
     abilityMessage: "Choose someone to frame tonight."
   },
 
@@ -93,7 +100,7 @@ const roles = {
     image: ExecutionerIcon,
     team: "Executioner",
     winCondition: `${teams.Executioner.winCondition}`,
-    abilities: "None. But you know that your target is part of the Village."
+    abilitiesDesc: "None. But you know that your target is part of the Village."
   }
 };
 
