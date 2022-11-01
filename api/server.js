@@ -35,6 +35,7 @@ var lobbies = {
     whoseTurn: '',
     counter: 0,
     lobbyHost: undefined,
+    chatLog: [],
 
   }
 }
@@ -313,8 +314,10 @@ app.get("/api/lobby/create", (req, res) => {
     playerList: [],
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
+    chatLog: [{msg: 'welcome to lobby'}],
     game: 'mafia', // name of the game (must correspond to game represented by gameState object)
     gameState: { // this object gets swapped out depending on the game
+
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
