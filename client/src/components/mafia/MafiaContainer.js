@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 import roles from "../../data/mafia/roles";
 
 function MafiaContainer(props) {
+  console.log("LOADED MAFIA");
+
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
   const selectedRoles = useSelector((state) => state.lobbyState.gameState.settings.selectedRoles);
-  const gameScreen = useSelector((state) => state.lobbyState.gameScreen);
+  const gameScreen = useSelector((state) => state.lobbyState.gameState.gameScreen);
   const socket = props.socket;
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
@@ -79,7 +81,7 @@ function MafiaContainer(props) {
 
   function updateSelectedRoles(roles) {
     const newSelectedRoles = roles;
-    lobbyState.settings.selectedRoles = newSelectedRoles;
+    lobbyState.gameState.settings.selectedRoles = newSelectedRoles;
     socket.emit("update_lobby_state", lobbyState);
     setWarnMessage("");
   }
