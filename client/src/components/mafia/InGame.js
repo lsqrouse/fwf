@@ -237,7 +237,8 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
   if (!lobbyState.gameState.history[phaseNum]) {
     lobbyState.gameState.history[phaseNum] = {
       night: {},
-      day: {}
+      day: {},
+      mafiaVotes: {}
     };
   }
 
@@ -247,10 +248,26 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
     targets: targets
   };
   lobbyState.gameState.history[phaseNum][phase][playerId] = entry;
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+}
 
-  console.log("history:");
-  console.log(lobbyState);
+function doMafiaVote(socket, lobbyState, voterId, choiceId) {
+  const phaseNum = lobbyState.gameState.phaseNum;
+  if (!lobbyState.gameState.history) {
+    // Create a new history if none exists
+    lobbyState.gameState.history = {};
+  }
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {},
+      mafiaVotes: {}
+    };
+  }
 
+  // Record the vote
+  lobbyState.gameState.history[phaseNum].mafiaVotes[voterId] = choiceId;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
 }
@@ -315,12 +332,13 @@ function Ability(props) {
         {teams[roles[role].team].meetingAbility}
         <form>
           <label for="teamChoice"><b>You vote: </b></label>
-          <select name="teamChoice">
+          <select id="teamChoice">
             <option value={null}>No one (skip)</option>
             {targets.map((player) => (<option value={player.id}>{player.nickname}</option>))}
           </select>
           <br />
-          <input type="button" value="OK" />
+          <input type="button" value="OK" onClick={() =>
+            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
         </form>
       </div>
     );
@@ -351,7 +369,7 @@ function Ability(props) {
             onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
               Array.from(document.getElementById("abilityForm").elements).filter(
                 elem => elem.nodeName.toLowerCase() === "select"
-              ).map(select => select.options[select.selectedIndex].value)
+              ).map(select => select.value)
               )}
           />
         </form>
