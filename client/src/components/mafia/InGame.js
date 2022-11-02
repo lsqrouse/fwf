@@ -446,12 +446,8 @@ function AliveList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are alive
   const players = lobbyState.playerList;
-  const alivePlayers = [];
-  for (const player of players) {
-    if (player.gamePlayerState.isAlive === true) {
-      alivePlayers.push(player);
-    }
-  }
+  const alivePlayers = players.filter(player => player.gamePlayerState.isAlive);
+
   return (
     <div className="bottomScreen aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
@@ -466,12 +462,7 @@ function DeadList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are dead
   const players = lobbyState.playerList;
-  const deadPlayers = [];
-  for (const player of players) {
-    if (player.gamePlayerState.isAlive == false) {
-      deadPlayers.push(player);
-    }
-  }
+  const deadPlayers = players.filter(player => !player.gamePlayerState.isAlive);
   return (
     <div className="bottomScreen deadList">
       <h3>Dead: {deadPlayers.length}</h3>
