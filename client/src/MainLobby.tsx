@@ -144,6 +144,15 @@ export default function MainLobby() {
   const listItems = result.map((msg) =>
     <li>{msg}</li>
   );
+  var logs = [''];
+  if(lobbyState.log != undefined){
+   for(var i = 0; i < lobbyState.log.length; i++){
+     logs.push(lobbyState.log[i].msg);
+    }
+  }
+  const logItems = logs.map((msg) =>
+    <li>{msg}</li>
+  );
   
   if (playerState.id != lobbyState.lobbyHost) {
     return (
@@ -270,7 +279,9 @@ export default function MainLobby() {
             </div>
           </div>
         </div>
-        <div className="box">log</div>
+        <div className="box">log
+          <ul>{logItems}</ul>
+        </div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
         </div>
       </div>

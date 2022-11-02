@@ -40,7 +40,11 @@ const GameContainer = (props) => {
     return (
     <MafiaContainer socket={props.socket} />
     );
-  } else {
+  } else if (props.game == "WereWolf") {
+    return (
+      <WerewolfContainer socket={props.socket} />
+    )
+  }else {
     return (
       <p>Please choose a game</p>
     );
