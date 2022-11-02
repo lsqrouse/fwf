@@ -187,10 +187,10 @@ function getTargetFromTypesNotSelf(target, players) {
         list = list.filter(player => player);
         break;
       case "mafia":
-        list = list.filter(player => roles[player.gamePlayerState.role].team === "mafia");
+        list = list.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
         break;
       case "nonmafia":
-        list = list.filter(player => roles[player.gamePlayerState.role].team !== "mafia");
+        list = list.filter(player => roles[player.gamePlayerState.role].team !== "Mafia");
         break;
       case "any":
         break;
