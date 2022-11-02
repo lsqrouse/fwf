@@ -324,7 +324,8 @@ function Ability(props) {
   const socket = props.socket;
 
   function TeamAbilityDiv() {
-    const targets = getTargetFromTypesNotSelf(["dead", "nonmafia"], players);;
+    const targets = getTargetFromTypesNotSelf(["dead", "nonmafia"], players);
+    const votes = lobbyState.gameState.history.mafiaVotes;
 
     return (
       <div className="abilityItem">
@@ -340,6 +341,11 @@ function Ability(props) {
           <input type="button" value="OK" onClick={() =>
             doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
         </form>
+        <div className="mafiaVotes">
+          {lobbyState.gameState.mafiaList.filter(p => p.id !== playerState.id).map(
+            mafiaMember => <span>Hi {mafiaMember.nickname}</span>
+          )}
+        </div>
       </div>
     );
   }
@@ -479,23 +485,27 @@ function DeadList() {
 function MafiaList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
-  // TODO: Check which players are dead
-  const mafiaPlayers = lobbyState.gameState.mafiaList;
-
-  if (playerState.gamePlayerState.role != "mafia")
+  
+  if (roles[playerState.gamePlayerState.role].team !== "Mafia")
   {
     return (
       <div className="bottomScreen mafiaList">
-      <h3>Sorry, you're not in the mafia.</h3>
+      <h3>Mafia:</h3>
+      You are not in the Mafia.
       </div>
     )
   }
+
+  const mafiaPlayers = lobbyState.playerList.filter(player =>
+    roles[player.gamePlayerState.role].team === "Mafia");
 
   return (
     <div className="bottomScreen mafiaList">
       <h3>Mafia: {mafiaPlayers.length}</h3>
       <ul>
-        {mafiaPlayers.map(player => {return <li>{player.nickname}</li>})}
+        {mafiaPlayers.map(player => {
+          return <li><img src={roles[player.gamePlayerState.role].image} alt={player.role} width="25px" /> {player.nickname}</li>
+        })}
       </ul>
     </div>
   )

@@ -71,11 +71,11 @@
   margin-bottom: 5px;
 }
 
-.aliveList ul, .deadList ul {
+.aliveList ul, .deadList ul, .mafiaList ul {
   padding-left: 0;
 }
 
-.aliveList li, .deadList li {
+.aliveList li, .deadList li, .mafiaList li {
   list-style: none;
 }
 
