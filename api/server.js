@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     }
 
 
-    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive, card1: data.card1, card2: data.card2, numCoins: data.numCoins})
+    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive, card1: data.card1, card1Alive: data.card1Alive, card2: data.card2, card2Alive: data.card2Alive, numCoins: data.numCoins, numCards: data.numCards})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
@@ -78,8 +78,11 @@ io.on('connection', (socket) => {
       isAlive: data.isAlive,
       nickname: data.nickname,
       card1: data.card1,
+      card1Alive: data.card1Alive,
       card2: data.card2,
-      numCoins: data.numCoins
+      card2Alive: data.card2Alive,
+      numCoins: data.numCoins,
+      numCards: data.numCards,
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
@@ -194,6 +197,9 @@ io.on('connection', (socket) => {
     lobbyState.coupGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
     lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
 
+    // Update players alive variable
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+
     // Update each player state
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
@@ -232,29 +238,455 @@ io.on('connection', (socket) => {
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
-  socket.on("next_player_turn", (data) => 
+  socket.on("coup_next_player_turn", (data) => 
   {
     // Get lobby state
     var lobbyState = lobbies[data.lobbyId];
 
-    // Update previous player
-    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
-    lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
-
-    // Update coup game turn
-    lobbyState.coupGameState.playerTurn += 1;
-
-    // Check that not out of bounds
-    if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+    // If turn was a coup
+    if (data.coupGameState.couped == true)
     {
-      lobbyState.coupGameState.playerTurn = 0;
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // Close all the modals
+              socket.emit("coup_close_all_modals", lobbyState)
+            }
+          })  
+        })
+      });
+
+      // Update lobbystate coup data
+      lobbyState.coupGameState.coupTarget = data.coupGameState.coupTarget;
+      lobbyState.coupGameState.coupTargetId = data.coupGameState.coupTargetId;
+
+      // Update previous player
+      lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
+      lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
+
+      // Reflect changes across other cleints
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If coup target
+              if (lobbyState.coupGameState.coupTargetId == socket.id)
+              {
+                // Open coup popup modal
+                socket.emit("open_coup_modal", lobbyState)
+              }
+              // Else all other players
+              else
+              {
+                // Open coup pending popup modal
+                socket.emit("open_coup_pending_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+    // Else wasn't a coup
+    else
+    {
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // Close all the modals
+              socket.emit("coup_close_all_modals", lobbyState)
+            }
+          })  
+        })
+      });
+
+      // Update previous player and previous player role
+      lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
+      lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
+      lobbyState.coupGameState.lastTurnPlayerRole = data.coupGameState.lastTurnPlayerRole;
+      
+      // Updae if last player role was truth or lie
+      lobbyState.coupGameState.lastTurnPlayerTrue = data.coupGameState.lastTurnPlayerTrue;
+
+      // Update can counter and did foreign aid variable
+      lobbyState.coupGameState.didForeignAid = data.coupGameState.didForeignAid;
+      lobbyState.coupGameState.canCounter = data.coupGameState.canCounter;
+
+      // Update coup game turn
+      lobbyState.coupGameState.playerTurn += 1;
+
+      // Check that not out of bounds
+      if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+      {
+        lobbyState.coupGameState.playerTurn = 0;
+      }
+
+      // If player is not alive go to next player
+      while (lobbyState.playerList[lobbyState.coupGameState.playerTurn].isAlive == false)
+      {
+        // Update coup game turn
+        lobbyState.coupGameState.playerTurn += 1;
+
+        // Check that not out of bounds
+        if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+        {
+          lobbyState.coupGameState.playerTurn = 0;
+        }
+      }
+
+      // Reflect changes across other cleints
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+
+      // Update each player state
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If not last player && player is alive
+              if (lobbyState.coupGameState.lastTurnPlayerId != socket.id)
+              {
+                // Open popup modal in clients
+                socket.emit("open_prev_turn_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+  });
+
+  socket.on("coup_turn_just_finished", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+
+    // Go through each player in player list and find dead players
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Current player
+      if (lobbyState.playerList[i].isAlive == false)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playersAlive -= 1;
+      }
+    }
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close coup pending popup modal
+            socket.emit("close_coup_pending_modal", lobbyState)
+
+            // If not player got couped then open coup prev turn info modal
+            if (lobbyState.coupGameState.coupTargetId != socket.id)
+            {
+              socket.emit("open_coup_prev_turn_modal", lobbyState)
+            }
+          }
+        })  
+      })
+    });
+
+    // If game over
+    if (lobbyState.coupGameState.playersAlive == 1)
+    {
+      // Set game ended to true
+      lobbyState.coupGameState.gameEnded = true;
+
+      // Find player that won
+      for (var i = 0; i < lobbyState.playerList.length; i++)
+      {
+        if (lobbyState.playerList[i].isAlive == true)
+        {
+          lobbyState.coupGameState.playerWon = lobbyState.playerList[i].nickname;
+          break;
+        }
+      }
+    }
+    else
+    {
+      // Update coup game turn
+      lobbyState.coupGameState.playerTurn += 1;
+
+      // Check that not out of bounds
+      if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+      {
+        lobbyState.coupGameState.playerTurn = 0;
+      }
+
+      // If player is not alive go to next player
+      while (lobbyState.playerList[lobbyState.coupGameState.playerTurn].isAlive == false)
+      {
+        // Update coup game turn
+        lobbyState.coupGameState.playerTurn += 1;
+
+        // Check that not out of bounds
+        if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+        {
+          lobbyState.coupGameState.playerTurn = 0;
+        }
+      }
     }
 
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
 
-    // Open popup modal in clients
-    //io.in(lobbyState.lobbyId).emit("open_prev_turn_modal", lobbyState)
+  socket.on("coup_player_called_bs", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerCalledBsId = data.coupGameState.playerCalledBsId;
+
+    // Go through each player in player list and find player that called bs
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If player that called bs
+      if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerCalledBsId)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playerCalledBs = i;
+        break;
+      }
+    }
+    
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // If last player was bluffing
+    if (lobbyState.coupGameState.lastTurnPlayerTrue == false)
+    {
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If last player
+              if (lobbyState.coupGameState.lastTurnPlayerId == socket.id)
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_called_modal", lobbyState)
+              }
+              // Else everyone else
+              else
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_pending_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+    // Else last player wasn't bluffing so player that called bs loses a card
+    else
+    {
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If player that called bs
+              if (lobbyState.coupGameState.playerCalledBsId == socket.id)
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_called_modal", lobbyState)
+              }
+              // Else everyone else
+              else
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_pending_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+  });
+
+  socket.on("bluff_turn_just_finished", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+
+    // Go through each player in player list and find dead players
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Current player
+      if (lobbyState.playerList[i].isAlive == false)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playersAlive -= 1;
+      }
+    }
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close their prev turn info modal to stop another play from calling bs again
+            socket.emit("close_bluff_pending_modal", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If last player was telling truth
+            if (lobbyState.coupGameState.lastTurnPlayerTrue)
+            {
+              // If not player that called bluff
+              if (lobbyState.coupGameState.playerCalledBsId != socket.id)
+              {
+                socket.emit("open_bluff_prev_turn_modal", lobbyState)
+              }
+            }
+            // Else last player was bluffing
+            else
+            {
+              // If not last player
+              if (lobbyState.coupGameState.lastTurnPlayerId != socket.id)
+              {
+                socket.emit("open_bluff_prev_turn_modal", lobbyState)
+              }
+            }
+          }
+        })  
+      })
+    });
+
+    // If game over
+    if (lobbyState.coupGameState.playersAlive == 1)
+    {
+      // Set game ended to true
+      lobbyState.coupGameState.gameEnded = true;
+
+      // Find player that won
+      for (var i = 0; i < lobbyState.playerList.length; i++)
+      {
+        if (lobbyState.playerList[i].isAlive == true)
+        {
+          lobbyState.coupGameState.playerWon = lobbyState.playerList[i].nickname;
+        }
+      }
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("bluff_turn_after_challenge_just_finished", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+
+    // Go through each player in player list and find dead players
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Current player
+      if (lobbyState.playerList[i].isAlive == false)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playersAlive -= 1;
+      }
+    }
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close their prev turn info modal to stop another play from calling bs again
+            socket.emit("close_bluff_pending_modal", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If last player was telling truth
+            if (lobbyState.coupGameState.lastTurnPlayerTrue)
+            {
+              // If not player that called bluff
+              if (lobbyState.coupGameState.playerCalledBsId != socket.id)
+              {
+                socket.emit("open_bluff_prev_turn_modal", lobbyState)
+              }
+            }
+            // Else last player was bluffing
+            else
+            {
+              // If not last player
+              if (lobbyState.coupGameState.lastTurnPlayerId != socket.id)
+              {
+                socket.emit("open_bluff_prev_turn_modal", lobbyState)
+              }
+            }
+          }
+        })  
+      })
+    });
+
+    // If game over
+    if (lobbyState.coupGameState.playersAlive == 1)
+    {
+      // Set game ended to true
+      lobbyState.coupGameState.gameEnded = true;
+
+      // Find player that won
+      for (var i = 0; i < lobbyState.playerList.length; i++)
+      {
+        if (lobbyState.playerList[i].isAlive == true)
+        {
+          lobbyState.coupGameState.playerWon = lobbyState.playerList[i].nickname;
+        }
+      }
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
   socket.on("coup_next_game_version", (data) => 
@@ -275,11 +707,338 @@ io.on('connection', (socket) => {
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
 
+  socket.on("coup_next_player_and_target_turn", (data) => 
+  {
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible opened modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })
+      })
+    });
+
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.lastTurnPlayerTrue = data.coupGameState.lastTurnPlayerTrue
+    lobbyState.coupGameState.playerTargeted = data.coupGameState.playerTargeted;
+    lobbyState.coupGameState.playerTargetedId = data.coupGameState.playerTargetedId
+    lobbyState.coupGameState.lastTurnPlayerRole = data.coupGameState.lastTurnPlayerRole;
+    lobbyState.coupGameState.didForeignAid = data.coupGameState.didForeignAid;
+    lobbyState.coupGameState.canCounter = data.coupGameState.canCounter;
+    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
+    lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
+
+    // Find target and open their modal
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If targeted player
+            if (lobbyState.coupGameState.playerTargetedId == socket.id)
+            {
+              // Open their modal
+              socket.emit("open_player_targeted_modal", lobbyState)
+            }
+            // Else all other players
+            else
+            {
+              // If prev card was assassin open assassin pending
+              if (lobbyState.coupGameState.lastTurnPlayerRole == 3)
+              {
+                // Open modal
+                socket.emit("open_assassin_pending_modal", lobbyState)
+              }
+              // Else if prev card was captain open captain pending
+              else if (lobbyState.coupGameState.lastTurnPlayerRole == 1)
+              {
+                // Open modal
+                socket.emit("open_captain_pending_modal", lobbyState)
+              }
+            }
+          }
+        })  
+      })
+    });
+
+    // Go through each player in player list and find dead players
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Current player
+      if (lobbyState.playerList[i].isAlive == false)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playersAlive -= 1;
+      }
+    }
+
+    // If game over
+    if (lobbyState.coupGameState.playersAlive == 1)
+    {
+      // Set game ended to true
+      lobbyState.coupGameState.gameEnded = true;
+
+      // Find player that won
+      for (var i = 0; i < lobbyState.playerList.length; i++)
+      {
+        if (lobbyState.playerList[i].isAlive == true)
+        {
+          lobbyState.coupGameState.playerWon = lobbyState.playerList[i].nickname;
+        }
+      }
+    }
+    else
+    {
+      // Update coup game turn
+      lobbyState.coupGameState.playerTurn += 1;
+
+      // Check that not out of bounds
+      if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+      {
+        lobbyState.coupGameState.playerTurn = 0;
+      }
+
+      // If player is not alive go to next player
+      while (lobbyState.playerList[lobbyState.coupGameState.playerTurn].isAlive == false)
+      {
+        // Update coup game turn
+        lobbyState.coupGameState.playerTurn += 1;
+
+        // Check that not out of bounds
+        if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+        {
+          lobbyState.coupGameState.playerTurn = 0;
+        }
+      }
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("coup_close_all_client_modals", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("coup_close_all_modals", lobbyState)
+  });
+
+  socket.on("coup_just_increment_turn", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    
+    // Go through each player in player list and find dead players
+    lobbyState.coupGameState.playersAlive = lobbyState.playerList.length;
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // Current player
+      if (lobbyState.playerList[i].isAlive == false)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playersAlive -= 1;
+      }
+    }
+
+    // If game over
+    if (lobbyState.coupGameState.playersAlive == 1)
+    {
+      // Set game ended to true
+      lobbyState.coupGameState.gameEnded = true;
+
+      // Find player that won
+      for (var i = 0; i < lobbyState.playerList.length; i++)
+      {
+        if (lobbyState.playerList[i].isAlive == true)
+        {
+          lobbyState.coupGameState.playerWon = lobbyState.playerList[i].nickname;
+        }
+      }
+    }
+    else
+    {
+      // Update coup game turn
+      lobbyState.coupGameState.playerTurn += 1;
+
+      // Check that not out of bounds
+      if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+      {
+        lobbyState.coupGameState.playerTurn = 0;
+      }
+
+      // If player is not alive go to next player
+      while (lobbyState.playerList[lobbyState.coupGameState.playerTurn].isAlive == false)
+      {
+        // Update coup game turn
+        lobbyState.coupGameState.playerTurn += 1;
+
+        // Check that not out of bounds
+        if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+        {
+          lobbyState.coupGameState.playerTurn = 0;
+        }
+      }
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("coup_player_called_bs_after_challenge", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerCalledBsId = data.coupGameState.playerCalledBsId;
+
+    // Go through each player in player list and find player that called bs
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If player that called bs
+      if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerCalledBsId)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playerCalledBs = i;
+        break;
+      }
+    }
+    
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // If player that challenged was bluffing
+    if (lobbyState.coupGameState.challengePlayerTrue == false)
+    {
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If last player
+              if (lobbyState.coupGameState.playerChallengedId == socket.id)
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_called_after_challenge_modal", lobbyState)
+              }
+              // Else everyone else
+              else
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_pending_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+    // Else last player wasn't bluffing so player that called bs loses a card
+    else
+    {
+      // Go through all sockets
+      io.in(data.lobbyId).fetchSockets().then((response) => {
+        response.forEach((socket) => {
+          data.playerList.forEach((newPlayerState) => {
+            if (newPlayerState.id == socket.id) 
+            {
+              // If player that called bs
+              if (lobbyState.coupGameState.lastTurnPlayerId == socket.id)
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_called_after_challenge_modal", lobbyState)
+              }
+              // Else everyone else
+              else
+              {
+                // Open their bluff modal
+                socket.emit("open_bluff_pending_modal", lobbyState)
+              }
+            }
+          })  
+        })
+      });
+    }
+  });
+
+  socket.on("coup_challenging_foreign_aid", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerChallengedId = data.coupGameState.playerChallengedId;
+    lobbyState.coupGameState.challengePlayerTrue = data.coupGameState.challengePlayerTrue;
+
+    // Go through each player in player list and find player that challenged
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If player that called bs
+      if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerChallengedId)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playerChallenged = i;
+        break;
+      }
+    }
+    
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If not player got couped then open coup prev turn info modal
+            if (lobbyState.coupGameState.lastTurnPlayerId == socket.id)
+            {
+              socket.emit("open_get_challenged_modal", lobbyState)
+            }
+            else
+            {
+              socket.emit("open_challenge_pending_modal", lobbyState)
+            }
+          }
+        })  
+      })
+    });
+    
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
   socket.on("end_coup_game", (data) => 
   {
     // Update coup game state
     var lobbyState = lobbies[data.lobbyId];
-    lobbyState.coupGameState.gameEnded = true;
+    lobbyState.coupGameState.gameEnded = false;
     lobbyState.coupGameState.gameStarted = false;
 
     // Reflect changes across other cleints
@@ -437,11 +1196,26 @@ app.get("/api/lobby/create", (req, res) => {
       gameVersion: 0,
       playerTurn: 0,
       gameStarted: false,
+      playerWon: '',
       gameEnded: false,
-      lastTurnPlayer: -1,
+      lastTurnPlayer: 0,
       lastTurnPlayerId: '',
-      lastTurnPlayerRole: -1,
-      canChallenge: false,
+      lastTurnPlayerRole: 0,
+      lastTurnPlayerTrue: false,
+      challengePlayerTrue: false,
+      playerChallenged: 0,
+      playerChallengedId: '',
+      didForeignAid: false,
+      canCounter: false,
+      coupTarget: 0,
+      coupTargetId: '',
+      playerTarget: 0,
+      playerCalledBs: 0,
+      playerCalledBsId: '',
+      couped: false,
+      playerTargeted: 0,
+      playerTargetedId: '',
+      playersAlive: 0,
     },
     settings: {
       selectedRoles: ["Villager"]

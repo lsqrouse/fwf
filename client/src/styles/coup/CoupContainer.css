@@ -47,6 +47,14 @@
   border: 1.5px grey solid;
 }
 
+.soloCard
+{
+  margin-left: 25%;
+  margin-right: 25%;
+  vertical-align: text-bottom;
+  border: 1.5px grey solid;
+}
+
 .coins
 {
   padding: 15px;

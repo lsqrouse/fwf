@@ -18,7 +18,7 @@ export default function FrontPage () {
       .then((data) => {
         console.log("got data from api: ", data)
         dispatch({type: 'updateLobby', payload: data})
-        dispatch({type: 'updatePlayer', payload: {nickname: nickname, isAlive: true, host: true, card1: 0, card2: 0, numCoins: 3}})
+        dispatch({type: 'updatePlayer', payload: {nickname: nickname, isAlive: true, host: true, card1: 0, card1Alive: true, card2: 0, card2Alive: true, numCoins: 3, numCards: 2}})
 
       })    // try {
     //   let res = await fetch("http://localhost:3001/api/accounts/create", {
@@ -52,7 +52,7 @@ export default function FrontPage () {
     .then((data) => {
       console.log("got data from api: ", data)
       dispatch({type: 'updateLobby', payload: data})
-      dispatch({type: 'updatePlayer', payload: {nickname: nickname, isAlive: true, host: false, card1: 0, card2: 0, numCoins: 3}})
+      dispatch({type: 'updatePlayer', payload: {nickname: nickname, isAlive: true, host: false, card1: 0, card1Alive: true, card2: 0, card2Alive: true, numCoins: 3, numCards: 2}})
 
     })
 

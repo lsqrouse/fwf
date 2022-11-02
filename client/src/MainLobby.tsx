@@ -35,8 +35,11 @@ export default function MainLobby() {
       isAlive: playerState.isAlive,
       role: playerState.role,
       card1: playerState.card1,
+      card1Alive: playerState.card1Alive,
       card2: playerState.card2,
-      numCoins: playerState.numCoins
+      card2Alive: playerState.card2Alive,
+      numCoins: playerState.numCoins,
+      numCards: playerState.numCards,
     }
     var rejoin = false;
     for (var i =0; i < lobbyState.playerList.length; i++) {
