@@ -173,6 +173,34 @@ function getTargetTypesFromAbility(ability) {
   }
 }
 
+function getTargetFromTypesNotSelf(target, players) {
+  let list = [...players];
+
+  for (let j = 0; j < target.length; j++) {
+    const type = target[j];
+    
+    switch (type) {
+      case "alive":
+        list = list.filter(player => player.gamePlayerState.isAlive);
+        break;
+      case "dead":
+        list = list.filter(player => player);
+        break;
+      case "mafia":
+        list = list.filter(player => roles[player.gamePlayerState.role].team === "mafia");
+        break;
+      case "nonmafia":
+        list = list.filter(player => roles[player.gamePlayerState.role].team !== "mafia");
+        break;
+      case "any":
+        break;
+      default:
+        // pass
+    }
+  }
+  return list;
+}
+
 function filterTargets(ability, allPlayers, selfPlayerState) {
   const types = getTargetTypesFromAbility(ability);
   let results = [];
@@ -180,34 +208,10 @@ function filterTargets(ability, allPlayers, selfPlayerState) {
   for (let i = 0; i < types.length; i++) {
     const target = types[i];
     let list = [...allPlayers];
-    let includeSelf = false;
 
-    for (let j = 0; j < types.length; j++) {
-      const type = target[j];
-      
-      switch (type) {
-        case "alive":
-          list = list.filter(player => player.gamePlayerState.isAlive);
-          break;
-        case "dead":
-          list = list.filter(player => player);
-          break;
-        case "mafia":
-          list = list.filter(player => roles[player.gamePlayerState.role].team === "mafia");
-          break;
-        case "nonmafia":
-          list = list.filter(player => roles[player.gamePlayerState.role].team !== "mafia");
-          break;
-        case "self":
-          includeSelf = true;
-          break;
-        case "any":
-          break;
-        default:
-          // pass
-      }
-    }
-    if (includeSelf) {
+    list = getTargetFromTypesNotSelf(target, list);
+
+    if (target.includes("self")) {
       // Add self to targets if not already included
       if (!list.includes(selfPlayerState)) {
         selfPlayerState.unshift(selfPlayerState);
