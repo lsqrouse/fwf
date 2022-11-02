@@ -307,6 +307,8 @@ function Ability(props) {
   const socket = props.socket;
 
   function TeamAbilityDiv() {
+    const targets = getTargetFromTypesNotSelf(["dead", "nonmafia"], players);;
+
     return (
       <div className="abilityItem">
         <h3>{roles[role].team} Meeting</h3>
@@ -315,7 +317,7 @@ function Ability(props) {
           <label for="teamChoice"><b>You vote: </b></label>
           <select name="teamChoice">
             <option value={null}>No one (skip)</option>
-            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+            {targets.map((player) => (<option value={player.id}>{player.nickname}</option>))}
           </select>
           <br />
           <input type="button" value="OK" />
