@@ -15,12 +15,13 @@ function InGame(props) {
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
   const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
+  const socket = props.socket;
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
-      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
       <RoleCard role={roles[playerRole]} />
     </div>
   );
@@ -32,18 +33,19 @@ function Phase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
 
   switch (phase) {
     case "day":
       return (
         <div className="phase">
-          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     case "night":
       return (
         <div className="phase">
-          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     default:
@@ -56,11 +58,12 @@ function DayPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen
+  const socket = props.socket;
 
   return (
     <>
       <div className="mainInfo">
-        <TopScreen screen={topScreen} />
+        <TopScreen screen={topScreen} socket={socket} />
         <BottomScreen screen={bottomScreen} />
       </div>
       <div className="sideButtons">
@@ -82,10 +85,12 @@ function NightPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
+
   return (
     <>
     <div className="mainInfo">
-      <TopScreen screen={topScreen} />
+      <TopScreen screen={topScreen} socket={socket} />
       <BottomScreen screen={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -217,18 +222,48 @@ function filterTargets(ability, allPlayers, selfPlayerState) {
   return results;
 }
 
+function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
+  const phase = lobbyState.gameState.currentPhase;
+  const phaseNum = lobbyState.gameState.phaseNum;
+  // Write to history
+  if (!lobbyState.gameState.history) {
+    // Create a new history if none exists
+    lobbyState.gameState.history = {};
+  }
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {}
+    };
+  }
+
+  // Now write the ability into the history
+  const entry = {
+    ability: ability,
+    targets: targets
+  };
+  lobbyState.gameState.history[phaseNum][phase][playerId] = entry;
+
+  console.log("history:");
+  console.log(lobbyState);
+
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+}
+
 function TopScreen(props) {
   const screen = props.screen;
+  const socket = props.socket;
 
   switch (screen) {
     case "chat":
-      return <Chat />
+      return <Chat socket={socket} />
     case "vote":
-      return <Vote />
+      return <Vote socket={socket} />
     case "ability":
-      return <Ability />
+      return <Ability socket={socket} />
     case "notes":
-      return <Notes />
+      return <Notes socket={socket} />
     case "alerts":
       return <Alerts />
     default:
@@ -262,8 +297,10 @@ function Vote(props) {
 
 function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
+  const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
   const role = playerState.gamePlayerState.role;
+  const socket = props.socket;
 
   function TeamAbilityDiv() {
     return (
@@ -277,33 +314,40 @@ function Ability(props) {
             {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
           </select>
           <br />
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" />
         </form>
       </div>
     );
   }
 
-  // TODO: Only make alive players selectable (unless player is ressurectionist)
   function IndividualAbilityDiv() {
-    const targets = filterTargets(roles[playerState.gamePlayerState.role].ability, players, playerState);
+    // TODO: Make it possible to get the values of TWO select fields
+    const ability = roles[playerState.gamePlayerState.role].ability;
+    const targets = filterTargets(ability, players, playerState);
     return (
       <div className="ability">
         <h3>{role} Ability</h3>
         {roles[role].abilityMessage}
         <br />
-        <form>
-          <label for="abilityChoice"><b>You choose: </b></label>
+        <form id="abilityForm">
+          <span><b>You choose: </b></span>
           {targets.map(
-            target =>
-            <select name="abilityChoice">
-            <option value={null}>No one (skip)</option>
-            {target.map(player => 
-                <option value={player.id}>{player.nickname}</option>
-            )}
+            (target, index) =>
+            <select is={"abilityChoice" + index}>
+              <option value={null}>No one (skip)</option>
+              {target.map(player => 
+                  <option value={player.id}>{player.nickname}</option>
+              )}
             </select>
           )}
           <br />
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" 
+            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
+              Array.from(document.getElementById("abilityForm").elements).filter(
+                elem => elem.nodeName.toLowerCase() === "select"
+              ).map(select => select.options[select.selectedIndex].value)
+              )}
+          />
         </form>
       </div>
     )
@@ -315,7 +359,7 @@ function Ability(props) {
         You have no ability. Sweet dreams! <br />
         Press the OK button to continue.
         <form>
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" />
         </form>
       </div>
     );
