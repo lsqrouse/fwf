@@ -187,6 +187,28 @@ io.on('connection', (socket) => {
     saveGameHistory(connection, lobbyState)
   });
 
+  socket.on("update_coup_players", (data) => 
+  {
+    // Update coup player list
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.playerList = data.playerList;
+
+    // Update each player state
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+    });
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+  
   socket.on("disconnect", (data) => {
     var lobbyState = {}
     if(players.hasOwnProperty(socket.id)) {
