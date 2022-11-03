@@ -60,6 +60,8 @@ function CoupContainer(props)
         lobbyState.playerList[i].card1Alive = true;
         lobbyState.playerList[i].card2 = random2;
         lobbyState.playerList[i].card2Alive = true;
+        lobbyState.playerList[i].numCoins = 3;
+        lobbyState.playerList[i].isAlive = true;
       }
 
       socket.emit("start_coup_game", lobbyState);
@@ -427,7 +429,7 @@ function CoupContainer(props)
     modal.style.display = "block";
   });
 
-  // Open challenge pending modal for all other players
+  // Open challenge pending modal for player that was challenged
   socket.on("open_get_challenged_modal", (data) => 
   {
     // Get the modal
@@ -442,7 +444,41 @@ function CoupContainer(props)
       if (event.target == modal) 
       {
         modal.style.display = "none";
+
+        // Close all other client modals
         socket.emit("coup_close_all_client_modals", lobbyState);
+
+        // Go through each player in player list and find curent player
+        for (var i = 0; i < lobbyState.playerList.length; i++)
+        {
+          // If current player
+          if (lobbyState.playerList[i].id == playerState.id)
+          {
+            // If player tried foreign aid
+            if (lobbyState.coupGameState.didForeignAid)
+            {
+              // Undo foreign aid
+              lobbyState.playerList[i].numCoins -= 2;
+            }
+            // Else if player tried captain
+            else if (lobbyState.coupGameState.lastTurnPlayerRole == 1)
+            {
+              lobbyState.playerList[i].numCoins -= lobbyState.coupGameState.coinsTakenDuringCaptain;
+            }
+          }
+          // Else if targeted player
+          if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerTargetedId)
+          {
+            // If player tried captain
+            if (lobbyState.coupGameState.lastTurnPlayerRole == 1)
+            {
+              lobbyState.playerList[i].numCoins += lobbyState.coupGameState.coinsTakenDuringCaptain;
+            }
+          }
+        }
+      
+        // Update coup players
+        socket.emit("update_coup_players", lobbyState);
       }
     }
   });
@@ -481,6 +517,7 @@ function CoupContainer(props)
 
     // Update player that challenged
     lobbyState.coupGameState.playerChallengedId = playerState.id;
+    lobbyState.coupGameState.playerChallengedWith = "Duke"
 
     // Tell server that player is challenging foreign aid
     socket.emit("coup_challenging_foreign_aid", lobbyState);
@@ -489,34 +526,79 @@ function CoupContainer(props)
   // Player confirms challenge foreign aid
   function confirmChallengeAsAmbassador()
   {
-    alert("Confirming challenge as ambassador");
+    // Update game state if user played truth or lie
+    if ((playerState.card1 != 4 || playerState.card1Alive == false) && (playerState.card2 != 4 || playerState.card2Alive == false))
+    {
+      lobbyState.coupGameState.challengePlayerTrue = false;
+    }
+    else
+    {
+      lobbyState.coupGameState.challengePlayerTrue = true;
+    }
 
     // Close modal and reset going to counter var
-    var modal = document.getElementById("previousTurnInfo");
+    var modal = document.getElementById("playerTargeted");
     modal.style.display = "none";
     setGoingToCounter(-1);
+
+    // Update player that challenged
+    lobbyState.coupGameState.playerChallengedId = playerState.id;
+    lobbyState.coupGameState.playerChallengedWith = "Ambassador"
+
+    // Tell server that player is challenging foreign aid
+    socket.emit("coup_challenging_captain", lobbyState);
   }
 
   // Player confirms challenge foreign aid
   function confirmChallengeAsCaptain()
   {
-    alert("Confirming challenge as captain");
+    // Update game state if user played truth or lie
+    if ((playerState.card1 != 1 || playerState.card1Alive == false) && (playerState.card2 != 1 || playerState.card2Alive == false))
+    {
+      lobbyState.coupGameState.challengePlayerTrue = false;
+    }
+    else
+    {
+      lobbyState.coupGameState.challengePlayerTrue = true;
+    }
 
     // Close modal and reset going to counter var
-    var modal = document.getElementById("previousTurnInfo");
+    var modal = document.getElementById("playerTargeted");
     modal.style.display = "none";
     setGoingToCounter(-1);
+
+    // Update player that challenged
+    lobbyState.coupGameState.playerChallengedId = playerState.id;
+    lobbyState.coupGameState.playerChallengedWith = "Captain"
+
+    // Tell server that player is challenging foreign aid
+    socket.emit("coup_challenging_captain", lobbyState);
   }
 
   // Player confirms challenge assassination
   function confirmChallengeAsContessa()
   {
-    alert("Confirming challenge as contessa");
+    // Update game state if user played truth or lie
+    if ((playerState.card1 != 2 || playerState.card1Alive == false) && (playerState.card2 != 2 || playerState.card2Alive == false))
+    {
+      lobbyState.coupGameState.challengePlayerTrue = false;
+    }
+    else
+    {
+      lobbyState.coupGameState.challengePlayerTrue = true;
+    }
 
     // Close modal and reset going to counter var
-    var modal = document.getElementById("previousTurnInfo");
+    var modal = document.getElementById("playerTargeted");
     modal.style.display = "none";
     setGoingToCounter(-1);
+
+    // Update player that challenged
+    lobbyState.coupGameState.playerChallengedId = playerState.id;
+    lobbyState.coupGameState.playerChallengedWith = "Contessa"
+
+    // Tell server that player is challenging foreign aid
+    socket.emit("coup_challenging_assassination", lobbyState);
   }
 
   function confirmBS()
@@ -811,7 +893,7 @@ function CoupContainer(props)
         // If previous player was bluffing
         if (lobbyState.coupGameState.challengePlayerTrue == false)
         {
-          lobbyState.playerList[i].numCoins -= 2;
+          lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].numCoins += 2;
         }
 
         // If player selected card 1 for bluff
@@ -1051,12 +1133,14 @@ function CoupContainer(props)
           {
             lobbyState.playerList[curentPlayerI].numCoins -= roles[gameVersion][playerSelectedCard].coinAction;
             lobbyState.playerList[curentPlayerI].numCoins += lobbyState.playerList[i].numCoins;
+            lobbyState.coupGameState.coinsTakenDuringCaptain = lobbyState.playerList[i].numCoins;
             lobbyState.playerList[i].numCoins = 0;
           }
           // Else just take their coins
           else
           {
             lobbyState.playerList[i].numCoins -= roles[gameVersion][playerSelectedCard].coinAction;
+            lobbyState.coupGameState.coinsTakenDuringCaptain = 2;
           }
         }
 
@@ -1645,7 +1729,7 @@ function CoupContainer(props)
             <div id="getChallenged" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
-                  <h1>{lobbyState.playerList[lobbyState.coupGameState.playerChallenged].nickname} challenged you</h1>
+                  <h1>{lobbyState.playerList[lobbyState.coupGameState.playerChallenged].nickname} challenged you with a {lobbyState.coupGameState.playerChallengedWith}</h1>
                   <div class="soloCard hoverMe" onClick={callingBs}>
                     <h1>Call BS</h1>
                     <h3>Liar liar pants on fire</h3>

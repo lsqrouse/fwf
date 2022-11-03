@@ -221,6 +221,7 @@ io.on('connection', (socket) => {
     // Update coup player list
     var lobbyState = lobbies[data.lobbyId];
     lobbyState.playerList = data.playerList;
+    lobbyState.coupGameState.coinsTakenDuringCaptain = data.coupGameState.coinsTakenDuringCaptain;
 
     // Update each player state
     io.in(data.lobbyId).fetchSockets().then((response) => {
@@ -983,6 +984,123 @@ io.on('connection', (socket) => {
     var lobbyState = lobbies[data.lobbyId];
     lobbyState.coupGameState.playerChallengedId = data.coupGameState.playerChallengedId;
     lobbyState.coupGameState.challengePlayerTrue = data.coupGameState.challengePlayerTrue;
+    lobbyState.coupGameState.playerChallengedWith = data.coupGameState.playerChallengedWith;
+
+    // Go through each player in player list and find player that challenged
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If player that called bs
+      if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerChallengedId)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playerChallenged = i;
+        break;
+      }
+    }
+    
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If not player got couped then open coup prev turn info modal
+            if (lobbyState.coupGameState.lastTurnPlayerId == socket.id)
+            {
+              socket.emit("open_get_challenged_modal", lobbyState)
+            }
+            else
+            {
+              socket.emit("open_challenge_pending_modal", lobbyState)
+            }
+          }
+        })  
+      })
+    });
+    
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("coup_challenging_assassination", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerChallengedId = data.coupGameState.playerChallengedId;
+    lobbyState.coupGameState.challengePlayerTrue = data.coupGameState.challengePlayerTrue;
+    lobbyState.coupGameState.playerChallengedWith = data.coupGameState.playerChallengedWith;
+
+    // Go through each player in player list and find player that challenged
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      // If player that called bs
+      if (lobbyState.playerList[i].id == lobbyState.coupGameState.playerChallengedId)
+      {
+        // Update coup cards and is alive variable
+        lobbyState.coupGameState.playerChallenged = i;
+        break;
+      }
+    }
+    
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // Close all possible modals
+            socket.emit("coup_close_all_modals", lobbyState)
+          }
+        })  
+      })
+    });
+
+    // Go through all sockets
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            // If not player got couped then open coup prev turn info modal
+            if (lobbyState.coupGameState.lastTurnPlayerId == socket.id)
+            {
+              socket.emit("open_get_challenged_modal", lobbyState)
+            }
+            else
+            {
+              socket.emit("open_challenge_pending_modal", lobbyState)
+            }
+          }
+        })  
+      })
+    });
+    
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("coup_challenging_captain", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.playerChallengedId = data.coupGameState.playerChallengedId;
+    lobbyState.coupGameState.challengePlayerTrue = data.coupGameState.challengePlayerTrue;
+    lobbyState.coupGameState.playerChallengedWith = data.coupGameState.playerChallengedWith;
 
     // Go through each player in player list and find player that challenged
     for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -1202,9 +1320,10 @@ app.get("/api/lobby/create", (req, res) => {
       lastTurnPlayerId: '',
       lastTurnPlayerRole: 0,
       lastTurnPlayerTrue: false,
-      challengePlayerTrue: false,
       playerChallenged: 0,
       playerChallengedId: '',
+      playerChallengedWith: '',
+      challengePlayerTrue: false,
       didForeignAid: false,
       canCounter: false,
       coupTarget: 0,
@@ -1215,6 +1334,7 @@ app.get("/api/lobby/create", (req, res) => {
       couped: false,
       playerTargeted: 0,
       playerTargetedId: '',
+      coinsTakenDuringCaptain: 0,
       playersAlive: 0,
     },
     settings: {
