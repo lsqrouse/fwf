@@ -7,7 +7,10 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser, saveGameHistory, createLobby} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId, login} = require('./queries.js')
+const bcrypt = require("bcrypt");
+const { NONAME } = require("dns");
+
 
 
 const PORT = process.env.PORT || 3001;
@@ -71,6 +74,7 @@ io.on('connection', (socket) => {
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
+      db_id: "NONE",
       lobbyId: data.lobbyId,
       nickname: data.nickname,
       host: data.host,
@@ -79,6 +83,8 @@ io.on('connection', (socket) => {
         isAlive: true
       }
     }
+    gameState.playerList.push(newPlayerState)
+    io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     socket.emit("recieve_player_state", newPlayerState)
   });
 
@@ -106,6 +112,7 @@ io.on('connection', (socket) => {
         var ran = Math.floor(Math.random() * left.length);
         var newPlayerState = {
           id: i.id,
+          db_id: i.db_id,
           lobbyId: data.lobbyId,
           nickname: i.nickname,
           host: i.host,
@@ -119,6 +126,7 @@ io.on('connection', (socket) => {
       } else {
         var newPlayerState = {
           id: i.id,
+          db_id: i.db_id,
           lobbyId: data.lobbyId,
           nickname: i.nickname,
           host: i.host,
@@ -297,12 +305,30 @@ app.get("/api", (req, res) => {
  
 app.get("/api/accounts/login", (req, res) => {
   console.log("received request for login", req.query)
+  login(connection, req.query, res)
+})
+
+app.get("/api/accounts/getUser", (req, res) => {
+  console.log("received request to lookup user", req.query.username);
   getUserByUsername(connection, req.query, res)
 })
 
 app.get("/api/accounts/create", (req, res) => {
   console.log("received request to create an account")
+  
   createUser(connection, req.query , res)
+})
+
+app.get("/api/accounts/stats", (req, res) => {
+  console.log("received request to create an account")
+  
+  getStatsByUserId(connection, req.query , res)
+})
+
+app.get("/api/accounts/history", (req, res) => {
+  console.log("received request to create an account")
+  
+  getHistoryByUserId(connection, req.query , res)
 })
 
 app.get("/api/lobby/create", (req, res) => {
