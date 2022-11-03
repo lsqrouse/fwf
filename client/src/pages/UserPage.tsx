@@ -13,20 +13,31 @@ type accountProps = {
 }
 
 export default function UserPage() {
-    const {curUser} = useParams();
-    const [view, setView] = useState("info");
+    let { curUsername } = useParams()
+    const [curUserId, setCurUserId] = useState(-1);
+
+    console.log(`got ${curUsername} as username and ${curUserId} as userid`)
+    if (curUserId == -1) {
+        fetch(`/api/accounts/getUser?username=${curUsername}`)
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("got this from api for userId ", data)
+            setCurUserId(data.userId);
+        })
+    }
 
     return <>
     {/* Page displayed when we are logged in */}
         <Container>
-            <Row>
-                <Profile userId={curUser}></Profile>
+            <Row className="justify-content-md-center">
+                <Profile userId={curUserId} username={curUsername}></Profile>
             </Row>
-            <Row>
-                <AccountStatistics userId={curUser}></AccountStatistics>
+            <hr style={{borderTop:'5px solid blue'}}></hr>
+            <Row className="justify-content-md-center">
+                <AccountStatistics userId={curUserId} username={curUsername}></AccountStatistics>
             </Row>
-            <Row>
-                <AccountHistory userId={curUser}></AccountHistory>
+            <Row className="justify-content-md-center">
+                <AccountHistory userId={curUserId} username={curUsername}></AccountHistory>
             </Row>
         </Container>
 

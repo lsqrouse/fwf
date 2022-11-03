@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId, login} = require('./queries.js')
 const bcrypt = require("bcrypt");
 const { NONAME } = require("dns");
 
@@ -294,6 +294,11 @@ app.get("/api", (req, res) => {
  
 app.get("/api/accounts/login", (req, res) => {
   console.log("received request for login", req.query)
+  login(connection, req.query, res)
+})
+
+app.get("/api/accounts/getUser", (req, res) => {
+  console.log("received request to lookup user", req.query.username);
   getUserByUsername(connection, req.query, res)
 })
 

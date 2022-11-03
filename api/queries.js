@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt")
 
 
 
-function getUserByUsername(connection, query, res) { 
+function login(connection, query, res) { 
   console.log("inside the getUserbyUsername function", query.uname) 
     request = new Request(`SELECT * FROM accounts WHERE username = '${query.uname}';`, function(err) {  
     if (err) {  
@@ -40,6 +40,37 @@ function getUserByUsername(connection, query, res) {
     });
     connection.execSql(request);  
 }
+
+function getUserByUsername(connection, query, res) { 
+  console.log("inside the getUserbyUsername function", query.username) 
+    request = new Request(`SELECT * FROM accounts WHERE username = '${query.username}';`, function(err) {  
+    if (err) {  
+        console.log(err);}  
+    });  
+
+    var sentSomething = false
+    request.on('row', function(columns) {
+      columns.forEach((column) => {
+        if (column.metadata.colName =='id') {
+          res.json({userId: column.value})
+          sentSomething = true
+          console.log("sent something")
+          return
+        }
+      })
+    });  
+    
+    // Close the connection after the final event emitted by the request, after the callback passes
+    request.on("requestCompleted", function (rowCount, more) {
+      console.log("completed user search: ", rowCount, more)
+      if (!sentSomething) {
+        console.log("returning bad stuff")
+        res.json({userId: '-2'})
+      }
+    });
+    connection.execSql(request);  
+}
+
 
 function createUser(connection, query, res) {
   console.log(query);
@@ -107,9 +138,9 @@ function createLobby(connection, lobbyState) {
 
 function getStatsByUserId(connection, query, res) { 
   console.log('inside of getstas by userid', query)
-    request = new Request(`SELECT w.userId, w.game_id, game_name, coalesce(wins, 0) as 'wins', coalesce(losses, 0) as 'losses' FROM (SElect COUNT(*) as 'wins', '3' as 'userId', game_id From game_history WHERE winners LIKE '%3, %' GROUP BY game_id) as w 
+    request = new Request(`SELECT w.userId, w.game_id, game_name, coalesce(wins, 0) as 'wins', coalesce(losses, 0) as 'losses' FROM (SElect COUNT(*) as 'wins', '${query.userId}' as 'userId', game_id From game_history WHERE winners LIKE '%${query.userId}, %' GROUP BY game_id) as w 
     full outer join 
-    (SElect COUNT(*) as 'losses', '3' as 'userId', game_id From game_history WHERE losers LIKE '%3, %' GROUP BY game_id) as l on w.game_id = l.game_id
+    (SElect COUNT(*) as 'losses', '${query.userId}' as 'userId', game_id From game_history WHERE losers LIKE '%${query.userId}, %' GROUP BY game_id) as l on w.game_id = l.game_id
     JOIN games on w.game_id = games.id
     `, function(err) {  
     if (err) {  
@@ -168,4 +199,4 @@ function getHistoryByUserId(connection, query, res) {
 }
 
 
-module.exports = {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId};
+module.exports = {getUserByUsername, login, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId};

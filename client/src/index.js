@@ -32,7 +32,7 @@ root.render(
         <Route exact path="/sync" element={<SyncTesting/>}/>
         <Route exact path="/home" element={<Home/>}/>
         <Route exact path="/account" element={<Account/>}/>
-        <Route exact path="/u/:userId" element={<UserPage/>}/>
+        <Route path="/u/:curUsername" element={<UserPage/>}/>
 
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
 

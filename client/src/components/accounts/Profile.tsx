@@ -3,9 +3,14 @@ import { AgGridReact } from 'ag-grid-react';
 
 type accountStatisticsProps = {
     userId: number,
+    username: string,
 
 }
 
 export default function Profile(props) {
-    return <>This is {props.userId}'s Profile</>
+    return <>
+    <div style={{textAlign: 'center'}}>
+        <h1>Welcome to {props.username}'s Profile!</h1>
+    </div>
+    </>
 }

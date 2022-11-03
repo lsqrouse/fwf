@@ -4,7 +4,10 @@ type AccountInfoProps = {
     userState: any,
 };
 export default function AccountInfo (props: AccountInfoProps) {
-    return (<>
+    return <>
+    <div style={{textAlign: 'center'}}>
         <h1>Hello There {props.userState.username}</h1>
-    </>);
+        
+    </div>
+    </>;
 }
