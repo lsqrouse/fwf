@@ -229,7 +229,6 @@ function filterTargets(ability, allPlayers, selfPlayerState) {
 }
 
 function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
-  const phase = lobbyState.gameState.currentPhase;
   const phaseNum = lobbyState.gameState.phaseNum;
   // Write to history
   if (!lobbyState.gameState.history[phaseNum]) {
@@ -245,7 +244,7 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
     ability: ability,
     targets: targets
   };
-  lobbyState.gameState.history[phaseNum][phase][playerId] = entry;
+  lobbyState.gameState.history[phaseNum].night[playerId] = entry;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
 }
@@ -353,7 +352,6 @@ function Ability(props) {
   }
 
   function IndividualAbilityDiv() {
-    // TODO: Make it possible to get the values of TWO select fields
     const ability = roles[playerState.gamePlayerState.role].ability;
     const targets = filterTargets(ability, players, playerState);
     return (
@@ -391,7 +389,8 @@ function Ability(props) {
         You have no ability. Sweet dreams! <br />
         Press the OK button to continue.
         <form>
-          <input type="button" value="OK" />
+          <input type="button" value="OK" 
+            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, "ok", [])} />
         </form>
       </div>
     );
