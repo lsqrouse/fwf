@@ -65,19 +65,22 @@ io.on('connection', (socket) => {
     //TODO this should get set at lobby creation time
     if (gameState.lobbyHost == undefined) {
       gameState.lobbyHost = socket.id;
+      gameState.lobbyHostName = data.nickname;
     }
 
-  gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
+
+    gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, isAlive: data.isAlive, card1: data.card1, card2: data.card2, numCoins: data.numCoins})
     io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       lobbyId: data.lobbyId,
-      nickname: data.nickname,
+      role: '',
       host: data.host,
-      gamePlayerState: {
-        role: '',
-        isAlive: true
-      }
+      isAlive: data.isAlive,
+      nickname: data.nickname,
+      card1: data.card1,
+      card2: data.card2,
+      numCoins: data.numCoins
     }
     socket.emit("recieve_player_state", newPlayerState)
   });
@@ -107,12 +110,9 @@ io.on('connection', (socket) => {
         var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
-          nickname: i.nickname,
+          role: left[ran],
           host: i.host,
-          gamePlayerState: {
-            role: left[ran],
-            isAlive: true
-          }
+          nickname: i.nickname
         }
         left.splice(ran, 1);
         assignments.push(newPlayerState)
@@ -120,12 +120,9 @@ io.on('connection', (socket) => {
         var newPlayerState = {
           id: i.id,
           lobbyId: data.lobbyId,
-          nickname: i.nickname,
+          role: 'Villager',
           host: i.host,
-          gamePlayerState: {
-            role: 'Villager',
-            isAlive: true
-          }
+          nickname: i.nickname
         }
         assignments.push(newPlayerState)
       }
@@ -145,7 +142,7 @@ io.on('connection', (socket) => {
         })  
       })
         lobbyState.playerList = assignments;
-        lobbyState.gameState.gameScreen = "Game";
+        lobbyState.gameScreen = "Game";
         lobbies[data.lobbyId] = lobbyState
         console.log("updated lobby state is ", lobbyState)
         io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
@@ -187,11 +184,16 @@ io.on('connection', (socket) => {
     saveGameHistory(connection, lobbyState)
   });
 
-  socket.on("update_coup_players", (data) => 
+  socket.on("start_coup_game", (data) => 
   {
-    // Update coup player list
+    // Update coup game started and player list
     var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameStarted = true;
     lobbyState.playerList = data.playerList;
+
+    // Get random player and assign as turn
+    lobbyState.coupGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
+    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
 
     // Update each player state
     io.in(data.lobbyId).fetchSockets().then((response) => {
@@ -208,7 +210,89 @@ io.on('connection', (socket) => {
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
   });
-  
+
+  socket.on("start_wolf_game", (data) => 
+  {
+    
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.wolfGameState.gameStarted = true;
+    lobbyState.playerList = data.playerList;
+
+    
+    lobbyState.wolfGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
+
+    
+    io.in(data.lobbyId).fetchSockets().then((response) => {
+      response.forEach((socket) => {
+        data.playerList.forEach((newPlayerState) => {
+          if (newPlayerState.id == socket.id) 
+          {
+            socket.emit("recieve_player_state", newPlayerState);
+          }
+        })  
+      })
+    });
+
+    
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+ 
+
+  socket.on("next_player_turn", (data) => 
+  {
+    // Get lobby state
+    var lobbyState = lobbies[data.lobbyId];
+
+    // Update previous player
+    lobbyState.coupGameState.lastTurnPlayer = lobbyState.coupGameState.playerTurn;
+    lobbyState.coupGameState.lastTurnPlayerId = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id;
+
+    // Update coup game turn
+    lobbyState.coupGameState.playerTurn += 1;
+
+    // Check that not out of bounds
+    if (lobbyState.coupGameState.playerTurn >= lobbyState.playerList.length)
+    {
+      lobbyState.coupGameState.playerTurn = 0;
+    }
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+
+    // Open popup modal in clients
+    //io.in(lobbyState.lobbyId).emit("open_prev_turn_modal", lobbyState)
+  });
+
+  socket.on("coup_next_game_version", (data) => 
+  {
+    // Update coup game state version
+    var currentGameVersion = data.coupGameState.gameVersion;
+    currentGameVersion += 1;
+
+    if (currentGameVersion > 2)
+    {
+      currentGameVersion = 0;
+    }
+
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameVersion = currentGameVersion;
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
+  socket.on("end_coup_game", (data) => 
+  {
+    // Update coup game state
+    var lobbyState = lobbies[data.lobbyId];
+    lobbyState.coupGameState.gameEnded = true;
+    lobbyState.coupGameState.gameStarted = false;
+
+    // Reflect changes across other cleints
+    io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+  });
+
   socket.on("disconnect", (data) => {
     var lobbyState = {}
     if(players.hasOwnProperty(socket.id)) {
@@ -335,26 +419,51 @@ app.get("/api/lobby/create", (req, res) => {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
     lobbyHost: undefined,
+    lobbyHostName: '',
     lobbyCode: curLobbyId.toString(),
-    chatLog: [{msg: 'welcome to lobby'}],
-    game: 'mafia', // name of the game (must correspond to game represented by gameState object)
-    gameState: { // this object gets swapped out depending on the game
-
+    gameState: {
+      whoseTurn: '',
+      game: 'mafia',
       mafiaList: [],
       alivePlayerList: [],
       deadPlayerList: [],
-      currentPhase: 'night',     // 'day' or 'night'
-      phaseNum: 1, // the nth 'day' or 'night', starting with Night 1, followed by Day 1, Night 2, Day 2, etc.
+      currentPhase: 'day',
+      phaseNum: 0,
       dayPhaseTimeLimit: 90,
       nightPhaseTimeLimit: 90,
-      nightPhaseStarted: false, // flag
-      nightPhaseEnded: false,   // flag
-      allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
-      settings: {
-        selectedRoles: ["Villager"]
-      },
-      gameScreen: 'Settings'
-    }
+      nightPhaseStarted: false,
+      nightPhaseEnded: false,
+      nightEventSummary: '',
+      framerTarget: '',
+      ressurectionistTarget: '',
+      executionerTarget: '',
+      allPlayersMessage: 'Do Nothing'
+    },
+    coupGameState:
+    {
+      gameVersion: 0,
+      playerTurn: 0,
+      gameStarted: false,
+      gameEnded: false,
+      lastTurnPlayer: -1,
+      lastTurnPlayerId: '',
+      lastTurnPlayerRole: -1,
+      canChallenge: false,
+    },
+    wolfGameState:
+    {
+      playerTurn: 0,
+      gameStarted: false,
+      gameEnded: false,
+      lastTurnPlayer: -1,
+      lastTurnPlayerId: '',
+      lastTurnPlayerRole: -1,
+    },
+    settings: {
+      selectedRoles: ["Villager"]
+    },
+    gameScreen: 'Settings',
+    game: ''
   }
   curLobbyId++
   res.json(newLobby)

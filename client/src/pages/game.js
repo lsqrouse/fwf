@@ -1,4 +1,5 @@
 import MafiaContainer from '../components/mafia/MafiaContainer';
+import WerewolfContainer from '../components/werewolf/WerewolfContainer';
 
 const Game = (props) => {
   return (
@@ -40,7 +41,7 @@ const GameContainer = (props) => {
     return (
     <MafiaContainer socket={props.socket} />
     );
-  } else if (props.game == "WereWolf") {
+  } else if (props.game == "Werewolf") {
     return (
       <WerewolfContainer socket={props.socket} />
     )

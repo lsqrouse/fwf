@@ -11,46 +11,45 @@ function WerewolfContainer(props) {
     const socket = props.socket;
     const lobbyState = useSelector((state) => state.lobbyState);
     const [warnMessage, setWarnMessage] = useState("");
-    const [gameStart, setgameStart] = useState(false);
+    var gameStart = false || lobbyState.wolfGameState.gameStarted;
+    console.log('GAME STARTED STATE', gameStart);
+    
+      
     const minPlayers = 3;
     var roles = ["werewolf", "werewolf", "seer", "robber", "troublemaker", "villager"]; //load in roles alternative way here
-    if (numPlayers < 3) {
-        alert("not enough players");
-    } else if (numPlayers == 4) {
-        roles.push("villager");
-    } else if (numPlayers == 5) {
-        roles.push("villager");
-        roles.push("villager");
-    } else {
-        alert("Too many players");
-    }
-
-
-
 
 
     function startGame() {
         console.log('starting werewolf');
         console.log('PLAYER STATE', playerState);
         console.log('LOBBY STATE', lobbyState);
-        if (numPlayers >= minPlayers) {
-            roles = shuffle(roles);
-
-            if (lobbyState.playerList != undefined) {
-                if (roles.length != lobbyState.playerList.length) {
-                    console.log("ROLE AND PLAYER LENGTH DO NOT MATCH");
-                }
-
-                for (var i = 0; i < lobbyState.playerList.length; i++) {
-                    lobbyState.playerList[i].role = roles[i];
-                    lobbyState.playerList[i].name = playerState.nickname;
-                }
-                setgameStart(true);
-                socket.emit("start_wolf_game", lobbyState);
-            }
-        }else {
-            alert("Need at least two players to start game!");
+        if (numPlayers <= 2) {
+            alert("not enough players");
+            return;
+        } else if (numPlayers == 4) {
+            roles.push("villager");
+        } else if (numPlayers == 5) {
+            roles.push("villager");
+            roles.push("villager");
+        } else if (numPlayers > 5){
+            alert("Too many players");
+            return;
         }
+
+        roles = shuffle(roles);
+
+        if (lobbyState.playerList != undefined) {
+            if (roles.length != lobbyState.playerList.length) {
+                console.log("ROLE AND PLAYER LENGTH DO NOT MATCH");
+            }
+
+            for (var i = 0; i < lobbyState.playerList.length; i++) {
+                lobbyState.playerList[i].role = roles[i];
+                lobbyState.playerList[i].name = playerState.nickname;
+            }
+            socket.emit("start_wolf_game", lobbyState);
+        }
+
     }
 
     function shuffle(array) {
@@ -63,16 +62,16 @@ function WerewolfContainer(props) {
         }
         return array;
     }
-    function SettingStuff() {
+    function Settings() {
         // Initialize stuff
         const isHost = useSelector((state) => state.playerState.host);
 
 
         return (
-            <div className="settingStuff">
+            <div >
                 {isHost && <>
                     <div>
-                        <button type="button" class="startGameButton" onClick={startGame()}>Start Game</button>
+                        <button type="button" onClick={startGame}>Start Game</button>
                     </div>
                 </>}
                 {!isHost && <>
@@ -81,14 +80,14 @@ function WerewolfContainer(props) {
                     </div>
                 </>}
             </div>
-            
+
         );
     }
 
     return (
         <div>
             {!gameStart && <>
-                <SettingStuff />
+                <Settings />
             </>
             }
             {gameStart && <>
@@ -97,8 +96,10 @@ function WerewolfContainer(props) {
                 </div>
             </>
             }
-            
+
         </div>
     );
 
 }
+
+export default WerewolfContainer;

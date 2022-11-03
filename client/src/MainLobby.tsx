@@ -231,7 +231,7 @@ export default function MainLobby() {
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('avalon') }}>AVALON
             <p className='descMaf'>HELLO THIS IS AVALON BABY hi</p>
           </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
+          <button className='myBMaf'  onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
             <p className='descMaf'>HELLO THIS IS WEREWOLF BABY hi</p>
           </button>
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('ghost') }}>GHOST
