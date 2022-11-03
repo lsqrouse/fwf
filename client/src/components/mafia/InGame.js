@@ -364,7 +364,7 @@ function Ability(props) {
           {targets.map(
             (target, index) =>
             <select is={"abilityChoice" + index}>
-              <option value={null}>No one (skip)</option>
+              <option value="">No one (skip)</option>
               {target.map(player => 
                   <option value={player.id}>{player.nickname}</option>
               )}
@@ -375,9 +375,12 @@ function Ability(props) {
             onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
               Array.from(document.getElementById("abilityForm").elements).filter(
                 elem => elem.nodeName.toLowerCase() === "select"
-              ).map(select => select.value)
+              ).map(select => select.value === "" ? null : select.value)
               )}
           />
+          {lobbyState.gameState.history.hasOwnProperty(phaseNum) && lobbyState.gameState.history[phaseNum].night.hasOwnProperty(playerState.id) ? 
+            lobbyState.gameState.history[phaseNum].night[playerState.id].targets.map(
+              (target, index) => <>{(index > 0 ? ", " : "") + (target === null ? "No one" : players.find(p => p.id === target).nickname)}</>) : ""}
         </form>
       </div>
     )

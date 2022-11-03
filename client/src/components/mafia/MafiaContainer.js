@@ -61,7 +61,7 @@ function MafiaContainer(props) {
       return {message: "Not enough roles selected!", valid: false};
     }
     if (selectedRoles.length > numPlayers) {
-      return {message: "Too few roles selected!", valid: false};
+      return {message: "Too many roles selected!", valid: false};
     }
     if (village === 0) {
       return {message: "At least one Village role must be selected.", valid: false};
