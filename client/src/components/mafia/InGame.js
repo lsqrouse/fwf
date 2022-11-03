@@ -186,7 +186,7 @@ function getTargetFromTypesNotSelf(target, players) {
         list = list.filter(player => player.gamePlayerState.isAlive);
         break;
       case "dead":
-        list = list.filter(player => player);
+        list = list.filter(player => !player.gamePlayerState.isAlive);
         break;
       case "mafia":
         list = list.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
@@ -215,8 +215,8 @@ function filterTargets(ability, allPlayers, selfPlayerState) {
 
     if (target.includes("self")) {
       // Add self to targets if not already included
-      if (!list.includes(selfPlayerState)) {
-        selfPlayerState.unshift(selfPlayerState);
+      if (!list.some(player => player.id === selfPlayerState.id)) {
+        list.unshift(selfPlayerState);
       }
     } else {
       // Remove self from targets
@@ -232,10 +232,6 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
   const phase = lobbyState.gameState.currentPhase;
   const phaseNum = lobbyState.gameState.phaseNum;
   // Write to history
-  if (!lobbyState.gameState.history) {
-    // Create a new history if none exists
-    lobbyState.gameState.history = {};
-  }
   if (!lobbyState.gameState.history[phaseNum]) {
     lobbyState.gameState.history[phaseNum] = {
       night: {},
@@ -256,10 +252,7 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
 
 function doMafiaVote(socket, lobbyState, voterId, choiceId) {
   const phaseNum = lobbyState.gameState.phaseNum;
-  if (!lobbyState.gameState.history) {
-    // Create a new history if none exists
-    lobbyState.gameState.history = {};
-  }
+
   if (!lobbyState.gameState.history[phaseNum]) {
     lobbyState.gameState.history[phaseNum] = {
       night: {},
@@ -322,12 +315,14 @@ function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
   const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
+  const phaseNum = lobbyState.gameState.phaseNum;
   const role = playerState.gamePlayerState.role;
   const socket = props.socket;
 
   function TeamAbilityDiv() {
-    const targets = getTargetFromTypesNotSelf(["dead", "nonmafia"], players);
-    const votes = lobbyState.gameState.history.mafiaVotes;
+    const targets = getTargetFromTypesNotSelf(["alive", "nonmafia"], players);
+    const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
+      lobbyState.gameState.history[phaseNum].mafiaVotes : {};
 
     return (
       <div className="abilityItem">
@@ -344,9 +339,14 @@ function Ability(props) {
             doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
         </form>
         <div className="mafiaVotes">
-          {lobbyState.gameState.mafiaList.filter(p => p.id !== playerState.id).map(
-            mafiaMember => <span>Hi {mafiaMember.nickname}</span>
+          <ul>
+          {lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia").map(
+            mafiaMember =>
+            <li key={mafiaMember.nickname}>
+              {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? players.find(p => p.id === votes[mafiaMember.id]).nickname : ""}
+            </li>
           )}
+          </ul>
         </div>
       </div>
     );

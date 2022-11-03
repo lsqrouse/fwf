@@ -325,6 +325,7 @@ app.get("/api/lobby/create", (req, res) => {
       nightPhaseStarted: false, // flag
       nightPhaseEnded: false,   // flag
       allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
+      history: {},
       settings: {
         selectedRoles: ["Villager"]
       },

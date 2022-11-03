@@ -124,3 +124,9 @@
   padding-bottom: 10px;
   text-align: center;
 }
+
+.mafiaVotes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
