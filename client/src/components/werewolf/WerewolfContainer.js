@@ -93,6 +93,7 @@ function WerewolfContainer(props) {
             {gameStart && <>
                 <div>
                     GAME STARTED
+                    <h1>your role is {playerState.role}</h1>
                 </div>
             </>
             }
