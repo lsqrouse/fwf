@@ -23,8 +23,8 @@ function WerewolfContainer(props) {
 
     function startGame() {
         console.log('starting werewolf');
-        console.log('PLAYER STATE', playerState);
-        console.log('LOBBY STATE', lobbyState);
+        //console.log('PLAYER STATE', playerState);
+        //console.log('LOBBY STATE', lobbyState);
         if (numPlayers <= 2) {
             alert("not enough players");
             return;
@@ -68,15 +68,15 @@ function WerewolfContainer(props) {
                 }
             }
         }
-        console.log("WOLVES: " , wolves);
-        console.log("PLAYER ROLE: ", isWolf);
+        //console.log("WOLVES: " , wolves);
+        //console.log("PLAYER ROLE: ", isWolf);
         if (isWolf) {
             for(var i = 0; i < wolves.length; i++){
                 newroleAction += wolves[i]; 
             }
             setRoleAction(newroleAction);
         }
-        console.log("roleAction: " , roleAction);
+        //console.log("roleAction: " , roleAction);
         curLobbyState.wolfGameState.playerTurn = 1;
         socket.emit("update_lobby_state", curLobbyState);
     }

@@ -145,13 +145,13 @@ export default function MainLobby() {
     <li>{msg}</li>
   );
   var logs = [''];
-  console.log(lobbyState.log, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  //console.log(lobbyState.log, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
   if (lobbyState.log != undefined) {
     for (var i = 0; i < lobbyState.log.length; i++) {
       logs.push(lobbyState.log[i].msg);
     }
   }
-  console.log(logs, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
+  //console.log(logs, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
   const logItems = logs.map((msg) =>
     <li>{msg}</li>
   );
