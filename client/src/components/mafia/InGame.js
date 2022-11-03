@@ -168,6 +168,8 @@ function getTargetTypesFromAbility(ability) {
       return [["dead"]];
     case "frame":
       return [["alive", "nonmafia"]];
+    case "identify":
+      return [["alive"]];
     default:
       return []; // no ability
   }

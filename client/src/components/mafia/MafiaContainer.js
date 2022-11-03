@@ -32,6 +32,7 @@ function MafiaContainer(props) {
             selectedRoles: selectedRoles,
           }
           socket.emit("start_game", startData);
+
         } else {
           setWarnMessage(check.message + " Game can still be started.");
         }
@@ -56,10 +57,10 @@ function MafiaContainer(props) {
           other++;
       }
     }
-    if (selectedRoles.length > numPlayers) {
+    if (selectedRoles.length < numPlayers) {
       return {message: "Not enough roles selected!", valid: false};
     }
-    if (selectedRoles.length < numPlayers) {
+    if (selectedRoles.length > numPlayers) {
       return {message: "Too few roles selected!", valid: false};
     }
     if (village === 0) {
