@@ -82,7 +82,7 @@ export default function MainLobby() {
     if (window.confirm("Are you sure you want to leave the lobby?")) {
       var curLobbyState = lobbyState;
       setJoined(false)
-      dispatch({ type: 'updateLobby', payload: {gameState: {}}})
+      dispatch({ type: 'updateLobby', payload: { gameState: {} } })
       console.log("disconnecting: ");
     }
 
@@ -93,7 +93,7 @@ export default function MainLobby() {
     console.log("Updating Lobby State to: ", curLobbyState)
     var newMsg = playerState.nickname + ": " + msg;
     curLobbyState.chatLog.push({ msg: newMsg });
-    console.log("CHECKING THE STATE POST EMIT FOR FORM SUBMIT " , curLobbyState);
+    console.log("CHECKING THE STATE POST EMIT FOR FORM SUBMIT ", curLobbyState);
     socket.emit("update_lobby_state", curLobbyState);
     refreshChat();
   }
@@ -134,26 +134,28 @@ export default function MainLobby() {
   console.log(playerState.host == false)
   console.log(playerState.id != lobbyState.lobbyHost)
   var result = [''];
-  console.log(lobbyState.chatLog, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  
   //console.log(lobbyState.chatLog.length, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
-  if(lobbyState.chatLog != undefined)
-  for(var i = 0; i < lobbyState.chatLog.length; i++){
-    result.push(lobbyState.chatLog[i].msg);
-  }
-  console.log(result, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
+  if (lobbyState.chatLog != undefined)
+    for (var i = 0; i < lobbyState.chatLog.length; i++) {
+      result.push(lobbyState.chatLog[i].msg);
+    }
+  
   const listItems = result.map((msg) =>
     <li>{msg}</li>
   );
   var logs = [''];
-  if(lobbyState.log != undefined){
-   for(var i = 0; i < lobbyState.log.length; i++){
-     logs.push(lobbyState.log[i].msg);
+  console.log(lobbyState.log, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+  if (lobbyState.log != undefined) {
+    for (var i = 0; i < lobbyState.log.length; i++) {
+      logs.push(lobbyState.log[i].msg);
     }
   }
+  console.log(logs, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
   const logItems = logs.map((msg) =>
     <li>{msg}</li>
   );
-  
+
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
@@ -186,22 +188,25 @@ export default function MainLobby() {
                 handleLeave={handleLeave}
               />
             </div>
-            <div className='chat'>chat
-              
+            <div className='chat'>
+
               <ul>{listItems}</ul>
-                <form onSubmit={handleChatSubmit}>
-                  <div id='chatBox'>
-                    <hr></hr>
-                    <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
-                    <button className='myB' type='submit'>send</button>
-                  </div>
-                </form>
-              
+              <form onSubmit={handleChatSubmit}>
+                <div id='chatBox'>
+                  <hr></hr>
+                  <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                  <button className='myB' type='submit'>send</button>
+                </div>
+              </form>
+
             </div>
           </div>
 
-          <div className='ag-theme-alpine' style={{ height: 75, width: 100 }}>
-          </div>
+          
+            <div className="box">log
+              <ul>{logItems}</ul>
+            </div>
+          
         </div>
       </>
     )
@@ -231,7 +236,7 @@ export default function MainLobby() {
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('avalon') }}>AVALON
             <p className='descMaf'>HELLO THIS IS AVALON BABY hi</p>
           </button>
-          <button className='myBMaf'  onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
+          <button className='myBMaf' onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
             <p className='descMaf'>HELLO THIS IS WEREWOLF BABY hi</p>
           </button>
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('ghost') }}>GHOST
@@ -247,12 +252,12 @@ export default function MainLobby() {
         <div className='middle'>
           <div className='chat'>Players:
 
-          <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
-                </AgGridReact>
-              </div>
+            <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
+              <AgGridReact
+                rowData={lobbyState.playerList}
+                columnDefs={colDefs}>
+              </AgGridReact>
+            </div>
           </div>
           <div className='screen'>
             <Game
@@ -263,12 +268,12 @@ export default function MainLobby() {
             />
           </div>
           <div className='chat'>
-          <hr id = 'chatBox'></hr>
+            <hr id='chatBox'></hr>
             <div >
-            
 
 
-            <ul>{listItems}</ul>
+
+              <ul>{listItems}</ul>
               <form onSubmit={handleChatSubmit}>
                 <div id='chatBox'>
                   <hr></hr>

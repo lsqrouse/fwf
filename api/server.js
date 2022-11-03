@@ -219,9 +219,6 @@ io.on('connection', (socket) => {
     lobbyState.playerList = data.playerList;
 
     
-    lobbyState.wolfGameState.playerTurn = Math.floor(Math.random() * lobbyState.playerList.length);
-
-    
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
         data.playerList.forEach((newPlayerState) => {
@@ -418,6 +415,8 @@ app.get("/api/lobby/create", (req, res) => {
   var newLobby = {
     lobbyId: curLobbyId.toString() + "L",
     playerList: [],
+    chatLog: [],
+    log: [],
     lobbyHost: undefined,
     lobbyHostName: '',
     lobbyCode: curLobbyId.toString(),

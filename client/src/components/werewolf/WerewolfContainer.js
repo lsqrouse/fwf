@@ -12,9 +12,11 @@ function WerewolfContainer(props) {
     const lobbyState = useSelector((state) => state.lobbyState);
     const [warnMessage, setWarnMessage] = useState("");
     var gameStart = false || lobbyState.wolfGameState.gameStarted;
+    var seerTurn = false || lobbyState.wolfGameState.playerTurn == 1;
     console.log('GAME STARTED STATE', gameStart);
-    
-      
+    const [roleAction, setRoleAction] = useState("");  
+    var wolves = [''];
+    var isWolf = false || playerState.role == "werewolf";
     const minPlayers = 3;
     var roles = ["werewolf", "werewolf", "seer", "robber", "troublemaker", "villager"]; //load in roles alternative way here
 
@@ -50,6 +52,33 @@ function WerewolfContainer(props) {
             socket.emit("start_wolf_game", lobbyState);
         }
 
+    }
+    console.log("SEER TURN: ", seerTurn);
+    if (gameStart && !seerTurn) {
+        console.log("SHOWING WEREWOLVES");
+        var curLobbyState = lobbyState;
+        var newMsg = "Werewolves, wake up and look for other werewolves";
+        var newroleAction = '';
+        curLobbyState.log.push({ msg: newMsg });
+        for (var i = 0; i < lobbyState.playerList.length; i++) {
+            if(lobbyState.playerList[i].role == 'werewolf') {
+                wolves.push(lobbyState.playerList[i].nickname + ": is a werewolf");
+                if(lobbyState.playerList[i].nickname == playerState.nickname) {
+                    isWolf = true;
+                }
+            }
+        }
+        console.log("WOLVES: " , wolves);
+        console.log("PLAYER ROLE: ", isWolf);
+        if (isWolf) {
+            for(var i = 0; i < wolves.length; i++){
+                newroleAction += wolves[i]; 
+            }
+            setRoleAction(newroleAction);
+        }
+        console.log("roleAction: " , roleAction);
+        curLobbyState.wolfGameState.playerTurn = 1;
+        socket.emit("update_lobby_state", curLobbyState);
     }
 
     function shuffle(array) {
@@ -94,6 +123,7 @@ function WerewolfContainer(props) {
                 <div>
                     GAME STARTED
                     <h1>your role is {playerState.role}</h1>
+                    <h1>{roleAction}</h1>
                 </div>
             </>
             }
