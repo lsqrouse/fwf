@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 const http = require('http');
 const formatMessage = require('./helper/formatDate')
 const cors = require("cors");
-const {getUserByUsername, createUser, saveGameHistory, createLobby} = require('./queries.js')
+const {getUserByUsername, createUser, saveGameHistory, createLobby, getUserByEmail} = require('./queries.js')
 
 
 const PORT = process.env.PORT || 3001;
@@ -152,6 +152,32 @@ io.on('connection', (socket) => {
 
     //console.log(lobbyState.playerList);
   });
+
+  socket.on('remove_player', (data) => {
+    console.log("removing player with data", data)
+    if(lobbies.hasOwnProperty(data.lobbyId)) {
+      lobbyState = lobbies[data.lobbyId]
+      var newPlayerList = []
+      lobbyState.playerList.forEach((player) => {
+        if (player.id != data.socketId) {
+          newPlayerList.push(player)
+        }
+        lobbyState.playerList = newPlayerList;
+        lobbies[data.lobbyId] = lobbyState
+        io.in(data.lobbyId).emit("receive_lobby_state", lobbyState)
+        io.in(data.lobbyId).fetchSockets().then((response) => {
+          response.forEach((socket) => {
+            if (socket.id == data.socketId) {
+              socket.emit("removed_from_lobby", {});
+            }
+          })
+        });
+
+      })
+    } else {
+      console.log("Attempting to remove player from non-existant lobby")
+    }
+  })
 
   socket.on("end_night_phase", (data) => {
     console.log("Night phase ending with data", data)
@@ -1164,7 +1190,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on("disconnect", (data) => {
-    var lobbyState = {}
+    var lobbyState = {playerList: []}
     if(players.hasOwnProperty(socket.id)) {
       lobbyState = lobbies[players[socket.id]]
     } else {
@@ -1279,6 +1305,16 @@ app.get("/api/accounts/login", (req, res) => {
 app.get("/api/accounts/create", (req, res) => {
   console.log("received request to create an account")
   createUser(connection, req.query , res)
+})
+
+app.get("/api/accounts/forgotPassword", (req, res) => {
+  console.log("got the query as ", req)
+  if (req.query.email == '') {
+    res.status(400).send('email required')
+    return
+  }
+  console.log("querying db")
+  getUserByEmail(connection, req.query, res)
 })
 
 app.get("/api/lobby/create", (req, res) => {

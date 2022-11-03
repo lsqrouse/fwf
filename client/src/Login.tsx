@@ -82,6 +82,10 @@ export default function Login() {
               <Link to="/" >
                 <button className='myButton' type='submit' onClick={handleLogin}>Login</button>
               </Link>
+              <br/>
+              <Link to="/ForgotPass" >
+                Forgot Your Password?
+              </Link>
             </div>
 
 

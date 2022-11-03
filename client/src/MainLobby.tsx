@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './MainLobby.css';
 import Game from './pages/game';
 import { AgGridReact } from 'ag-grid-react';
@@ -7,23 +7,50 @@ import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
+import ActionBtnRenderer from './components/lobby/ActionBtnRenderer'
 
 const socket = io("http://localhost:3001").connect()
 
 // @ts-ignore
 export default function MainLobby() {
   const [joined, setJoined] = useState<boolean>(false);
+  const gridRef = useRef();
+  const navigate = useNavigate();
+
   // const [lobbyState, setLobbyState] = useState<any>(useSelector((state: any) => state.lobbyState));
   const lobbyState = useSelector((state: any) => state.lobbyState);
   const playerState = useSelector((state: any) => state.playerState);
 
+  const sizeToFit = () => {
+    gridRef.current.api.sizeColumnsToFit({
+      defaultMinWidth: 100,
+      columnLimits: [{ key: 'country', minWidth: 900 }],
+    });
+  };
   console.log("lobby state is, ", lobbyState)
 
   const dispatch = useDispatch();
 
   const colDefs = [
-    { field: 'nickname' }
+    { field: 'nickname' },  
+
   ]
+  if (playerState.id == lobbyState.lobbyHost) {
+    colDefs.push(    {
+      field: 'id',
+      cellRenderer: ActionBtnRenderer,
+      cellRendererParams: {
+        clicked: function(field) {
+          console.log("removing", {socketId: field, lobbyId: lobbyState.lobbyId})
+          socket.emit('remove_player', {socketId: field, lobbyId: lobbyState.lobbyId});
+        },
+      },
+    })
+  }
+
+
+
+
   console.log("joined %b", joined)
   console.log("host is ", lobbyState.lobbyHost)
   console.log("i am ", playerState.id, " comp is ", playerState.id == lobbyState.lobbyHost)
@@ -70,6 +97,12 @@ export default function MainLobby() {
       var newPlayerState = data;
       dispatch({ type: 'updatePlayer', payload: newPlayerState })
     });
+
+    socket.on("removed_from_lobby", (data) => {
+      console.log("ope, removed from this lobby")
+      alert("You have been removed from this lobby.")
+      navigate('/')
+    })
 
   }, [socket])
 
@@ -129,10 +162,11 @@ export default function MainLobby() {
         <div className='outerBox'>
           <div className='middle'>
             <div className='chat'>Players
-              <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
+              <div style={{height: 400, width: 600}}>
                 <AgGridReact
                   rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
+                  columnDefs={colDefs}
+                  >
                 </AgGridReact>
               </div>
             </div>
@@ -189,24 +223,18 @@ export default function MainLobby() {
           </button>
         </div>
         <div className='middle'>
-          <div className='chat'>Players:
-
-            <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-              {/* <form onSubmit={this.handleSubmit}>
-                <div id='chatBox'>
-                  <hr></hr>
-                  <input className='textBox' type="text" placeholder="UserName" onChange={(e) => this.setState({ msg: e.target.value })} />
-                  <button className='myB' type='submit'>Invite</button>
-                </div>
-              </form> */}
-              
-              
-              <AgGridReact
+          <div className='chat' style={{ }}>Players:
+            <div className='grid-wrapper' style={{marginTop: '10%', marginLeft:'-30%'}}>
+            <AgGridReact
+                ref={gridRef}
                 rowData={lobbyState.playerList}
-                columnDefs={colDefs}>
+                columnDefs={colDefs}
+                onGridReady={sizeToFit}
+               >
               </AgGridReact>
-              
             </div>
+
+              
           </div>
           <div className='screen'>
             <Game game={lobbyState.game} socket={socket} host={playerState.host}/>

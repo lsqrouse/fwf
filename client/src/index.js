@@ -13,6 +13,7 @@ import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
 import Instructions from './Instructions.tsx';
 import MafiaContainer from './components/mafia/MafiaContainer';
+import ForgotPass from './components/login/ForgotPass.tsx'
 import store from './redux/store'
 
 
@@ -30,6 +31,7 @@ root.render(
         <Route exact path="/home" element={<Home/>}/>
         <Route exact path="/account" element={<AccountTesting/>}/>
         <Route exact path="/mafia" element={<MafiaContainer/>}/>
+        <Route exact path="ForgotPass" element={<ForgotPass/>}/>
 
         
       </Routes>
