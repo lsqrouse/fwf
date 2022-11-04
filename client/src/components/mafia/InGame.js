@@ -456,7 +456,7 @@ function AliveList() {
     <div className="bottomScreen aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
       <ul>
-        {alivePlayers.map(player => {return <li>{player.nickname}</li>})}
+        {alivePlayers.map(player => {return <li key={player.id}>{player.nickname}</li>})}
       </ul>
     </div>
   )
@@ -471,7 +471,9 @@ function DeadList() {
     <div className="bottomScreen deadList">
       <h3>Dead: {deadPlayers.length}</h3>
       <ul>
-        {deadPlayers.map(player => {return <li>{player.nickname}</li>})}
+        {deadPlayers.map(player => {return <li key={player.id}>
+          <img src={roles[player.gamePlayerState.role].image} alt={player.gamePlayerState.role} width="25px" /> {player.nickname}
+        </li>})}
       </ul>
     </div>
   )
