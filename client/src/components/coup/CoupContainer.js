@@ -76,6 +76,17 @@ function CoupContainer(props)
   // End game function
   function endGame() 
   {
+    // Go through each player in player list set their cards to 0
+    for (var i = 0; i < lobbyState.playerList.length; i++)
+    {
+      lobbyState.playerList[i].card1 = 0;
+      lobbyState.playerList[i].card2 = 0;
+    }
+  
+    // Update coup game
+    socket.emit("update_coup_players", lobbyState);
+
+    // End coup game
     socket.emit("end_coup_game", lobbyState);
   }
 
