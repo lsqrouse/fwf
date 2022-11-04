@@ -197,7 +197,8 @@ io.on('connection', (socket) => {
   })
 
 
-  // Mafia-specific socket events
+  // ---------- Mafia-specific socket events and funtions ----------
+  
   socket.on("mafia_check_night_end", (lobbyId) => {
     console.log("Checking if night phase can be ended")
 
@@ -372,7 +373,7 @@ io.on('connection', (socket) => {
           });
 
           // CHECK WIN CONDITIONS
-          checkMafiaWin(lobbyState);
+          //checkMafiaWin(lobbyState);
           
           // Initialize empty night summary string
           let nightSummary = ""
@@ -460,7 +461,7 @@ io.on('connection', (socket) => {
           }
 
           // CHECK WIN CONDITIONS
-          checkMafiaWin(lobbyState);
+          //checkMafiaWin(lobbyState);
 
           // Initialize empty day summary string
           let daySummary = ""
