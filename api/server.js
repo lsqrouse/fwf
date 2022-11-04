@@ -75,7 +75,8 @@ io.on('connection', (socket) => {
       host: data.host,
       gamePlayerState: {
         role: '',
-        isAlive: true
+        isAlive: true,
+        message: ''
       }
     }
     socket.emit("recieve_player_state", newPlayerState)
@@ -110,7 +111,8 @@ io.on('connection', (socket) => {
           host: i.host,
           gamePlayerState: {
             role: left[ran],
-            isAlive: true
+            isAlive: true,
+            message: ''
           }
         }
         left.splice(ran, 1);
@@ -123,7 +125,8 @@ io.on('connection', (socket) => {
           host: i.host,
           gamePlayerState: {
             role: 'Villager',
-            isAlive: true
+            isAlive: true,
+            message: ''
           }
         }
         assignments.push(newPlayerState)
