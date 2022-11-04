@@ -482,7 +482,7 @@ function Alerts(props) {
     <div className="topScreen alerts">
       {lobbyState.gameState.allPlayersMessage}
       <br />
-      {lobbyState.playerList.find(p => p.id === playerState.id).isAlive ?
+      {lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive ?
         (lobbyState.gameState.messages.hasOwnProperty(playerState.id) ? 
           lobbyState.gameState.messages[playerState.id] : "") : <b>You are dead.</b>}
     </div>
