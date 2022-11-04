@@ -290,6 +290,9 @@ io.on('connection', (socket) => {
           const mafiaKiller = Object.keys(mafiaPlayers)[0];
           abilitiesList.push({player: mafiaKiller, targets: mafiaKill === null ? [] : [mafiaKill], ability: "kill"});
 
+          // Clear messages
+          lobbyState.gameState.messages = {};
+
           // ----- First, deal with the SWAP ability -----
           const swaps = abilitiesList.filter(a => a.ability === "swap");
           swaps.forEach(swap => {
@@ -325,10 +328,13 @@ io.on('connection', (socket) => {
           // Deal with Mafia and Vigilante kills
           const kills = abilitiesList.filter(a => a.ability === "kill");
           kills.forEach(kill => {
-            markedForDeath.push(kill.targets[0]);
-            // Killer kills a Bomb, so killer gets marked for death
-            if (playerIdMap[kill.targets[0]].gamePlayerState.role === "Bomb") {
-              markedForDeath.push(kill.player);
+            const killTarget = playerIdMap[kill.targets[0]];
+            if (killTarget) {
+              markedForDeath.push(kill.targets[0]);
+              // Killer kills a Bomb, so killer gets marked for death
+              if (killTarget.gamePlayerState.role === "Bomb") {
+                markedForDeath.push(kill.player);
+              }
             }
           });
 
@@ -360,12 +366,28 @@ io.on('connection', (socket) => {
           const investigations = abilitiesList.filter(a => a.ability === "investigate");
           investigations.forEach(investigation => {
             // TODO: Send alert message to the detective
+            const targetRole = playerIdMap[investigation.targets[0]].gamePlayerState.role;
+            let targetMafia = false;
+            if (targetRole == "Mafia" || targetRole == "Distractor" || targetRole == "Framer" || targetRole == "Informant") {
+              targetMafia = true;
+            }
+            if (!lobbyState.gameState.messages.hasOwnProperty(investigation.player)) {
+              lobbyState.gameState.messages[investigation.player] = "";
+            }
+            lobbyState.gameState.messages[investigation.player] +=
+              `Your investigations lead you to believe your target is ${targetMafia ? "part of the the Mafia!" : " not part of the Mafia."}\n`;
           });
 
           // ----- Eighth, deal with the IDENTIFY ability -----
           const identifies = abilitiesList.filter(a => a.ability === "identify");
           identifies.forEach(identify => {
             // TODO: Send alert message to the informant
+            const targetRole = playerIdMap[identify.targets[0]].gamePlayerState.role;
+            if (!lobbyState.gameState.messages.hasOwnProperty(identify.player)) {
+              lobbyState.gameState.messages[identify.player] = "";
+            }
+            lobbyState.gameState.messages[identify.player] +=
+              `After snooping around, you find out your target is a ${targetRole}.`;
           });
 
           // Finally, update the game state by killing off dead players
@@ -463,12 +485,15 @@ io.on('connection', (socket) => {
             playerIdMap[mostVoted].gamePlayerState.isAlive = false;
           }
 
+          // Clear messages
+          lobbyState.gameState.messages = {};
+
           // CHECK WIN CONDITIONS
           //checkMafiaWin(lobbyState);
 
           // Initialize empty day summary string
           let daySummary = ""
-          daySummary += `Night ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.`;
+          daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.`;
           // Add voted player's name to summary list
           daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.`;
           // Set the message
@@ -597,6 +622,7 @@ app.get("/api/lobby/create", (req, res) => {
       nightPhaseEnded: false,   // flag
       allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
       history: {},
+      messages: {},
       settings: {
         selectedRoles: ["Villager"]
       },

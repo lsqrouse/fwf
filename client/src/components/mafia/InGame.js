@@ -358,6 +358,8 @@ function Ability(props) {
     const targets = getTargetFromTypesNotSelf(["alive", "nonmafia"], players);
     const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
       lobbyState.gameState.history[phaseNum].mafiaVotes : {};
+    const mafiaMembers = lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
+    console.log(mafiaMembers);
 
     return (
       <div className="abilityItem">
@@ -366,7 +368,7 @@ function Ability(props) {
         <form>
           <label for="teamChoice"><b>You vote: </b></label>
           <select id="teamChoice">
-            <option value={null}>No one (skip)</option>
+            <option value="">No one (skip)</option>
             {targets.map((player) => (<option value={player.id}>{player.nickname}</option>))}
           </select>
           <br />
@@ -375,10 +377,10 @@ function Ability(props) {
         </form>
         <div className="mafiaVotes">
           <ul>
-          {lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia").map(
-            mafiaMember =>
+          {mafiaMembers.map(mafiaMember =>
             <li key={mafiaMember.nickname}>
-              {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? players.find(p => p.id === votes[mafiaMember.id]).nickname : ""}
+              {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? 
+                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "" : ""}
             </li>
           )}
           </ul>
@@ -460,10 +462,16 @@ function Notes(props) {
 
 function Alerts(props) {
   const lobbyState = useSelector((state) => state.lobbyState);
+  const playerState = useSelector((state) => state.playerState);
+  console.log("PLAYER:", playerState);
 
   return (
     <div className="topScreen alerts">
       {lobbyState.gameState.allPlayersMessage}
+      <br />
+      {lobbyState.playerList.find(p => p.id === playerState.id).isAlive ?
+        (lobbyState.gameState.messages.hasOwnProperty(playerState.id) ? 
+          lobbyState.gameState.messages[playerState.id] : "") : <b>You are dead.</b>}
     </div>
   );
 }
