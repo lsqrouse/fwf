@@ -35,6 +35,14 @@ function Phase(props) {
   const setBottomScreen = props.setBottomScreen;
   const socket = props.socket;
 
+  socket.on("mafia_night_phase_ended", (data) => {
+    setTopScreen("alerts");
+  });
+
+  socket.on("mafia_day_phase_ended", (data) => {
+    setTopScreen("alerts");
+  });
+
   switch (phase) {
     case "day":
       return (
@@ -142,7 +150,7 @@ function RoleList(props) {
   });
 
   const a = Array.from(roleCount).map(([key, value]) => (
-    <div class="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    <div className="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
     );
 
   return (
@@ -247,6 +255,7 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
   lobbyState.gameState.history[phaseNum].night[playerId] = entry;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_night_end", lobbyState.lobbyId);
 }
 
 function doMafiaVote(socket, lobbyState, voterId, choiceId) {
@@ -256,7 +265,8 @@ function doMafiaVote(socket, lobbyState, voterId, choiceId) {
     lobbyState.gameState.history[phaseNum] = {
       night: {},
       day: {},
-      mafiaVotes: {}
+      mafiaVotes: {},
+      mafiaKill: undefined
     };
   }
 
@@ -264,6 +274,26 @@ function doMafiaVote(socket, lobbyState, voterId, choiceId) {
   lobbyState.gameState.history[phaseNum].mafiaVotes[voterId] = choiceId;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_night_end", lobbyState.lobbyId);
+}
+
+function doDayVote(socket, lobbyState, voterId, choiceId) {
+  const phaseNum = lobbyState.gameState.phaseNum;
+
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {},
+      mafiaVotes: {},
+      mafiaKill: undefined
+    };
+  }
+
+  // Record the vote
+  lobbyState.gameState.history[phaseNum].day[voterId] = choiceId;
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_day_end", lobbyState.lobbyId);
 }
 
 function TopScreen(props) {
@@ -295,16 +325,22 @@ function Chat(props) {
 }
 
 function Vote(props) {
+  const playerState = useSelector((state) => state.playerState);
+  const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
+  const socket = props.socket;
 
   return (
     <div className="topScreen vote">
       <form>
-        <label for="voteChoice"><b>You vote:</b></label>
-        <select name="voteChoice">
-          <option value={null}></option>
-          {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+        <label for="voteChoice"><b>You vote: </b></label>
+        <select id="voteChoice">
+          <option value={null}>No one</option>
+          {players.filter(p => p.gamePlayerState.isAlive).map((player) => (<option value={player.id}>{player.nickname}</option>))}
         </select>
+        <br />
+          <input type="button" value="OK" onClick={() =>
+            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value)} />
       </form>
     </div>
   );
