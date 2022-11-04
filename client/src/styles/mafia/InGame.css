@@ -125,7 +125,7 @@
   text-align: center;
 }
 
-.mafiaVotes ul {
+.mafiaVotes ul, .votes ul {
   list-style: none;
   margin: 0;
   padding: 0;

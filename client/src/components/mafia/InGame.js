@@ -328,6 +328,9 @@ function Vote(props) {
   const playerState = useSelector((state) => state.playerState);
   const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
+  const alivePlayers = players.filter(p => p.gamePlayerState.isAlive);
+  const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
+    lobbyState.gameState.history[lobbyState.gameState.phaseNum].day : {};
   const socket = props.socket;
 
   return (
@@ -336,12 +339,22 @@ function Vote(props) {
         <label for="voteChoice"><b>You vote: </b></label>
         <select id="voteChoice">
           <option value={null}>No one</option>
-          {players.filter(p => p.gamePlayerState.isAlive).map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          {alivePlayers.map((player) => (<option value={player.id}>{player.nickname}</option>))}
         </select>
         <br />
           <input type="button" value="OK" onClick={() =>
             doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value)} />
       </form>
+      <div className="votes">
+          <ul>
+          {alivePlayers.map(voter =>
+            <li key={voter.nickname}>
+              {voter.nickname} <i>votes</i> {votes.hasOwnProperty(voter.id) ? 
+                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "" : ""}
+            </li>
+          )}
+          </ul>
+        </div>
     </div>
   );
 }
