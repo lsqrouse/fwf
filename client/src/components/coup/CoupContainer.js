@@ -11,10 +11,8 @@ function CoupContainer(props)
   const [socket, setSocket] = useState(props.socket);
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
+  const stateOfGame = lobbyState.coupGameState.stateOfGame;
   const gameVersion = lobbyState.coupGameState.gameVersion;
-  const gameStarted = lobbyState.coupGameState.gameStarted;
-  const gameEnded = lobbyState.coupGameState.gameEnded;
-  const tempOn = lobbyState.coupGameState.tempOn;
   const isPlayerTurn = lobbyState.playerList[lobbyState.coupGameState.playerTurn].id === playerState.id;
   const minPlayers = 2;
   const canCoup = playerState.numCoins >= 7;
@@ -62,6 +60,7 @@ function CoupContainer(props)
         lobbyState.playerList[i].card2Alive = true;
         lobbyState.playerList[i].numCoins = 3;
         lobbyState.playerList[i].isAlive = true;
+        lobbyState.playerList[i].numCards = 2;
       }
 
       socket.emit("start_coup_game", lobbyState);
@@ -81,6 +80,7 @@ function CoupContainer(props)
     {
       lobbyState.playerList[i].card1 = 0;
       lobbyState.playerList[i].card2 = 0;
+      lobbyState.playerList[i].numCards = 2;
     }
   
     // Update coup game
@@ -1238,7 +1238,7 @@ function CoupContainer(props)
   return (
     <>
     {/* Game not started */}
-    {(!gameStarted && !gameEnded) && <>
+    {(stateOfGame == 0) && <>
         <div className="coupContainer">
             <div className="coupHeaderContent">
               <span>COUP</span>
@@ -1251,22 +1251,22 @@ function CoupContainer(props)
     </>}
 
     {/* Game started and finished*/}
-    {(gameStarted && gameEnded) && <>
+    {(stateOfGame == 2) && <>
       <div className="coupContainer">
         <div className="coupHeaderContent">
           <span>Game Over</span>
           <h3>{lobbyState.coupGameState.playerWon} won the game!</h3>
         </div>
-        {/*playerState.host && <>
+        {playerState.host && <>
           <div class="centerStuff">
             <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
           </div>
-        </>*/}
+        </>}
       </div>
     </>}
 
     {/* Game only started */}
-    {(gameStarted && !gameEnded) && <>
+    {(stateOfGame == 1) && <>
         <div className="coupContainer">
             <div className="coupHeaderContent">
               <span>Coins: {playerState.numCoins}</span>
@@ -1740,7 +1740,7 @@ function CoupContainer(props)
             <div id="getChallenged" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
-                  <h1>{lobbyState.playerList[lobbyState.coupGameState.playerChallenged].nickname} challenged you with a {lobbyState.coupGameState.playerChallengedWith}</h1>
+                  <h1>{lobbyState.playerList[lobbyState.coupGameState.playerChallenged].nickname} challenged you with {lobbyState.coupGameState.playerChallengedWith}</h1>
                   <div class="soloCard hoverMe" onClick={callingBs}>
                     <h1>Call BS</h1>
                     <h3>Liar liar pants on fire</h3>

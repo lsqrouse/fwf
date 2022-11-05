@@ -216,7 +216,7 @@ io.on('connection', (socket) => {
   {
     // Update coup game started and player list
     var lobbyState = lobbies[data.lobbyId];
-    lobbyState.coupGameState.gameStarted = true;
+    lobbyState.coupGameState.stateOfGame = 1;
     lobbyState.playerList = data.playerList;
 
     // Get random player and assign as turn
@@ -432,7 +432,7 @@ io.on('connection', (socket) => {
     if (lobbyState.coupGameState.playersAlive == 1)
     {
       // Set game ended to true
-      lobbyState.coupGameState.gameEnded = true;
+      lobbyState.coupGameState.stateOfGame = 2;
 
       // Find player that won
       for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -621,7 +621,7 @@ io.on('connection', (socket) => {
     if (lobbyState.coupGameState.playersAlive == 1)
     {
       // Set game ended to true
-      lobbyState.coupGameState.gameEnded = true;
+      lobbyState.coupGameState.stateOfGame = 2;
 
       // Find player that won
       for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -700,7 +700,7 @@ io.on('connection', (socket) => {
     if (lobbyState.coupGameState.playersAlive == 1)
     {
       // Set game ended to true
-      lobbyState.coupGameState.gameEnded = true;
+      lobbyState.coupGameState.stateOfGame = 2;
 
       // Find player that won
       for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -809,7 +809,7 @@ io.on('connection', (socket) => {
     if (lobbyState.coupGameState.playersAlive == 1)
     {
       // Set game ended to true
-      lobbyState.coupGameState.gameEnded = true;
+      lobbyState.coupGameState.stateOfGame = 2;
 
       // Find player that won
       for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -879,7 +879,7 @@ io.on('connection', (socket) => {
     if (lobbyState.coupGameState.playersAlive == 1)
     {
       // Set game ended to true
-      lobbyState.coupGameState.gameEnded = true;
+      lobbyState.coupGameState.stateOfGame = 2;
 
       // Find player that won
       for (var i = 0; i < lobbyState.playerList.length; i++)
@@ -1182,8 +1182,7 @@ io.on('connection', (socket) => {
   {
     // Update coup game state
     var lobbyState = lobbies[data.lobbyId];
-    lobbyState.coupGameState.gameEnded = false;
-    lobbyState.coupGameState.gameStarted = false;
+    lobbyState.coupGameState.stateOfGame = 0;
 
     // Reflect changes across other cleints
     io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
@@ -1349,9 +1348,8 @@ app.get("/api/lobby/create", (req, res) => {
     {
       gameVersion: 0,
       playerTurn: 0,
-      gameStarted: false,
+      stateOfGame: 0,
       playerWon: '',
-      gameEnded: false,
       lastTurnPlayer: 0,
       lastTurnPlayerId: '',
       lastTurnPlayerRole: 0,
