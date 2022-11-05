@@ -8,7 +8,7 @@ function CoupContainer(props)
 {
   // Initialize stuff
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
-  const [socket, setSocket] = useState(props.socket);
+  const socket = props.socket;
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
   const stateOfGame = lobbyState.coupGameState.stateOfGame;
