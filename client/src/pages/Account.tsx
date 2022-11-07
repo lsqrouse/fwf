@@ -16,6 +16,7 @@ type accountProps = {
 export default function Account(props: accountProps) {
     const userState = useSelector((state: any) => state.userState);
     const [lookupUser, setLookupUser] = useState('');
+    const [isLoading, setIsLoading] = useState(false)
 
 
     return <>
@@ -24,7 +25,13 @@ export default function Account(props: accountProps) {
         <NoLogin/>
     </>) : (<>
     {/* Page displayed when we are logged in */}
-        <Container  >
+        <div style={{marginTop: '2%', marginLeft: '2%'}}>
+        <Link to="/">
+            <button className='myButton'>Home</button>
+          </Link>
+        </div>
+
+        <Container>
             <Row style={{border:'8px solid blue', borderRadius:'5%', marginTop:'2%', marginBottom:'2%', padding:'1%'}}>
                     <Col>            
                         <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />

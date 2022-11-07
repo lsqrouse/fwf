@@ -319,16 +319,18 @@ app.get("/api/accounts/create", (req, res) => {
   createUser(connection, req.query , res)
 })
 
+let doingDB = false
 app.get("/api/accounts/stats", (req, res) => {
   console.log("received request to create an account")
-  
+  doingDB = true
   getStatsByUserId(connection, req.query , res)
+  doingDB = false
 })
 
 app.get("/api/accounts/history", (req, res) => {
   console.log("received request to create an account")
-  
   getHistoryByUserId(connection, req.query , res)
+  
 })
 
 app.get("/api/lobby/create", (req, res) => {

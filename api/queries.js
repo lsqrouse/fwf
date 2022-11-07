@@ -138,20 +138,22 @@ function createLobby(connection, lobbyState) {
 
 function getStatsByUserId(connection, query, res) { 
   console.log('inside of getstas by userid', query)
-    request = new Request(`SELECT w.userId, w.game_id, game_name, coalesce(wins, 0) as 'wins', coalesce(losses, 0) as 'losses' FROM (SElect COUNT(*) as 'wins', '${query.userId}' as 'userId', game_id From game_history WHERE winners LIKE '%${query.userId}, %' GROUP BY game_id) as w 
+    request = new Request(`SELECT coalesce(w.userId, l.userId) as "userId", coalesce(w.game_id, l.game_id) as "game_id", game_name, coalesce(wins, 0) as 'wins', coalesce(losses, 0) as 'losses' FROM (SElect COUNT(*) as 'wins', '4' as 'userId', game_id From game_history WHERE winners LIKE '%${query.userId}, %' GROUP BY game_id) as w 
     full outer join 
-    (SElect COUNT(*) as 'losses', '${query.userId}' as 'userId', game_id From game_history WHERE losers LIKE '%${query.userId}, %' GROUP BY game_id) as l on w.game_id = l.game_id
-    JOIN games on w.game_id = games.id
+    (SElect COUNT(*) as 'losses', '4' as 'userId', game_id From game_history WHERE losers LIKE '%${query.userId}, %' GROUP BY game_id) as l on w.game_id = l.game_id
+    full outer JOIN games on w.game_id = games.id OR l.game_id = games.id
+
     `, function(err) {  
     if (err) {  
         console.log(err);}  
     });  
-    var stats = {userId : query.userId, games: []}
+    var stats = {userId : query.userId}
     request.on('row', function(columns) {
       var game_stats = {}
+      var curGame = ""
       columns.forEach(function(column) { 
         if (column.metadata.colName == 'game_name') {  
-          game_stats.gameName = column.value;
+          curGame = column.value
         } 
         if (column.metadata.colName == 'wins') {  
           game_stats.wins = column.value;
@@ -159,9 +161,16 @@ function getStatsByUserId(connection, query, res) {
         if (column.metadata.colName == 'losses') {  
           game_stats.losses = column.value;
         } 
-
       });
-      stats.games.push(game_stats)
+      stats[curGame] = {}
+      stats[curGame].wins = game_stats.wins
+      stats[curGame].losses = game_stats.losses
+      stats[curGame].total_games = game_stats.wins + game_stats.losses
+      if (game_stats.wins + game_stats.losses == 0) {
+        stats[curGame].win_rate = 0
+      } else {
+        stats[curGame].win_rate = Math.round(game_stats.wins / ( game_stats.wins + game_stats.losses) * 100)
+      }
     });  
 
     
@@ -174,9 +183,8 @@ function getStatsByUserId(connection, query, res) {
 }
 
 function getHistoryByUserId(connection, query, res) { 
-  console.log('inside of getstas by userid', query)
-    request = new Request(`SELECT game_name, created_at, winners, losers from game_history JOIN games ON games.id = game_history.game_id WHERE losers LIKE '%${query.userId}, %' OR winners LIKE '%${query.userId}, %' 
-    `, function(err) {  
+  console.log('inside of gethist by userid', query)
+    request = new Request(`SELECT game_name, created_at, winners, losers from game_history JOIN games ON games.id = game_history.game_id WHERE losers LIKE '%${query.userId}, %' OR winners LIKE '%${query.userId}, %'`, function(err) {  
     if (err) {  
         console.log(err);}  
     });  
@@ -196,6 +204,15 @@ function getHistoryByUserId(connection, query, res) {
       res.json(history)
     });
     connection.execSql(request);  
+}
+
+function seeIfSend(connection, request) {
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  if (connection.state == "LoggedIn") {
+    connection.execSql(request)
+  } else {
+    sleep(100).then(seeIfSend(connection, request))
+  }
 }
 
 

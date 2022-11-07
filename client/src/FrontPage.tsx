@@ -10,6 +10,7 @@ export default function FrontPage () {
   const token = useSelector((state: any) => state.userState.token)
   const [nickname, setNickname] = useState('name')
   const [lobbyCode, setLobbyCode] = useState('0')
+  const [lookupUser, setLookupUser] = useState("");
 
 
   const dispatch = useDispatch();
@@ -51,15 +52,18 @@ export default function FrontPage () {
         <Link to="/Login">
           <button className='myButton' type='submit'>Login</button>
         </Link>
-        <p><Link to="/account">
+        
           {userName == undefined ? (<>
           {/* code displayed if username is undefined */}
-          View Accounts
+          <p>
+          <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />
+          <Link to={`/u/${lookupUser}`}>Search</Link>
+            </p>
           </>) : (<>
           {/* Code displayed if user is defined */}
-          {userName}
+          <p><Link to="/account">{userName}</Link></p>
           </>)}
-          </Link></p>
+          
 
       </div>
 
