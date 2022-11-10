@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import roles from "../../data/coup/roles";
 import "../../styles/coup/CoupContainer.css"
+import coinIcon from "../../images/coup/coin.png"
 
 // Coup container
 function CoupContainer(props) 
@@ -1269,7 +1270,8 @@ function CoupContainer(props)
     {(stateOfGame == 1) && <>
         <div className="coupContainer">
             <div className="coupHeaderContent">
-              <span>Coins: {playerState.numCoins}</span>
+              <span>{playerState.numCoins}</span>
+              <img src={coinIcon} width={50} height={35}/>
             </div>
             <div class="parent">
               <div class="card">
@@ -1304,7 +1306,7 @@ function CoupContainer(props)
                     {
                       if (player.cards > 0) 
                       {
-                        return (<div class="item"> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>);
+                        return (<div class="item"> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                       }
                       return (<div class="item"> <h1>{player.name}</h1> <h3>is</h3> <h3>dead</h3></div>);
                     })}
@@ -1354,7 +1356,7 @@ function CoupContainer(props)
                                 {
                                   if (player.cards > 0) 
                                   {
-                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>);
+                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                                   }
                                   return;
                                 })}
@@ -1389,7 +1391,7 @@ function CoupContainer(props)
                       {
                         if (!((role.id == playerState.card1 && playerState.card1Alive) || (role.id == playerState.card2 && playerState.card2Alive)) && (role.canBePlayed == true)) 
                         {
-                          return (<div class="item hoverMe" onClick={() => playLieRole(role.id)}> <h2>{role.name}</h2></div>);
+                          return (<div class="item hoverMe" onClick={() => playLieRole(role.id)}> <h3>{role.name}</h3></div>);
                         }
                         return null;
                       })}
@@ -1405,7 +1407,7 @@ function CoupContainer(props)
                                 {
                                   if (player.cards > 0) 
                                   {
-                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>);
+                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                                   }
                                   return;
                                 })}
@@ -1431,8 +1433,8 @@ function CoupContainer(props)
               <div class="modal-content">
                 <div class="centerStuff">
                   <h1>Playing Foreign Aid</h1>
-                  <h3>Take 2 coins.</h3>
                   <h3>Note: This action can be blocked by a Duke</h3>
+                  <h2>+2 <img src={coinIcon} width={35} height={25}/> ?</h2>
                   <button type="button" class="startGameButton" onClick={confirmForeignAid}>Draw 2 Coins</button>
                 </div>
               </div>
@@ -1441,8 +1443,8 @@ function CoupContainer(props)
               <div class="modal-content">
                 <div class="centerStuff">
                   <h1>Playing Income</h1>
-                  <h3>Take 1 coin.</h3>
                   <h3>Note: This can't be blocked or challenged.</h3>
+                  <h2>+1 <img src={coinIcon} width={35} height={25}/> ?</h2>
                   <button type="button" class="startGameButton" onClick={confirmIncome}>Draw 1 Coin</button>
                 </div>
               </div>
@@ -1507,7 +1509,7 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   {canCoup && <>
                     <h1>COUP who?</h1>
-                    <h3>This costs 7 coins</h3>
+                    <h2>-7<img src={coinIcon} width={35} height={25}/></h2>
                     <div class="carousel">
                       {playerStatsArray.map((player) => 
                       {
@@ -1524,7 +1526,7 @@ function CoupContainer(props)
                     </>}
                   </>}
                   {!canCoup && <>
-                    <h1>You need 7 coins to coup</h1>
+                    <h1>You need 7<img src={coinIcon} width={30} height={20}/> to coup</h1>
                   </>}
                 </div>
               </div>
@@ -1813,9 +1815,9 @@ function CoupContainer(props)
               <div class="turnStuff">
                 <button type="button" class="startGameButton" onClick={playTruth}>Play Truth</button>
                 <button type="button" class="startGameButton" onClick={playLie}>Play Lie</button>
+                <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
                 <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
                 <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
-                <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
                 {playerState.host && <>
                   <button type="button" class="startGameButton" onClick={endGame}>End Game</button>

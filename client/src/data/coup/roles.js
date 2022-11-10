@@ -1,5 +1,6 @@
-// import DukeIcon from "../../images/coup/icons/duke.png";
-// import CaptainIcon from "../../images/coup/icons/captain.pngfalse/ import ContessaIcon from "../../imagefalseup/icons/contessa.png";
+// import DukeIcon from "../../images/coup/icons/duke.png"
+// import CaptainIcon from "../../images/coup/icons/captain.png" 
+// import ContessaIcon from "../../imagefalseup/icons/contessa.png"
 // import AssassinIcon from "../../images/coup/icons/assassin.png"
 // import AmbassadorIcon from "../../images/coup/icons/ambassador.png"
 
