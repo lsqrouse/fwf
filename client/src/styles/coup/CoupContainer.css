@@ -42,7 +42,12 @@
 .card
 {
   width: 50%;
-  vertical-align: text-bottom;
+  text-align: center;
+}
+
+.cardWithOutline
+{
+  width: 50%;
   text-align: center;
   border: 1.5px grey solid;
 }

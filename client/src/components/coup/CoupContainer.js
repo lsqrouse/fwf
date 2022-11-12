@@ -663,10 +663,14 @@ function CoupContainer(props)
   }
 
   // Play player's actual cards
-  function playTruth()
+  function playTruth(cardSelected)
   {
     // Get the modal
     var modal = document.getElementById("playTruth");
+
+    // Update player selected card
+    setPlayerSelectedCard(cardSelected);
+    setPlayerSelectedTarget(-1);
 
     // When the user clicks on the button, open the modal 
     modal.style.display = "block";
@@ -681,22 +685,6 @@ function CoupContainer(props)
         setPlayerSelectedTarget(-1);
       }
     }
-  }
-
-  // Play player's actual cards
-  function playTruthCard1()
-  {
-    // Update player selected card
-    setPlayerSelectedCard(playerState.card1);
-    setPlayerSelectedTarget(-1);
-  }
-
-  // Play player's actual cards
-  function playTruthCard2()
-  {
-    // Update player selected card
-    setPlayerSelectedCard(playerState.card2);
-    setPlayerSelectedTarget(-1);
   }
 
   // Player chooses card 1 to get couped
@@ -1274,26 +1262,38 @@ function CoupContainer(props)
               <img src={coinIcon} width={50} height={35}/>
             </div>
             <div class="parent">
-              <div class="card">
-                {playerState.card1Alive && <>
-                  <h1>{roles[gameVersion][playerState.card1].name}</h1>
-                  <h3>{roles[gameVersion][playerState.card1].ability}</h3>
+              {playerState.card1Alive && <>
+                {isPlayerTurn && <>
+                  <div class="card hoverMe"
+                    onClick={() => playTruth(playerState.card1)}
+                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                  </div>
                 </>}
-                {!playerState.card1Alive && <>
-                  <h1>None</h1>
-                  <h3>This card was couped</h3>
+                {!isPlayerTurn && <>
+                  <div class="card"
+                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                  </div>
                 </>}
-              </div>
-              <div class="card">
-                {playerState.card2Alive && <>
-                  <h1>{roles[gameVersion][playerState.card2].name}</h1>
-                  <h3>{roles[gameVersion][playerState.card2].ability}</h3>
+              </>}
+              {!playerState.card1Alive && <>
+                <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
+              </>}
+              {playerState.card2Alive && <>
+                {isPlayerTurn && <>
+                  <div class="card hoverMe"
+                    onClick={() => playTruth(playerState.card2)}
+                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                  </div>
                 </>}
-                {!playerState.card2Alive && <>
-                  <h1>None</h1>
-                  <h3>This card was couped</h3>
+                {!isPlayerTurn && <>
+                  <div class="card"
+                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                  </div>
                 </>}
-              </div>
+              </>}
+              {!playerState.card2Alive && <>
+                <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
+              </>}
             </div>
 
             {/* Pop up modals set to hidden by default */}
@@ -1318,32 +1318,6 @@ function CoupContainer(props)
               <div class="modal-content">
                 <div class="centerStuff">
                   <h1>Playing Truth</h1>
-                  <div class="parent">
-                    {playerState.card1Alive && <>
-                      <div class="card hoverMe" onClick={playTruthCard1}>
-                        <h1>{roles[gameVersion][playerState.card1].name}</h1>
-                        <h3>{roles[gameVersion][playerState.card1].ability}</h3>
-                      </div>
-                    </>}
-                    {!playerState.card1Alive && <>
-                      <div class="card">
-                        <h1>None</h1>
-                        <h3>This card was couped</h3>
-                      </div>
-                    </>}
-                    {playerState.card2Alive && <>
-                      <div class="card hoverMe" onClick={playTruthCard2}>
-                        <h1>{roles[gameVersion][playerState.card2].name}</h1>
-                        <h3>{roles[gameVersion][playerState.card2].ability}</h3>
-                      </div>
-                    </>}
-                    {!playerState.card2Alive && <>
-                      <div class="card">
-                        <h1>None</h1>
-                        <h3>This card was couped</h3>
-                      </div>
-                    </>}
-                  </div>
                   {(playerSelectedCard >= 0) && <>
                       {roles[gameVersion][playerSelectedCard].canBePlayed && <>
                         <div>
@@ -1509,13 +1483,13 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   {canCoup && <>
                     <h1>COUP who?</h1>
-                    <h2>-7<img src={coinIcon} width={35} height={25}/></h2>
+                    <h3>Pay 7<img src={coinIcon} width={20} height={15}/> to coup a player</h3>
                     <div class="carousel">
                       {playerStatsArray.map((player) => 
                       {
                         if (player.cards > 0) 
                         {
-                          return (<div class="item hoverMe" onClick={() => choosePlayerCoup(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>coins: {player.coins}</h3></div>);
+                          return (<div class="item hoverMe" onClick={() => choosePlayerCoup(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                         }
                         return;
                       })}
@@ -1655,11 +1629,11 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   <h1>{lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].nickname} played {roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].name} on you</h1>
                   <div class="parent">
-                    <div class="card hoverMe" onClick={callingBs}>
+                    <div class="cardWithOutline hoverMe" onClick={callingBs}>
                       <h1>Call BS</h1>
                       <h3>Liar liar pants on fire</h3>
                     </div>
-                    <div class="card hoverMe" onClick={challengeCard}>
+                    <div class="cardWithOutline hoverMe" onClick={challengeCard}>
                       <h1>Challenge</h1>
                       {(roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].name == "Captain") && <>
                         <h3>With a captain or ambassador</h3>
@@ -1813,7 +1787,6 @@ function CoupContainer(props)
                 <span>Your turn</span>
               </div>
               <div class="turnStuff">
-                <button type="button" class="startGameButton" onClick={playTruth}>Play Truth</button>
                 <button type="button" class="startGameButton" onClick={playLie}>Play Lie</button>
                 <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
                 <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
