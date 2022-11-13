@@ -25,6 +25,7 @@ function CoupContainer(props)
   const [coupCardChosen, setCoupCardChosen] = useState(-1);
   const [bluffCardChosen, setBluffCardChosen] = useState(-1);
   const [assassinCardChosen, setAssassinCardChosen] = useState(-1);
+  const [playingLie, setPlayingLie] = useState(0);
 
   // Create new player array of name, numCards, and numCoins
   var counter = 0;
@@ -38,6 +39,18 @@ function CoupContainer(props)
 
       // Update counter
       counter++;
+    }
+  }
+
+  // For hover on card info stuff
+  document.addEventListener('mousemove', fn, false);
+  function fn(e) 
+  {
+    var tooltip = document.querySelectorAll('.coupontooltip');
+    for (var i=tooltip.length; i--;) 
+    {
+      tooltip[i].style.left = e.pageX + 'px';
+      tooltip[i].style.top = e.pageY + 'px';
     }
   }
 
@@ -203,6 +216,7 @@ function CoupContainer(props)
 
     // Update variables
     setPlayerSelectedCard(-1);
+    setPlayingLie(0);
 
     // Update last turn player role index and let other players counter
     lobbyState.coupGameState.lastTurnPlayerRole = playerSelectedCard;
@@ -967,6 +981,21 @@ function CoupContainer(props)
   // Let player pick a card from all roles to play
   function playLie()
   {
+    // If on truth go to lie
+    if (playingLie == 0)
+    {
+      setPlayingLie(1);
+    }
+    // Else on lie so go to truth
+    else
+    {
+      setPlayingLie(0);
+    }
+  }
+
+  // Do user chosen lie role 
+  function playLieRole(cardSelected)
+  {
     // Get the modal
     var modal = document.getElementById("playLie");
 
@@ -983,11 +1012,7 @@ function CoupContainer(props)
         setPlayerSelectedTarget(-1);
       }
     }
-  }
-
-  // Do user chosen lie role 
-  function playLieRole(cardSelected)
-  {
+    
     // Update player selected card
     setPlayerSelectedCard(cardSelected);
     setPlayerSelectedTarget(-1);
@@ -1161,6 +1186,7 @@ function CoupContainer(props)
 
     // Update variables
     setPlayerSelectedCard(-1);
+    setPlayingLie(0);
 
     // Update last turn player role index and let other players counter
     lobbyState.coupGameState.lastTurnPlayerRole = playerSelectedCard;
@@ -1261,40 +1287,87 @@ function CoupContainer(props)
               <span>{playerState.numCoins}</span>
               <img src={coinIcon} width={50} height={35}/>
             </div>
-            <div class="parent">
-              {playerState.card1Alive && <>
-                {isPlayerTurn && <>
-                  <div class="card hoverMe"
-                    onClick={() => playTruth(playerState.card1)}
-                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                  </div>
+
+            {/* User can only see truth cards */}
+            {(playingLie == 0) && <>
+             <div class="parent">
+                {playerState.card1Alive && <>
+                  {isPlayerTurn && <>
+                    <div class="card hoverMe"
+                      onClick={() => playTruth(playerState.card1)}
+                      style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>{roles[gameVersion][playerState.card1].name}</h2>
+                          <h3>{roles[gameVersion][playerState.card1].ability}</h3>
+                        </span>
+                      </div>
+                    </div>
+                  </>}
+                  {!isPlayerTurn && <>
+                    <div class="card"
+                      style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>{roles[gameVersion][playerState.card1].name}</h2>
+                          <h3>{roles[gameVersion][playerState.card1].ability}</h3>
+                        </span>
+                      </div>
+                    </div>
+                  </>}
                 </>}
-                {!isPlayerTurn && <>
-                  <div class="card"
-                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                  </div>
+                {!playerState.card1Alive && <>
+                  <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
                 </>}
-              </>}
-              {!playerState.card1Alive && <>
-                <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
-              </>}
-              {playerState.card2Alive && <>
-                {isPlayerTurn && <>
-                  <div class="card hoverMe"
-                    onClick={() => playTruth(playerState.card2)}
-                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                  </div>
+                {playerState.card2Alive && <>
+                  {isPlayerTurn && <>
+                    <div class="card hoverMe"
+                      onClick={() => playTruth(playerState.card2)}
+                      style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>{roles[gameVersion][playerState.card2].name}</h2>
+                          <h3>{roles[gameVersion][playerState.card2].ability}</h3>
+                        </span>
+                      </div>
+                    </div>
+                  </>}
+                  {!isPlayerTurn && <>
+                    <div class="card"
+                      style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>{roles[gameVersion][playerState.card2].name}</h2>
+                          <h3>{roles[gameVersion][playerState.card2].ability}</h3>
+                        </span>
+                      </div>
+                    </div>
+                  </>}
                 </>}
-                {!isPlayerTurn && <>
-                  <div class="card"
-                    style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                  </div>
+                {!playerState.card2Alive && <>
+                  <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
                 </>}
-              </>}
-              {!playerState.card2Alive && <>
-                <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
-              </>}
-            </div>
+              </div>
+            </>}
+
+            {/* User can only see lie cards */}
+            {(playingLie == 1) && <>
+              <div class="parent carousel">
+                  {roles[gameVersion].map((role) => 
+                  {
+                    if (!((role.id == playerState.card1 && playerState.card1Alive) || (role.id == playerState.card2 && playerState.card2Alive)) && (role.canBePlayed == true)) 
+                    {
+                      return (
+                        <div class="bigItem hoverMe" 
+                          onClick={() => playLieRole(role.id)}
+                          style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}> 
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+              </div>
+            </>}
 
             {/* Pop up modals set to hidden by default */}
             <div id="playerStatsModal" class="modal">
@@ -1317,11 +1390,10 @@ function CoupContainer(props)
             <div id="playTruth" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
-                  <h1>Playing Truth</h1>
                   {(playerSelectedCard >= 0) && <>
+                      <h1>Playing Truth as {roles[gameVersion][playerSelectedCard].name}</h1>
                       {roles[gameVersion][playerSelectedCard].canBePlayed && <>
                         <div>
-                          <h3>You have selected to play as the {roles[gameVersion][playerSelectedCard].name}</h3>
                           {roles[gameVersion][playerSelectedCard].pvp && <>
                             {(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
                               <h3>Choose target</h3>
@@ -1359,46 +1431,36 @@ function CoupContainer(props)
             <div id="playLie" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
-                  <h1>Playing Lie</h1>
-                  <div class="carousel">
-                      {roles[gameVersion].map((role) => 
-                      {
-                        if (!((role.id == playerState.card1 && playerState.card1Alive) || (role.id == playerState.card2 && playerState.card2Alive)) && (role.canBePlayed == true)) 
-                        {
-                          return (<div class="item hoverMe" onClick={() => playLieRole(role.id)}> <h3>{role.name}</h3></div>);
-                        }
-                        return null;
-                      })}
-                  </div>
                   {(playerSelectedCard >= 0) && <>
-                      <div>
-                        <h3>{roles[gameVersion][playerSelectedCard].name}: {roles[gameVersion][playerSelectedCard].ability}</h3>
-                        {roles[gameVersion][playerSelectedCard].pvp && <>
-                          {(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
-                              <h3>Choose target</h3>
-                              <div class="carousel">
-                                {playerStatsArray.map((player) => 
+                    <h1>Playing Lie as {roles[gameVersion][playerSelectedCard].name}</h1>
+                    <div>
+                      <h3>{roles[gameVersion][playerSelectedCard].name}: {roles[gameVersion][playerSelectedCard].ability}</h3>
+                      {roles[gameVersion][playerSelectedCard].pvp && <>
+                        {(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
+                            <h3>Choose target</h3>
+                            <div class="carousel">
+                              {playerStatsArray.map((player) => 
+                              {
+                                if (player.cards > 0) 
                                 {
-                                  if (player.cards > 0) 
-                                  {
-                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
-                                  }
-                                  return;
-                                })}
-                              </div>
-                            </>}
-                            {!(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
-                              <h3>You don't have enough coins</h3>
-                            </>}
-                          {(playerSelectedTarget >= 0) && <>
-                              <h3>Target {playerStatsArray[playerSelectedTarget].name}?</h3>
-                              <button type="button" class="startGameButton" onClick={confirmSelectedCardAndTarget}>Confirm</button>
+                                  return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
+                                }
+                                return;
+                              })}
+                            </div>
                           </>}
+                          {!(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
+                            <h3>You don't have enough coins</h3>
+                          </>}
+                        {(playerSelectedTarget >= 0) && <>
+                            <h3>Target {playerStatsArray[playerSelectedTarget].name}?</h3>
+                            <button type="button" class="startGameButton" onClick={confirmSelectedCardAndTarget}>Confirm</button>
                         </>}
-                        {!roles[gameVersion][playerSelectedCard].pvp && <>
-                          <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
-                        </>}
-                      </div>
+                      </>}
+                      {!roles[gameVersion][playerSelectedCard].pvp && <>
+                        <button type="button" class="startGameButton" onClick={confirmSelectedCard}>Confirm</button>
+                      </>}
+                    </div>
                   </>}
                 </div>
               </div>
@@ -1512,11 +1574,11 @@ function CoupContainer(props)
                   {(playerState.numCards == 2) && <>
                     <h3>Choose card to give up</h3>
                     <div class="parent">
-                      <div class="card hoverMe" onClick={playCoupCard1}>
+                      <div class="cardWithOutline hoverMe" onClick={playCoupCard1}>
                         <h1>{roles[gameVersion][playerState.card1].name}</h1>
                         <h3>{roles[gameVersion][playerState.card1].ability}</h3>
                       </div>
-                      <div class="card hoverMe" onClick={playCoupCard2}>
+                      <div class="cardWithOutline hoverMe" onClick={playCoupCard2}>
                         <h1>{roles[gameVersion][playerState.card2].name}</h1>
                         <h3>{roles[gameVersion][playerState.card2].ability}</h3>
                       </div>
@@ -1568,11 +1630,11 @@ function CoupContainer(props)
                   {(playerState.numCards == 2 && (lobbyState.coupGameState.lastTurnPlayerRole != 3 || playerState.id == lobbyState.coupGameState.lastTurnPlayerId)) && <>
                     <h3>Choose card to give up</h3>
                     <div class="parent">
-                      <div class="card hoverMe" onClick={playBluffCard1}>
+                      <div class="cardWithOutline hoverMe" onClick={playBluffCard1}>
                         <h1>{roles[gameVersion][playerState.card1].name}</h1>
                         <h3>{roles[gameVersion][playerState.card1].ability}</h3>
                       </div>
-                      <div class="card hoverMe" onClick={playBluffCard2}>
+                      <div class="cardWithOutline hoverMe" onClick={playBluffCard2}>
                         <h1>{roles[gameVersion][playerState.card2].name}</h1>
                         <h3>{roles[gameVersion][playerState.card2].ability}</h3>
                       </div>
@@ -1776,24 +1838,21 @@ function CoupContainer(props)
               </div>
               {playerState.host && <>
                 <div class="centerStuff">
-                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                  <button type="button" class="startGameButton" onClick={() => endGame}>End Game</button>
                 </div>
               </>}
             </>}
 
             {/* If player turn let them do turn stuff */}
             {isPlayerTurn && <>
-              <div className="coins">
-                <span>Your turn</span>
-              </div>
               <div class="turnStuff">
-                <button type="button" class="startGameButton" onClick={playLie}>Play Lie</button>
+                <button type="button" class="startGameButton" onClick={playLie}>Play {(playingLie == 0) && <>Lie</>}{(playingLie == 1) && <>Truth</>}</button>
                 <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
                 <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
                 <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
                 {playerState.host && <>
-                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                  <button type="button" class="startGameButton" onClick={() => endGame}>End Game</button>
                 </>}
               </div>
             </>}
