@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import roles from "../../data/coup/roles";
 import "../../styles/coup/CoupContainer.css"
 import coinIcon from "../../images/coup/coin.png"
+import deadCard from "../../images/coup/dead.png"
 
 // Coup container
 function CoupContainer(props) 
@@ -53,6 +54,14 @@ function CoupContainer(props)
       tooltip[i].style.top = e.pageY + 'px';
     }
   }
+
+  // Use this for tooltip on bottom row buttons
+  // <div class="couponcode">
+  //   <span class="coupontooltip">
+  //     <h2>{role.name}</h2>
+  //     <h3>{role.ability}</h3>
+  //   </span>
+  // </div>
 
   // Start game function
   function startGame() 
@@ -627,6 +636,7 @@ function CoupContainer(props)
     socket.emit("coup_challenging_assassination", lobbyState);
   }
 
+  // Player confirms bs
   function confirmBS()
   {
     // Update lobbystate that player called bs
@@ -643,6 +653,7 @@ function CoupContainer(props)
     setGoingToCounter(-1);
   }
 
+  // Player confirms bs after challenge
   function confirmBSAfterChallenge()
   {
     // Update lobbystate that player called bs
@@ -1296,56 +1307,32 @@ function CoupContainer(props)
                     <div class="card hoverMe"
                       onClick={() => playTruth(playerState.card1)}
                       style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                      <div class="couponcode">
-                        <span class="coupontooltip">
-                          <h2>{roles[gameVersion][playerState.card1].name}</h2>
-                          <h3>{roles[gameVersion][playerState.card1].ability}</h3>
-                        </span>
-                      </div>
                     </div>
                   </>}
                   {!isPlayerTurn && <>
                     <div class="card"
                       style={{ backgroundImage: `url(${roles[gameVersion][playerState.card1].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                      <div class="couponcode">
-                        <span class="coupontooltip">
-                          <h2>{roles[gameVersion][playerState.card1].name}</h2>
-                          <h3>{roles[gameVersion][playerState.card1].ability}</h3>
-                        </span>
-                      </div>
                     </div>
                   </>}
                 </>}
                 {!playerState.card1Alive && <>
-                  <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
+                  <div class="card" style={{ backgroundImage: `url(${deadCard})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
                 </>}
                 {playerState.card2Alive && <>
                   {isPlayerTurn && <>
                     <div class="card hoverMe"
                       onClick={() => playTruth(playerState.card2)}
                       style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                      <div class="couponcode">
-                        <span class="coupontooltip">
-                          <h2>{roles[gameVersion][playerState.card2].name}</h2>
-                          <h3>{roles[gameVersion][playerState.card2].ability}</h3>
-                        </span>
-                      </div>
                     </div>
                   </>}
                   {!isPlayerTurn && <>
                     <div class="card"
                       style={{ backgroundImage: `url(${roles[gameVersion][playerState.card2].roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-                      <div class="couponcode">
-                        <span class="coupontooltip">
-                          <h2>{roles[gameVersion][playerState.card2].name}</h2>
-                          <h3>{roles[gameVersion][playerState.card2].ability}</h3>
-                        </span>
-                      </div>
                     </div>
                   </>}
                 </>}
                 {!playerState.card2Alive && <>
-                  <div class="card" style={{ backgroundImage: `url()`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
+                  <div class="card" style={{ backgroundImage: `url(${deadCard})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}></div>
                 </>}
               </div>
             </>}
@@ -1360,7 +1347,7 @@ function CoupContainer(props)
                       return (
                         <div class="bigItem hoverMe" 
                           onClick={() => playLieRole(role.id)}
-                          style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}> 
+                          style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
                         </div>
                       );
                     }
@@ -1835,12 +1822,10 @@ function CoupContainer(props)
               </div>
               <div class="turnStuff">
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
+                {playerState.host && <>
+                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                </>}
               </div>
-              {playerState.host && <>
-                <div class="centerStuff">
-                  <button type="button" class="startGameButton" onClick={() => endGame}>End Game</button>
-                </div>
-              </>}
             </>}
 
             {/* If player turn let them do turn stuff */}
@@ -1852,7 +1837,7 @@ function CoupContainer(props)
                 <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
                 <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
                 {playerState.host && <>
-                  <button type="button" class="startGameButton" onClick={() => endGame}>End Game</button>
+                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
                 </>}
               </div>
             </>}

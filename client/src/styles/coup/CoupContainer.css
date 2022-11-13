@@ -155,6 +155,8 @@
   position: absolute;
   z-index: 1000;
   width: 300px;
+  text-align: center;
+  white-space: normal;
 }
 .coupontooltip h2
 {
