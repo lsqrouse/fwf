@@ -102,7 +102,9 @@ function CoupContainer(props)
     for (var i = 0; i < lobbyState.playerList.length; i++)
     {
       lobbyState.playerList[i].card1 = 0;
+      lobbyState.playerList[i].card1Alive = true;
       lobbyState.playerList[i].card2 = 0;
+      lobbyState.playerList[i].card2Alive = true;
       lobbyState.playerList[i].numCards = 2;
     }
   
@@ -1266,13 +1268,11 @@ function CoupContainer(props)
     {/* Game not started */}
     {(stateOfGame == 0) && <>
         <div className="coupContainer">
-            <div className="coupHeaderContent">
-              <span>COUP</span>
-            </div>
-            <div class="parent">
-              <RoleList roleList={roles} gameVersion={gameVersion}/>
-              <SettingStuff startGame={startGame} nextGameVersion={nextGameVersion} lobbyState={lobbyState}/>
-            </div>
+          <div className="coupHeaderContent">
+            <span>COUP</span>
+          </div>
+          <RoleList roleList={roles} gameVersion={gameVersion}/>
+          <SettingStuff startGame={startGame} nextGameVersion={nextGameVersion} lobbyState={lobbyState}/>
       </div>
     </>}
 
@@ -1380,6 +1380,7 @@ function CoupContainer(props)
                   {(playerSelectedCard >= 0) && <>
                       <h1>Playing Truth as {roles[gameVersion][playerSelectedCard].name}</h1>
                       {roles[gameVersion][playerSelectedCard].canBePlayed && <>
+                        <h3>{roles[gameVersion][playerSelectedCard].name}: {roles[gameVersion][playerSelectedCard].ability}</h3>
                         <div>
                           {roles[gameVersion][playerSelectedCard].pvp && <>
                             {(playerState.numCoins + roles[gameVersion][playerSelectedCard].coinAction >= 0) && <>
@@ -1855,9 +1856,16 @@ function RoleList(props)
     const roleList = props.roleList[gameVersion];
   
     return (
-      <div className="roleList">
-        {Array.from(roleList, (value) => (<span>{value.name} <br/> </span>))}
-      </div>
+      <div class="parent carousel">
+        {roleList.map((role) => 
+        {
+          return (
+            <div class="bigItem"
+              style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+            </div>
+          );
+        })}
+    </div>
     );
 }
 
@@ -1866,24 +1874,20 @@ function SettingStuff(props)
 {
     // Initialize stuff
     const startGame = props.startGame;
-    const endGame = props.endGame;
-    const nextGameVersion = props.nextGameVersion;
+    //const nextGameVersion = props.nextGameVersion;
     const isHost = useSelector((state) => state.playerState.host);
     
   
     return (
-      <div className="settingStuff">
+      <div className="settingStuff centerStuff">
         {isHost && <>
             <div>
               <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
             </div>
-            <div>
-              <button type="button" class="endGameButton" onClick={nextGameVersion}>Next Game Version</button>
-            </div>
         </>}
         {!isHost && <> 
             <div>
-                <h2>Waiting for {props.lobbyState.lobbyHostName} to start the game</h2>
+                <h3>Waiting for {props.lobbyState.lobbyHostName} to start the game</h3>
             </div>
         </>}
       </div>
