@@ -1,3 +1,19 @@
+.mafiaButton1 {
+  height: 35px;
+  font-size: 16px;
+  border: 2px #575757 solid;
+  border-radius: 8px;
+  background: #575757;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  padding: 5px 10px
+}
+
+.mafiaButton1:hover {
+  background: #424242;
+  border-color: #424242;
+}
+
 .mafiaButton2 {
   height: 35px;
   font-size: 16px;
@@ -7,6 +23,12 @@
   color: #575757;
   font-family: 'Inter', sans-serif;
   padding: 5px 10px
+}
+
+.mafiaButton2:hover {
+  background: #f0f0f0;
+  border-color: #424242;
+  color: #424242;
 }
 
 .mafiaInput1 {

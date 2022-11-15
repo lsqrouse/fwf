@@ -126,7 +126,7 @@ function Role(props) {
 
 function AddRoleButton(props) {
   return (
-    <button type="button" class="addRoleButton mafiaButton1" onClick={() => props.addRole(props.roleName)}>+</button>
+    <button type="button" class="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
   );
 }
 
