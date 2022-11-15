@@ -15,12 +15,13 @@ function InGame(props) {
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
   const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
+  const socket = props.socket;
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roleList={props.roleList} />
-      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
       <RoleCard role={roles[playerRole]} />
     </div>
   );
@@ -32,18 +33,27 @@ function Phase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
+
+  socket.on("mafia_night_phase_ended", (data) => {
+    setTopScreen("alerts");
+  });
+
+  socket.on("mafia_day_phase_ended", (data) => {
+    setTopScreen("alerts");
+  });
 
   switch (phase) {
     case "day":
       return (
         <div className="phase">
-          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     case "night":
       return (
         <div className="phase">
-          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} />
+          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     default:
@@ -56,11 +66,12 @@ function DayPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen
+  const socket = props.socket;
 
   return (
     <>
       <div className="mainInfo">
-        <TopScreen screen={topScreen} />
+        <TopScreen screen={topScreen} socket={socket} />
         <BottomScreen screen={bottomScreen} />
       </div>
       <div className="sideButtons">
@@ -82,10 +93,12 @@ function NightPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const socket = props.socket;
+
   return (
     <>
     <div className="mainInfo">
-      <TopScreen screen={topScreen} />
+      <TopScreen screen={topScreen} socket={socket} />
       <BottomScreen screen={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -137,7 +150,7 @@ function RoleList(props) {
   });
 
   const a = Array.from(roleCount).map(([key, value]) => (
-    <div class="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    <div className="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
     );
 
   return (
@@ -147,18 +160,155 @@ function RoleList(props) {
   );
 }
 
+function getTargetTypesFromAbility(ability) {
+  switch (ability) {
+    case "block":
+      return [["alive"]];
+    case "save":
+      return [["alive", "self"]];
+    case "kill":
+      return [["alive"]];
+    case "investigate":
+      return [["alive"]];
+    case "swap":
+      return [["alive", "self"], ["alive", "self"]];
+    case "ressurect":
+      return [["dead"]];
+    case "frame":
+      return [["alive", "nonmafia"]];
+    case "identify":
+      return [["alive"]];
+    default:
+      return []; // no ability
+  }
+}
+
+function getTargetFromTypesNotSelf(target, players) {
+  let list = [...players];
+
+  for (let j = 0; j < target.length; j++) {
+    const type = target[j];
+    
+    switch (type) {
+      case "alive":
+        list = list.filter(player => player.gamePlayerState.isAlive);
+        break;
+      case "dead":
+        list = list.filter(player => !player.gamePlayerState.isAlive);
+        break;
+      case "mafia":
+        list = list.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
+        break;
+      case "nonmafia":
+        list = list.filter(player => roles[player.gamePlayerState.role].team !== "Mafia");
+        break;
+      case "any":
+        break;
+      default:
+        // pass
+    }
+  }
+  return list;
+}
+
+function filterTargets(ability, allPlayers, selfPlayerState) {
+  const types = getTargetTypesFromAbility(ability);
+  let results = [];
+
+  for (let i = 0; i < types.length; i++) {
+    const target = types[i];
+    let list = [...allPlayers];
+
+    list = getTargetFromTypesNotSelf(target, list);
+
+    if (target.includes("self")) {
+      // Add self to targets if not already included
+      if (!list.some(player => player.id === selfPlayerState.id)) {
+        list.unshift(selfPlayerState);
+      }
+    } else {
+      // Remove self from targets
+      list = list.filter(player => player.id !== selfPlayerState.id);
+    }
+    results.push(list);
+  }
+
+  return results;
+}
+
+function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
+  const phaseNum = lobbyState.gameState.phaseNum;
+  // Write to history
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {},
+      mafiaVotes: {}
+    };
+  }
+
+  // Now write the ability into the history
+  const entry = {
+    ability: ability,
+    targets: targets
+  };
+  lobbyState.gameState.history[phaseNum].night[playerId] = entry;
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_night_end", lobbyState.lobbyId);
+}
+
+function doMafiaVote(socket, lobbyState, voterId, choiceId) {
+  const phaseNum = lobbyState.gameState.phaseNum;
+
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {},
+      mafiaVotes: {},
+      mafiaKill: undefined
+    };
+  }
+
+  // Record the vote
+  lobbyState.gameState.history[phaseNum].mafiaVotes[voterId] = choiceId;
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_night_end", lobbyState.lobbyId);
+}
+
+function doDayVote(socket, lobbyState, voterId, choiceId) {
+  const phaseNum = lobbyState.gameState.phaseNum;
+
+  if (!lobbyState.gameState.history[phaseNum]) {
+    lobbyState.gameState.history[phaseNum] = {
+      night: {},
+      day: {},
+      mafiaVotes: {},
+      mafiaKill: undefined
+    };
+  }
+
+  // Record the vote
+  lobbyState.gameState.history[phaseNum].day[voterId] = choiceId;
+  // Emit to server
+  socket.emit("update_lobby_state", lobbyState);
+  socket.emit("mafia_check_day_end", lobbyState.lobbyId);
+}
+
 function TopScreen(props) {
   const screen = props.screen;
+  const socket = props.socket;
 
   switch (screen) {
     case "chat":
-      return <Chat />
+      return <Chat socket={socket} />
     case "vote":
-      return <Vote />
+      return <Vote socket={socket} />
     case "ability":
-      return <Ability />
+      return <Ability socket={socket} />
     case "notes":
-      return <Notes />
+      return <Notes socket={socket} />
     case "alerts":
       return <Alerts />
     default:
@@ -175,59 +325,113 @@ function Chat(props) {
 }
 
 function Vote(props) {
+  const playerState = useSelector((state) => state.playerState);
+  const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
+  const alivePlayers = players.filter(p => p.gamePlayerState.isAlive);
+  const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
+    lobbyState.gameState.history[lobbyState.gameState.phaseNum].day : {};
+  const socket = props.socket;
 
   return (
     <div className="topScreen vote">
       <form>
-        <label for="voteChoice"><b>You vote:</b></label>
-        <select name="voteChoice">
-          <option value={null}></option>
-          {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+        <label for="voteChoice"><b>You vote: </b></label>
+        <select id="voteChoice">
+          <option value={null}>No one</option>
+          {alivePlayers.map((player) => (<option value={player.id}>{player.nickname}</option>))}
         </select>
+        <br />
+          <input type="button" value="OK" onClick={() =>
+            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value)} />
       </form>
+      <div className="votes">
+          <ul>
+          {alivePlayers.map(voter =>
+            <li key={voter.nickname}>
+              {voter.nickname} <i>votes</i> {votes.hasOwnProperty(voter.id) ? 
+                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "" : ""}
+            </li>
+          )}
+          </ul>
+        </div>
     </div>
   );
 }
 
 function Ability(props) {
   const playerState = useSelector((state) => state.playerState);
+  const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
+  const phaseNum = lobbyState.gameState.phaseNum;
   const role = playerState.gamePlayerState.role;
+  const socket = props.socket;
 
   function TeamAbilityDiv() {
+    const targets = getTargetFromTypesNotSelf(["alive", "nonmafia"], players);
+    const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
+      lobbyState.gameState.history[phaseNum].mafiaVotes : {};
+    const mafiaMembers = lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
+    console.log(mafiaMembers);
+
     return (
       <div className="abilityItem">
         <h3>{roles[role].team} Meeting</h3>
         {teams[roles[role].team].meetingAbility}
         <form>
           <label for="teamChoice"><b>You vote: </b></label>
-          <select name="teamChoice">
-            <option value={null}>No one (skip)</option>
-            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
+          <select id="teamChoice">
+            <option value="">No one (skip)</option>
+            {targets.map((player) => (<option value={player.id}>{player.nickname}</option>))}
           </select>
           <br />
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" onClick={() =>
+            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
         </form>
+        <div className="mafiaVotes">
+          <ul>
+          {mafiaMembers.map(mafiaMember =>
+            <li key={mafiaMember.nickname}>
+              {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? 
+                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "" : ""}
+            </li>
+          )}
+          </ul>
+        </div>
       </div>
     );
   }
 
-  // TODO: Only make alive players selectable (unless player is ressurectionist)
   function IndividualAbilityDiv() {
+    const ability = roles[playerState.gamePlayerState.role].ability;
+    const targets = filterTargets(ability, players, playerState);
     return (
       <div className="ability">
         <h3>{role} Ability</h3>
         {roles[role].abilityMessage}
         <br />
-        <form>
-          <label for="abilityChoice"><b>You choose: </b></label>
-          <select name="abilityChoice">
-            <option value={null}>No one (skip)</option>
-            {players.map((player) => (<option value={player.id}>{player.nickname}</option>))}
-          </select>
+        <form id="abilityForm">
+          <span><b>You choose: </b></span>
+          {targets.map(
+            (target, index) =>
+            <select is={"abilityChoice" + index}>
+              <option value="">No one (skip)</option>
+              {target.map(player => 
+                  <option value={player.id}>{player.nickname}</option>
+              )}
+            </select>
+          )}
           <br />
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" 
+            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
+              Array.from(document.getElementById("abilityForm").elements).filter(
+                elem => elem.nodeName.toLowerCase() === "select"
+              ).map(select => select.value === "" ? null : select.value)
+              )}
+          />
+          {lobbyState.gameState.history.hasOwnProperty(phaseNum) && lobbyState.gameState.history[phaseNum].night.hasOwnProperty(playerState.id) ? 
+            lobbyState.gameState.history[phaseNum].night[playerState.id].targets.map(
+              (target, index) => <>{(index > 0 ? ", " : "") + (target === null ? "No one" : players.find(p => p.id === target).nickname)}</>) : ""}
         </form>
       </div>
     )
@@ -239,7 +443,8 @@ function Ability(props) {
         You have no ability. Sweet dreams! <br />
         Press the OK button to continue.
         <form>
-          <input type="submit" value="OK" />
+          <input type="button" value="OK" 
+            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, "ok", [])} />
         </form>
       </div>
     );
@@ -251,7 +456,7 @@ function Ability(props) {
         roles[role].team === "Mafia" && roles[role].team && <TeamAbilityDiv />
       }
       {
-        roles[role].abilityMessage && <IndividualAbilityDiv />
+        roles[role].ability && <IndividualAbilityDiv />
       }
       {
         roles[role].team !== "Mafia" && !roles[role].abilityMessage && <NoAbilityDiv />
@@ -270,10 +475,16 @@ function Notes(props) {
 
 function Alerts(props) {
   const lobbyState = useSelector((state) => state.lobbyState);
+  const playerState = useSelector((state) => state.playerState);
+  console.log("PLAYER:", playerState);
 
   return (
     <div className="topScreen alerts">
       {lobbyState.gameState.allPlayersMessage}
+      <br />
+      {lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive ?
+        (lobbyState.gameState.messages.hasOwnProperty(playerState.id) ? 
+          lobbyState.gameState.messages[playerState.id] : "") : <b>You are dead.</b>}
     </div>
   );
 }
@@ -296,17 +507,13 @@ function AliveList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are alive
   const players = lobbyState.playerList;
-  const alivePlayers = [];
-  for (const player of players) {
-    if (player.gamePlayerState.isAlive === true) {
-      alivePlayers.push(player);
-    }
-  }
+  const alivePlayers = players.filter(player => player.gamePlayerState.isAlive);
+
   return (
     <div className="bottomScreen aliveList">
       <h3>Alive: {alivePlayers.length}</h3>
       <ul>
-        {alivePlayers.map(player => {return <li>{player.nickname}</li>})}
+        {alivePlayers.map(player => {return <li key={player.id}>{player.nickname}</li>})}
       </ul>
     </div>
   )
@@ -316,17 +523,14 @@ function DeadList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are dead
   const players = lobbyState.playerList;
-  const deadPlayers = [];
-  for (const player of players) {
-    if (player.gamePlayerState.isAlive == false) {
-      deadPlayers.push(player);
-    }
-  }
+  const deadPlayers = players.filter(player => !player.gamePlayerState.isAlive);
   return (
     <div className="bottomScreen deadList">
       <h3>Dead: {deadPlayers.length}</h3>
       <ul>
-        {deadPlayers.map(player => {return <li>{player.nickname}</li>})}
+        {deadPlayers.map(player => {return <li key={player.id}>
+          <img src={roles[player.gamePlayerState.role].image} alt={player.gamePlayerState.role} width="25px" /> {player.nickname}
+        </li>})}
       </ul>
     </div>
   )
@@ -335,23 +539,27 @@ function DeadList() {
 function MafiaList() {
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
-  // TODO: Check which players are dead
-  const mafiaPlayers = lobbyState.gameState.mafiaList;
-
-  if (playerState.gamePlayerState.role != "mafia")
+  
+  if (roles[playerState.gamePlayerState.role].team !== "Mafia")
   {
     return (
       <div className="bottomScreen mafiaList">
-      <h3>Sorry, you're not in the mafia.</h3>
+      <h3>Mafia:</h3>
+      You are not in the Mafia.
       </div>
     )
   }
+
+  const mafiaPlayers = lobbyState.playerList.filter(player =>
+    roles[player.gamePlayerState.role].team === "Mafia");
 
   return (
     <div className="bottomScreen mafiaList">
       <h3>Mafia: {mafiaPlayers.length}</h3>
       <ul>
-        {mafiaPlayers.map(player => {return <li>{player.nickname}</li>})}
+        {mafiaPlayers.map(player => {
+          return <li><img src={roles[player.gamePlayerState.role].image} alt={player.role} width="25px" /> {player.nickname}</li>
+        })}
       </ul>
     </div>
   )
