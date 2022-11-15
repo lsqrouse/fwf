@@ -3,6 +3,7 @@ import Settings from './Settings';
 import InGame from './InGame';
 import { useSelector } from "react-redux";
 import roles from "../../data/mafia/roles";
+import "../../styles/mafia/reusable.css";
 
 function MafiaContainer(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
@@ -138,10 +139,10 @@ function SettingsScreen(props) {
       {isHost &&
         <>
           <div>
-            <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+            <button type="button" class="startGameButton mafiaButton2" onClick={startGame}>Start Game</button>
           </div>
           <div>
-            <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
+            <button type="button" class="endGameButton mafiaButton2" onClick={endGame}>End Game</button>
           </div>
           <div id="warnMessage">
             {warnMessage}

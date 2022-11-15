@@ -26,15 +26,15 @@ function Settings(props) {
       />
 
       <div>
-        <input type="text" id="dayTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
+        <input type="text" name="frameName" className="timeInput mafiaInput1"></input>
+          <button className="mafiaButton2" onClick={() => {
             var fname = document.getElementById("dayTime");
             var time = fname.value;
             //handleDayPhaseTime(time);
           }}>Set day phase time in seconds </button>
 
-          <input type="text" id="nightPhaseTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
+          <input type="text" name="frameName" className="timeInput mafiaInput1"></input>
+          <button className="mafiaButton2" onClick={() => {
             var fname = document.getElementById("nightPhaseTime");
             var time = fname.value;
             //handleNightPhaseTime(time);

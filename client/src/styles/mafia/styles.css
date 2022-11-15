@@ -4,15 +4,13 @@
 
 .roleSetter {
   width: 300px;
-  margin: auto;
 }
 
 .roleDiv {
   border-radius: 10px;
-  border: 1px darkgray solid;
-  height: 30px;
+  height: 55px;
   margin-top: 4px;
-  padding: 6px;
+  padding: 10px;
 }
 
 .villageRole {
@@ -33,10 +31,17 @@
 
 .addRoleButton {
   float: right;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  line-height: 35px;
+  border: none;
+  border-radius: 10px;
+  background-color: whitesmoke;
 }
 
 #chooseRolesDiv, #selectedRolesDiv {
-  width: 150px;
+  width: 200px;
   margin-top: 0;
 }
 
@@ -44,8 +49,19 @@
   float: left;
 }
 
+#chooseRolesDiv .roleLabel {
+  font-size: 14px;
+  display: inline-block;
+  height: 35px;
+  font-family: 'Inter', sans-serif;
+}
+
 #selectedRolesDiv {
   float: left;
+}
+
+.timeInput {
+  width: 100px;
 }
 
 #header {

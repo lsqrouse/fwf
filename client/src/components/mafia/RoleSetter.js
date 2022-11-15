@@ -92,8 +92,8 @@ function RoleSetter(props) {
         SELECTED: {selectedRoles.length}
         <br/>
         {isHost && <>
-        <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
-        <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
+        <button type="button" className="clearRolesButton mafiaButton2" onClick={clearRoles}>Clear all</button>
+        <button type="button" className="suggestRolesbutton mafiaButton2" onClick={suggestRoles}>Suggest</button>
         </>}
         <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
       </div>
@@ -118,7 +118,7 @@ function Role(props) {
   return (
     <div className={cn}>
       <img src={role.image} alt={role.name} width="35px" />
-      {role.name}
+      <div className="roleLabel">{role.name}</div>
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
     </div>
   );
@@ -126,7 +126,7 @@ function Role(props) {
 
 function AddRoleButton(props) {
   return (
-    <button type="button" class="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
+    <button type="button" class="addRoleButton mafiaButton1" onClick={() => props.addRole(props.roleName)}>+</button>
   );
 }
 
