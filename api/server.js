@@ -70,8 +70,8 @@ io.on('connection', (socket) => {
       gameState.lobbyHost = socket.id;
     }
 
-  gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
-    io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
+  //gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
+    //io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       db_id: "NONE",
