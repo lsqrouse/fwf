@@ -1,3 +1,8 @@
+.settingsScreen {
+  font-size: 14px;
+
+}
+
 .settingsScreen button, .roleSetter button {
   margin: 2px;
 }
@@ -45,8 +50,8 @@
 }
 
 #chooseRolesDiv, #selectedRolesDiv {
-  width: 200px;
-  margin-top: 0;
+  width: 198px;
+  margin: 1px;
 }
 
 #chooseRolesDiv {
@@ -62,6 +67,14 @@
 
 #selectedRolesDiv {
   float: left;
+}
+
+#selectedRoles {
+  margin-top: 10px;
+}
+
+#selectedRoles img {
+  margin: 1px;
 }
 
 .timeInput {
@@ -161,4 +174,8 @@
 
 #menuItems a:visited {
   color: gray;
+}
+
+#warnMessage {
+  height: 30px;
 }

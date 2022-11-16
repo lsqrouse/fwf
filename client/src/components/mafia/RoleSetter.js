@@ -132,7 +132,7 @@ function AddRoleButton(props) {
 function SelectedRoles(props) {
   if (props.isHost) {
     return (
-      <div>
+      <div id="selectedRoles">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
             <span onClick={() => props.removeRoleIndex(index)}>

@@ -13,16 +13,9 @@ function Settings(props) {
 
   return (
     <div class="settings">
-      <div>
-        <p>
-          <h3>Settings</h3>
-        </p>
-        There are {numPlayers} players. Minimum 4 required.
-      </div>
-
       <div className="settingsTabs">
-        <button className={"mafiaButton1" + (settingsTab === "roles" ? " mafiaPrimary" : "")} onClick={() => setSettingsTab("roles")}>Roles</button>
-        <button className={"mafiaButton1" + (settingsTab === "timer" ? " mafiaPrimary" : "")} onClick={() => setSettingsTab("timer")}>Timers</button>
+        <button className={"mafiaButton1" + (settingsTab === "roles" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("roles")}>Roles</button>
+        <button className={"mafiaButton1" + (settingsTab === "timer" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("timer")}>Timers</button>
       </div>
       
       {

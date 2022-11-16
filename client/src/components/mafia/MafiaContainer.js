@@ -128,6 +128,21 @@ function SettingsScreen(props) {
 
   return (
     <div className="settingsScreen">
+
+      <div>
+        There are {numPlayers} players. Minimum 4 required.
+      </div>
+
+      {isHost &&
+        <>
+          <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
+          <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
+          <div id="warnMessage">
+            {warnMessage}
+          </div>
+        </>
+      }
+
       <Settings
         roles={roles}
         numPlayers={numPlayers}
@@ -136,15 +151,6 @@ function SettingsScreen(props) {
         setSelectedRoles={setSelectedRoles}
         socket={socket}
       />
-      {isHost &&
-      <>
-        <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
-        <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
-        <div id="warnMessage">
-          {warnMessage}
-        </div>
-      </>
-      }
     </div>
   );
 }
