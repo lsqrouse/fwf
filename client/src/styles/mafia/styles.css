@@ -1,18 +1,25 @@
+.settingsScreen {
+  font-size: 14px;
+
+}
+
+.settingsScreen button, .roleSetter button {
+  margin: 2px;
+}
+
 .settings {
   display: block;
 }
 
 .roleSetter {
-  width: 300px;
-  margin: auto;
+  width: 400px;
 }
 
 .roleDiv {
   border-radius: 10px;
-  border: 1px darkgray solid;
-  height: 30px;
+  height: 55px;
   margin-top: 4px;
-  padding: 6px;
+  padding: 10px;
 }
 
 .villageRole {
@@ -33,19 +40,45 @@
 
 .addRoleButton {
   float: right;
+  width: 35px;
+  height: 35px;
+  font-size: 24px;
+  line-height: 35px;
+  border: none;
+  border-radius: 10px;
+  background-color: whitesmoke;
 }
 
 #chooseRolesDiv, #selectedRolesDiv {
-  width: 150px;
-  margin-top: 0;
+  width: 198px;
+  margin: 1px;
 }
 
 #chooseRolesDiv {
   float: left;
 }
 
+#chooseRolesDiv .roleLabel {
+  font-size: 14px;
+  display: inline-block;
+  height: 35px;
+  font-family: 'Inter', sans-serif;
+}
+
 #selectedRolesDiv {
   float: left;
+}
+
+#selectedRoles {
+  margin-top: 10px;
+}
+
+#selectedRoles img {
+  margin: 1px;
+}
+
+.timeInput {
+  width: 100px;
 }
 
 #header {
@@ -141,4 +174,8 @@
 
 #menuItems a:visited {
   color: gray;
+}
+
+#warnMessage {
+  height: 30px;
 }

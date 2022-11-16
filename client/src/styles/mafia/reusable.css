@@ -1,0 +1,66 @@
+.mafiaButton1 {
+  height: 35px;
+  font-size: 16px;
+  border: 2px #575757 solid;
+  border-radius: 8px;
+  background: #575757;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  padding: 5px 10px
+}
+
+.mafiaButton1:hover {
+  background: #424242;
+  border-color: #424242;
+}
+
+.mafiaButton2 {
+  height: 35px;
+  font-size: 16px;
+  border: 2px #575757 solid;
+  border-radius: 8px;
+  background: none;
+  color: #575757;
+  font-family: 'Inter', sans-serif;
+  padding: 5px 10px
+}
+
+.mafiaButton2:hover {
+  background: #f0f0f0;
+  border-color: #424242;
+  color: #424242;
+}
+
+.mafiaInput1 {
+  height: 35px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Palette */
+.mafiaPrimary {
+  background-color: #d14838;
+  border-color: #d14838;
+}
+
+.mafiaSecondary {
+  background-color: #c76c6c;
+  border-color: #c76c6c;
+}
+
+.mafiaTertiary {
+  background-color: #e19282;
+  border-color: #e19282;
+}
+
+.mafiaGray1 {
+  background-color: #575757;
+  border-color: #575757;
+}
+
+.mafiaGray2 {
+  background-color: #424242;
+  border-color: #424242;
+}
+/***********/

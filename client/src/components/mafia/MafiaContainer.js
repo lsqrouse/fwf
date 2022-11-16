@@ -3,11 +3,10 @@ import Settings from './Settings';
 import InGame from './InGame';
 import { useSelector } from "react-redux";
 import roles from "../../data/mafia/roles";
+import "../../styles/mafia/reusable.css";
 
 function MafiaContainer(props) {
-  console.log("LOADED MAFIA");
-
-  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
+  const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
   const selectedRoles = useSelector((state) => state.lobbyState.gameState.settings.selectedRoles);
   const gameScreen = useSelector((state) => state.lobbyState.gameState.gameScreen);
   const socket = props.socket;
@@ -34,6 +33,7 @@ function MafiaContainer(props) {
             selectedRoles: selectedRoles,
           }
           socket.emit("start_game", startData);
+
         } else {
           setWarnMessage(check.message + " Game can still be started.");
         }
@@ -58,11 +58,11 @@ function MafiaContainer(props) {
           other++;
       }
     }
-    if (selectedRoles.length > numPlayers) {
+    if (selectedRoles.length < numPlayers) {
       return {message: "Not enough roles selected!", valid: false};
     }
-    if (selectedRoles.length < numPlayers) {
-      return {message: "Too few roles selected!", valid: false};
+    if (selectedRoles.length > numPlayers) {
+      return {message: "Too many roles selected!", valid: false};
     }
     if (village === 0) {
       return {message: "At least one Village role must be selected.", valid: false};
@@ -97,6 +97,7 @@ function MafiaContainer(props) {
         <GameScreen
           roles={roles}
           roleList={selectedRoles}
+          socket={socket}
         />)
       ||
       (gameScreen === "Settings" &&
@@ -126,7 +127,22 @@ function SettingsScreen(props) {
   const socket = props.socket;
 
   return (
-    <>
+    <div className="settingsScreen">
+
+      <div>
+        There are {numPlayers} players. Minimum 4 required.
+      </div>
+
+      {isHost &&
+        <>
+          <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
+          <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
+          <div id="warnMessage">
+            {warnMessage}
+          </div>
+        </>
+      }
+
       <Settings
         roles={roles}
         numPlayers={numPlayers}
@@ -135,27 +151,14 @@ function SettingsScreen(props) {
         setSelectedRoles={setSelectedRoles}
         socket={socket}
       />
-      {isHost &&
-        <>
-          <div>
-            <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
-          </div>
-          <div>
-            <button type="button" class="endGameButton" onClick={endGame}>End Game</button>
-          </div>
-          <div id="warnMessage">
-            {warnMessage}
-          </div>
-        </>
-      }
-    </>
+    </div>
   );
 }
 
 function GameScreen(props) {
   return (
     <>
-      <InGame roleList={props.roleList} />
+      <InGame roleList={props.roleList} socket={props.socket} />
     </>
   );
 }
