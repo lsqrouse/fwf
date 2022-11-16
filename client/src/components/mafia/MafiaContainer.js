@@ -127,7 +127,7 @@ function SettingsScreen(props) {
   const socket = props.socket;
 
   return (
-    <>
+    <div className="settingsScreen">
       <Settings
         roles={roles}
         numPlayers={numPlayers}
@@ -145,7 +145,7 @@ function SettingsScreen(props) {
         </div>
       </>
       }
-    </>
+    </div>
   );
 }
 

@@ -1,3 +1,7 @@
+.settingsScreen button, .roleSetter button {
+  margin: 2px;
+}
+
 .settings {
   display: block;
 }
