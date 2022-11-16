@@ -37,3 +37,30 @@
   border-radius: 8px;
   font-family: 'Inter', sans-serif;
 }
+
+/* Palette */
+.mafiaPrimary {
+  background-color: #d14838;
+  border-color: #d14838;
+}
+
+.mafiaSecondary {
+  background-color: #ab5f5f;
+  border-color: #ab5f5f;
+}
+
+.mafiaTertiary {
+  background-color: #e19282;
+  border-color: #e19282;
+}
+
+.mafiaGray1 {
+  background-color: #575757;
+  border-color: #575757;
+}
+
+.mafiaGray2 {
+  background-color: #424242;
+  border-color: #424242;
+}
+/***********/

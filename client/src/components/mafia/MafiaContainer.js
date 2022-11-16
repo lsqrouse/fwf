@@ -137,17 +137,13 @@ function SettingsScreen(props) {
         socket={socket}
       />
       {isHost &&
-        <>
-          <div>
-            <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
-          </div>
-          <div>
-            <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
-          </div>
-          <div id="warnMessage">
-            {warnMessage}
-          </div>
-        </>
+      <>
+        <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
+        <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
+        <div id="warnMessage">
+          {warnMessage}
+        </div>
+      </>
       }
     </>
   );

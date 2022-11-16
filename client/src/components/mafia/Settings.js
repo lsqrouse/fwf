@@ -2,12 +2,14 @@ import { useState } from "react";
 import RoleSetter from "./RoleSetter";
 import "../../styles/mafia/styles.css";
 import { useSelector } from "react-redux";
+import TimerSettings from "./TimerSettings";
 
 function Settings(props) {
   const roles = props.roles;
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
+  const [settingsTab, setSettingsTab] = useState("roles");
 
   return (
     <div class="settings">
@@ -15,8 +17,16 @@ function Settings(props) {
         <p>
           <h3>Settings</h3>
         </p>
-        There are {numPlayers} players. Minimum 2 required.
+        There are {numPlayers} players. Minimum 4 required.
       </div>
+
+      <div className="settingsTabs">
+        <button className={"mafiaButton1" + (settingsTab === "roles" ? " mafiaPrimary" : "")} onClick={() => setSettingsTab("roles")}>Roles</button>
+        <button className={"mafiaButton1" + (settingsTab === "timer" ? " mafiaPrimary" : "")} onClick={() => setSettingsTab("timer")}>Timers</button>
+      </div>
+      
+      {
+      settingsTab === "roles" ?
       <RoleSetter
         roles={roles}
         numPlayers={numPlayers}
@@ -24,23 +34,12 @@ function Settings(props) {
         setSelectedRoles={setSelectedRoles}
         socket={props.socket}
       />
-
-      <div>
-        <input type="text" name="frameName" className="timeInput mafiaInput1"></input>
-          <button className="mafiaButton2" onClick={() => {
-            var fname = document.getElementById("dayTime");
-            var time = fname.value;
-            //handleDayPhaseTime(time);
-          }}>Set day phase time in seconds </button>
-
-          <input type="text" name="frameName" className="timeInput mafiaInput1"></input>
-          <button className="mafiaButton2" onClick={() => {
-            var fname = document.getElementById("nightPhaseTime");
-            var time = fname.value;
-            //handleNightPhaseTime(time);
-          }}>Set night phase time in seconds </button>
-      </div>
-
+      :
+      settingsTab === "timer" ?
+      <TimerSettings />
+      :
+      <></>
+      }
     </div>
   );
 }

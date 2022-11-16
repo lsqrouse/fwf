@@ -17,7 +17,6 @@ function RoleSetter(props) {
   
   function suggestRoles() {
     if (numPlayers < 4) {
-      alert("Need more than three players!!");
       return;
     } else if (numPlayers == 4) {
       setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 3));
@@ -80,7 +79,7 @@ function RoleSetter(props) {
   }
 
   return (
-    <div class="roleSetter">
+    <div className="roleSetter">
       {isHost && <div id="chooseRolesDiv">
         CHOOSE:
         <br/>
