@@ -2,7 +2,6 @@ import { useState } from "react";
 import Settings from './Settings';
 import InGame from './InGame';
 import { useSelector } from "react-redux";
-import roles from "../../data/mafia/roles";
 import "../../styles/mafia/reusable.css";
 
 function MafiaContainer(props) {
@@ -13,12 +12,18 @@ function MafiaContainer(props) {
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
   const minPlayers = 4;
+  let roles = {};
+
+  // Get roles data from server.
+  socket.emit("mafia_request_roles_data");
+
+  socket.on("mafia_roles_data", (data) => {
+    roles = data;
+  });
 
   function startGame() {
-    // TODO: check for invalid role list
-    //setNumPlayers(lobbyState.playerList.length);
-    console.log(lobbyState.playerList.length);
     console.log("NUM PLAYERS %d", numPlayers);
+    // Only start the game if the number of roles and players is good.
     if (numPlayers < minPlayers) {
       setWarnMessage("Need at least " + minPlayers + " players.");
     } else {
@@ -32,8 +37,8 @@ function MafiaContainer(props) {
             lobbyId: lobbyState.lobbyId,
             selectedRoles: selectedRoles,
           }
+          // Start the game as the number of roles and players is good.
           socket.emit("start_game", startData);
-
         } else {
           setWarnMessage(check.message + " Game can still be started.");
         }
@@ -79,8 +84,8 @@ function MafiaContainer(props) {
     return {message: "OK", valid: true};
   }
 
-  function updateSelectedRoles(roles) {
-    const newSelectedRoles = roles;
+  function updateSelectedRoles(newRoles) {
+    const newSelectedRoles = newRoles;
     lobbyState.gameState.settings.selectedRoles = newSelectedRoles;
     socket.emit("update_lobby_state", lobbyState);
     setWarnMessage("");
@@ -102,6 +107,7 @@ function MafiaContainer(props) {
       ||
       (gameScreen === "Settings" &&
         <SettingsScreen
+          roles={roles}
           numPlayers={numPlayers}
           selectedRoles={selectedRoles}
           setSelectedRoles={updateSelectedRoles}
@@ -116,6 +122,7 @@ function MafiaContainer(props) {
 }
 
 function SettingsScreen(props) {
+  const roles = props.roles;
   const numPlayers = props.numPlayers;
   const setNumPlayers = props.setNumPlayers;
   const selectedRoles = props.selectedRoles;
@@ -158,7 +165,7 @@ function SettingsScreen(props) {
 function GameScreen(props) {
   return (
     <>
-      <InGame roleList={props.roleList} socket={props.socket} />
+      <InGame roles={props.roles} roleList={props.roleList} socket={props.socket} />
     </>
   );
 }
