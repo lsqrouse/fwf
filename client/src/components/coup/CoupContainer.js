@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import roles from "../../data/coup/roles";
 import "../../styles/coup/CoupContainer.css"
 import coinIcon from "../../images/coup/coin.png"
@@ -1271,7 +1271,7 @@ function CoupContainer(props)
           <div className="coupHeaderContent">
             <span>COUP</span>
           </div>
-          <RoleList roleList={roles} gameVersion={gameVersion}/>
+          <RoleListCircle roleList={roles} gameVersion={gameVersion}/>
           <SettingStuff startGame={startGame} nextGameVersion={nextGameVersion} lobbyState={lobbyState}/>
       </div>
     </>}
@@ -1816,32 +1816,32 @@ function CoupContainer(props)
               </div>
             </div>
 
-            {/* If not player turn only let them see stats */}
-            {!isPlayerTurn && <>
-              <div className="coins">
-                <span>{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn</span>
-              </div>
-              <div class="turnStuff">
-                <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
-                {playerState.host && <>
-                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
-                </>}
-              </div>
-            </>}
+            <div class="actionStuff">
+              {/* If not player turn only let them see stats */}
+              {!isPlayerTurn && <>
+                <div class="turnStuff">
+                  <span>{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn</span>
+                  <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
+                  {playerState.host && <>
+                    <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                  </>}
+                </div>
+              </>}
 
-            {/* If player turn let them do turn stuff */}
-            {isPlayerTurn && <>
-              <div class="turnStuff">
-                <button type="button" class="startGameButton" onClick={playLie}>Play {(playingLie == 0) && <>Lie</>}{(playingLie == 1) && <>Truth</>}</button>
-                <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
-                <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
-                <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
-                <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
-                {playerState.host && <>
-                  <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
-                </>}
-              </div>
-            </>}
+              {/* If player turn let them do turn stuff */}
+              {isPlayerTurn && <>
+                <div class="turnStuff">
+                  <button type="button" class="startGameButton" onClick={playLie}>Play {(playingLie == 0) && <>Lie</>}{(playingLie == 1) && <>Truth</>}</button>
+                  <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
+                  <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
+                  <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
+                  <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
+                  {playerState.host && <>
+                    <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                  </>}
+                </div>
+              </>}
+            </div>
       </div>
     </>}
     </>
@@ -1849,24 +1849,89 @@ function CoupContainer(props)
 }
 
 // Roles for coup
-function RoleList(props) 
-{
-    // Get role list based on game version
-    const gameVersion = props.gameVersion;
-    const roleList = props.roleList[gameVersion];
+// function RoleList(props) 
+// {
+//     // Get role list based on game version
+//     const gameVersion = props.gameVersion;
+//     const roleList = props.roleList[gameVersion];
   
-    return (
-      <div class="parent carousel">
-        {roleList.map((role) => 
+//     return (
+//       <div class="parent carousel">
+//         {roleList.map((role) => 
+//         {
+//           return (
+//             <div class="bigItem"
+//               style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+//               {/* <div class="couponcode">
+//                 <span class="coupontooltip">
+//                   <h2>{role.name}</h2>
+//                   <h3>{role.ability}</h3>
+//                 </span>
+//               </div> */}
+//             </div>
+//           );
+//         })}
+//       </div>
+//       // <div className="parent">
+//       //   <ul class="centerStuffXY">
+//       //     {roleList.map(role => {
+//       //       return (
+//       //         <div>
+//       //           <div class="couponcode">
+//       //             {role.name}
+//       //             <span class="coupontooltip">
+//       //               <h2>{role.name}</h2>
+//       //               <h3>{role.ability}</h3>
+//       //             </span>
+//       //           </div>
+//       //         </div>
+//       //       )
+//       //       })}
+//       //   </ul>
+//       // </div>
+//     );
+// }
+function RoleListCircle(props)
+{
+  // Get role list based on game version
+  const gameVersion = props.gameVersion;
+  const roleList = props.roleList[gameVersion];
+
+  // Do after first render
+  useEffect(() => 
+  {
+    // Get circle stuff
+    const circlegraph = document.getElementById("circleGraph");
+    let angle = 360;
+    let dangle = 360 / circlegraph.childNodes.length;
+
+    // Arange icons in circle
+    for (const circle of circlegraph.childNodes) 
+    {
+      angle += dangle;
+      circle.style.transform = `rotate(${angle}deg) translate(${circlegraph.clientWidth /
+        2}px) rotate(-${angle}deg)`;
+    }
+  }, [])
+
+  return (
+    <div id="circleGraph" className="circlegraph">
+      {roleList.map((role) =>
         {
           return (
-            <div class="bigItem"
+            <div class="circle"
               style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
+              {/* <div class="couponcode">
+                <span class="coupontooltip">
+                  <h2>{role.name}</h2>
+                  <h3>{role.ability}</h3>
+                </span>
+              </div> */}
             </div>
           );
         })}
     </div>
-    );
+  );
 }
 
 // Settings for coup
@@ -1874,15 +1939,15 @@ function SettingStuff(props)
 {
     // Initialize stuff
     const startGame = props.startGame;
-    //const nextGameVersion = props.nextGameVersion;
+    // const nextGameVersion = props.nextGameVersion;
     const isHost = useSelector((state) => state.playerState.host);
     
   
     return (
-      <div className="settingStuff centerStuff">
+      <div className="actionStuff">
         {isHost && <>
             <div>
-              <button type="button" class="startGameButton" onClick={startGame}>Start Game</button>
+              <h3><button type="button" class="startGameButton" onClick={startGame}>Start Game</button></h3>
             </div>
         </>}
         {!isHost && <> 

@@ -1,8 +1,8 @@
 .coupContainer 
 {
-  font-size: 14px;
-  height: 95%;
+  height: 99%;
   width: 100%;
+  font-size: 14px;
 }
 
 .coupHeaderContent 
@@ -10,7 +10,6 @@
   font-size: 55px;
   font-weight: bold;
   text-align: center;
-  padding-bottom: 15px;
 }
 
 .coupHeader span 
@@ -22,18 +21,12 @@
 {
   display: flex;
   height: 75%;
+  padding-bottom: 15px;
 }
 
 .roleList 
 {
   height: 100%;
-  width: 50%;
-  text-align: center;
-  border: 1.5px grey solid;
-}
-
-.settingStuff 
-{
   width: 50%;
   text-align: center;
   border: 1.5px grey solid;
@@ -95,7 +88,6 @@
   padding-top: 15px;
   overflow-x: scroll;
   white-space: nowrap;
-  padding-bottom: 15px; 
 }
 
 .item 
@@ -141,6 +133,7 @@
   border: 1px solid #888;
 }
 
+/* On hover modal thing */
 .couponcode:hover .coupontooltip 
 {
   display: block;
@@ -167,4 +160,32 @@
 .couponcode 
 {
   height: 100%;
+}
+
+/* Algin divs in circle*/
+.actionStuff 
+{
+  width: 100%;
+  text-align: center;
+  border-radius: 15px;
+  background-color: blanchedalmond;
+  border: 1.5px grey solid;
+}
+
+.circlegraph
+{
+  width: 65%;
+  height: 70%;
+  position: relative;
+  margin: calc(50px / 2 + 0px);
+}
+
+.circlegraph .circle
+{
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
 }
