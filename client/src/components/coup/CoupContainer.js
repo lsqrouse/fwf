@@ -238,6 +238,12 @@ function CoupContainer(props)
     socket.emit("coup_next_player_turn", lobbyState);
   }
 
+  // Reset playing truth state variable
+  socket.on("reset_playing_truth", (data) => 
+  {
+    setPlayingLie(0);
+  });
+
   // Close all modals that could be open
   socket.on("coup_close_all_modals", (data) => 
   {

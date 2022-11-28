@@ -233,6 +233,7 @@ io.on('connection', (socket) => {
           if (newPlayerState.id == socket.id) 
           {
             socket.emit("recieve_player_state", newPlayerState);
+            socket.emit("reset_playing_truth", newPlayerState);
           }
         })  
       })
