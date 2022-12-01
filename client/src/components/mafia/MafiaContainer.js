@@ -12,13 +12,15 @@ function MafiaContainer(props) {
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
   const minPlayers = 4;
-  let roles = {};
+  const [roles, setRoles] = useState({});
+  const [teams, setTeams] = useState({})
 
   // Get roles data from server.
-  socket.emit("mafia_request_roles_data");
+  socket.emit("mafia_request_data", lobbyState.lobbyId);
 
-  socket.on("mafia_roles_data", (data) => {
-    roles = data;
+  socket.on("mafia_data", (data) => {
+    setRoles(data.roles);
+    setTeams(data.teams);
   });
 
   function startGame() {
@@ -100,6 +102,7 @@ function MafiaContainer(props) {
     {
       (gameScreen === "Game" &&
         <GameScreen
+          teams={teams}
           roles={roles}
           roleList={selectedRoles}
           socket={socket}
@@ -142,8 +145,8 @@ function SettingsScreen(props) {
 
       {isHost &&
         <>
-          <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
-          <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
+          <button type="button" className="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
+          <button type="button" className="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
           <div id="warnMessage">
             {warnMessage}
           </div>
@@ -165,7 +168,7 @@ function SettingsScreen(props) {
 function GameScreen(props) {
   return (
     <>
-      <InGame roles={props.roles} roleList={props.roleList} socket={props.socket} />
+      <InGame roles={props.roles} teams={props.teams} roleList={props.roleList} socket={props.socket} />
     </>
   );
 }

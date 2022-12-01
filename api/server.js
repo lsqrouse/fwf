@@ -10,8 +10,7 @@ const cors = require("cors");
 const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUserId, getHistoryByUserId, login} = require('./queries.js')
 const bcrypt = require("bcrypt");
 const { NONAME } = require("dns");
-
-
+const mafiaData = require("./mafia/src/data/data");
 
 const PORT = process.env.PORT || 3001;
 const userNames = [];
@@ -211,6 +210,14 @@ io.on('connection', (socket) => {
 
   // ---------- Mafia-specific socket events and funtions ----------
   
+  socket.on("mafia_request_data", (lobbyId) => {
+    const data = {
+      roles: mafiaData.roles,
+      teams: mafiaData.teams
+    };
+    io.in(lobbyId).emit("mafia_data", data);
+  });
+
   socket.on("mafia_check_night_end", (lobbyId) => {
     console.log("Checking if night phase can be ended")
 
