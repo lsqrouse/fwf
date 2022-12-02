@@ -16,7 +16,9 @@ function MafiaContainer(props) {
   const [teams, setTeams] = useState({})
 
   // Get roles data from server.
-  socket.emit("mafia_request_data", lobbyState.lobbyId);
+  if (Object.keys(roles).length === 0 || Object.keys(teams).length === 0) {
+    socket.emit("mafia_request_data", lobbyState.lobbyId);
+  }
 
   socket.on("mafia_data", (data) => {
     setRoles(data.roles);
