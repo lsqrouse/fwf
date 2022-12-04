@@ -2,7 +2,6 @@ import { useState } from "react";
 import Settings from './Settings';
 import InGame from './InGame';
 import { useSelector } from "react-redux";
-import roles from "../../data/mafia/roles";
 import "../../styles/mafia/reusable.css";
 
 function MafiaContainer(props) {
@@ -13,12 +12,22 @@ function MafiaContainer(props) {
   const lobbyState = useSelector((state) => state.lobbyState);
   const [warnMessage, setWarnMessage] = useState("");
   const minPlayers = 4;
+  const [roles, setRoles] = useState({});
+  const [teams, setTeams] = useState({})
+
+  // Get roles data from server.
+  if (Object.keys(roles).length === 0 || Object.keys(teams).length === 0) {
+    socket.emit("mafia_request_data", lobbyState.lobbyId);
+  }
+
+  socket.on("mafia_data", (data) => {
+    setRoles(data.roles);
+    setTeams(data.teams);
+  });
 
   function startGame() {
-    // TODO: check for invalid role list
-    //setNumPlayers(lobbyState.playerList.length);
-    console.log(lobbyState.playerList.length);
     console.log("NUM PLAYERS %d", numPlayers);
+    // Only start the game if the number of roles and players is good.
     if (numPlayers < minPlayers) {
       setWarnMessage("Need at least " + minPlayers + " players.");
     } else {
@@ -32,8 +41,8 @@ function MafiaContainer(props) {
             lobbyId: lobbyState.lobbyId,
             selectedRoles: selectedRoles,
           }
+          // Start the game as the number of roles and players is good.
           socket.emit("start_game", startData);
-
         } else {
           setWarnMessage(check.message + " Game can still be started.");
         }
@@ -79,8 +88,8 @@ function MafiaContainer(props) {
     return {message: "OK", valid: true};
   }
 
-  function updateSelectedRoles(roles) {
-    const newSelectedRoles = roles;
+  function updateSelectedRoles(newRoles) {
+    const newSelectedRoles = newRoles;
     lobbyState.gameState.settings.selectedRoles = newSelectedRoles;
     socket.emit("update_lobby_state", lobbyState);
     setWarnMessage("");
@@ -95,6 +104,7 @@ function MafiaContainer(props) {
     {
       (gameScreen === "Game" &&
         <GameScreen
+          teams={teams}
           roles={roles}
           roleList={selectedRoles}
           socket={socket}
@@ -102,6 +112,7 @@ function MafiaContainer(props) {
       ||
       (gameScreen === "Settings" &&
         <SettingsScreen
+          roles={roles}
           numPlayers={numPlayers}
           selectedRoles={selectedRoles}
           setSelectedRoles={updateSelectedRoles}
@@ -116,6 +127,7 @@ function MafiaContainer(props) {
 }
 
 function SettingsScreen(props) {
+  const roles = props.roles;
   const numPlayers = props.numPlayers;
   const setNumPlayers = props.setNumPlayers;
   const selectedRoles = props.selectedRoles;
@@ -135,8 +147,8 @@ function SettingsScreen(props) {
 
       {isHost &&
         <>
-          <button type="button" class="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
-          <button type="button" class="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
+          <button type="button" className="startGameButton mafiaButton1" onClick={startGame}>Start Game</button>
+          <button type="button" className="endGameButton mafiaButton1" onClick={endGame}>End Game</button>
           <div id="warnMessage">
             {warnMessage}
           </div>
@@ -158,7 +170,7 @@ function SettingsScreen(props) {
 function GameScreen(props) {
   return (
     <>
-      <InGame roleList={props.roleList} socket={props.socket} />
+      <InGame roles={props.roles} teams={props.teams} roleList={props.roleList} socket={props.socket} />
     </>
   );
 }

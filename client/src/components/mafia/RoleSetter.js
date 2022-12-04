@@ -1,4 +1,5 @@
 import {useSelector} from 'react-redux';
+import { getIcon } from "./getIcon";
 
 function RoleSetter(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
@@ -78,6 +79,7 @@ function RoleSetter(props) {
     setSelectedRoles(newRoles);
   }
 
+
   return (
     <div className="roleSetter">
       {isHost && <div id="chooseRolesDiv">
@@ -116,7 +118,7 @@ function Role(props) {
 
   return (
     <div className={cn}>
-      <img src={role.image} alt={role.name} width="35px" />
+      <img src={getIcon(role.name)} alt={role.name} width="35px" />
       <div className="roleLabel">{role.name}</div>
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
     </div>
@@ -125,7 +127,7 @@ function Role(props) {
 
 function AddRoleButton(props) {
   return (
-    <button type="button" class="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
+    <button type="button" className="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
   );
 }
 
@@ -137,7 +139,7 @@ function SelectedRoles(props) {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
             <span onClick={() => props.removeRoleIndex(index)}>
               <img
-                src={props.roles[roleName].image}
+                src={getIcon(roleName)}
                 width="35px"
                 alt={roleName}
                 title={roleName}
@@ -154,7 +156,7 @@ function SelectedRoles(props) {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
             <span>
               <img
-                src={props.roles[roleName].image}
+                src={getIcon(roleName)}
                 width="35px"
                 alt={roleName}
                 title={roleName}

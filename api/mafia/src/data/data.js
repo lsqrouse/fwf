@@ -1,37 +1,42 @@
-import PlayerIcon from "../../images/mafia/icons/player.png";
-import VillagerIcon from "../../images/mafia/icons/villager.png";
-import DetectiveIcon from "../../images/mafia/icons/detective.png";
-import DoctorIcon from "../../images/mafia/icons/doctor.png";
-import VigilanteIcon from "../../images/mafia/icons/vigilante.png";
-import DrunkIcon from "../../images/mafia/icons/drunk.png";
-import SwapperIcon from "../../images/mafia/icons/swapper.png";
-import MafiaIcon from "../../images/mafia/icons/mafia.png";
-import DistractorIcon from "../../images/mafia/icons/distractor.png"
-import ExecutionerIcon from "../../images/mafia/icons/executioner.png";
-import FramerIcon from "../../images/mafia/icons/framer.png";
-import InformantIcon from "../../images/mafia/icons/informant.png";
-import RessurectionistIcon from "../../images/mafia/icons/ressurectionist.png";
-import BombIcon from "../../images/mafia/icons/bomb.png";
-import JesterIcon from "../../images/mafia/icons/jester.png";
-import teams from "./teams";
+const teams = {
+  "Village": {
+    name: "Village",
+    winCondition: "Stop the Mafia from killing the Village!"
+  },
+
+  "Mafia": {
+    name: "Mafia",
+    winCondition: "Eliminate the Village before they eliminate you and the other Mafia!",
+    meetingAbility: "Vote on who to kill."
+  },
+
+  "Jester": {
+    name: "Jester",
+    winCondition: "Get voted out, whatever the cost!"
+  },
+
+  "Executioner": {
+    name: "Executioner",
+    winCondition: "Get your target voted out, whatever the cost!"
+  }
+}
 
 const roles = {
   "Villager": {
     name: "Villager",
-    image: VillagerIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`
   },
 
   "Mafia": {
-    name: "Mafia", image: MafiaIcon,
+    name: "Mafia",
+    image: "../../images/mafia/icons/mafia.png",
     team: "Mafia", winCondition: `${teams.Mafia.winCondition}`,
     abilitiesDesc: "Vote with the other Mafia to kill someone at night!",
   },
 
   "Detective": {
     name: "Detective",
-    image: DetectiveIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "investigate",
@@ -41,7 +46,6 @@ const roles = {
 
   "Doctor": {
     name: "Doctor",
-    image: DoctorIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "save",
@@ -51,7 +55,6 @@ const roles = {
 
   "Vigilante": {
     name: "Vigilante",
-    image: VigilanteIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "kill",
@@ -61,7 +64,6 @@ const roles = {
 
   "Drunk": {
     name: "Drunk",
-    image: DrunkIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "block",
@@ -71,7 +73,6 @@ const roles = {
 
   "Swapper": {
     name: "Swapper",
-    image: SwapperIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "swap",
@@ -81,7 +82,6 @@ const roles = {
 
   "Ressurectionist": {
     name: "Ressurectionist",
-    image: RessurectionistIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     ability: "ressurect",
@@ -91,7 +91,6 @@ const roles = {
 
   "Bomb": {
     name: "Bomb",
-    image: BombIcon,
     team: "Village",
     winCondition: `${teams.Village.winCondition}`,
     abilitiesDesc: "If you get killed at night, you explode and take down your attacker with you.",
@@ -99,7 +98,6 @@ const roles = {
 
   "Distractor": {
     name: "Distractor",
-    image: DistractorIcon,
     team: "Mafia",
     winCondition: `${teams.Mafia.winCondition}`,
     ability: "block",
@@ -109,7 +107,6 @@ const roles = {
 
   "Framer": {
     name: "Framer",
-    image: FramerIcon,
     team: "Mafia",
     winCondition: `${teams.Mafia.winCondition}`,
     ability: "frame",
@@ -119,7 +116,6 @@ const roles = {
 
   "Informant": {
     name: "Informant",
-    image: InformantIcon,
     team: "Mafia",
     winCondition: `${teams.Mafia.winCondition}`,
     ability: "identify",
@@ -129,18 +125,17 @@ const roles = {
 
   "Jester": {
     name: "Jester",
-    image: JesterIcon,
     team: "Jester",
     winCondition: `${teams.Jester.winCondition}`,
   },
 
   "Executioner": {
     name: "Executioner",
-    image: ExecutionerIcon,
     team: "Executioner",
     winCondition: `${teams.Executioner.winCondition}`,
     abilitiesDesc: "None. But you know that your target is part of the Village."
   }
 };
 
-export default roles;
+exports.roles = roles;
+exports.teams = teams;

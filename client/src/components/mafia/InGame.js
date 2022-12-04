@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import { useState } from "react";
 import { ChatButton, AbilityButton, VoteButton, NotesButton, AlertsButton, AliveButton, DeadButton, MafiaButton } from "./SideButtons"
 import RoleCard from "./RoleCard";
-import roles from "../../data/mafia/roles";
-import teams from "../../data/mafia/teams";
 import SunIcon from "../../images/mafia/sun.png";
 import MoonIcon from "../../images/mafia/moon.png";
+import { getIcon } from "./getIcon";
 
 function InGame(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   // chat, vote, ability, notes, alerts 
   const [topScreen, setTopScreen] = useState("chat");
   // aliveList, deadList
@@ -20,14 +21,16 @@ function InGame(props) {
   return (
     <div className="inGame">
       <MafiaHeader />
-      <RoleList roleList={props.roleList} />
-      <Phase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+      <RoleList roles={roles} roleList={props.roleList} />
+      <Phase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
       <RoleCard role={roles[playerRole]} />
     </div>
   );
 }
 
 function Phase(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   const phase = useSelector((state) => state.lobbyState.gameState.currentPhase);
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
@@ -47,13 +50,13 @@ function Phase(props) {
     case "day":
       return (
         <div className="phase">
-          <DayPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <DayPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     case "night":
       return (
         <div className="phase">
-          <NightPhase topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <NightPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
         </div>
       );
     default:
@@ -62,6 +65,8 @@ function Phase(props) {
 }
 
 function DayPhase(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
@@ -71,8 +76,8 @@ function DayPhase(props) {
   return (
     <>
       <div className="mainInfo">
-        <TopScreen screen={topScreen} socket={socket} />
-        <BottomScreen screen={bottomScreen} />
+        <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+        <BottomScreen roles={roles} screen={bottomScreen} />
       </div>
       <div className="sideButtons">
         <ChatButton setScreen={setTopScreen} />
@@ -89,6 +94,8 @@ function DayPhase(props) {
 }
 
 function NightPhase(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
@@ -98,12 +105,12 @@ function NightPhase(props) {
   return (
     <>
     <div className="mainInfo">
-      <TopScreen screen={topScreen} socket={socket} />
-      <BottomScreen screen={bottomScreen} />
+      <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+      <BottomScreen roles={roles} screen={bottomScreen} />
     </div>
     <div className="sideButtons">
       <ChatButton setScreen={setTopScreen} />
-      <AbilityButton setScreen={setTopScreen} />
+      <AbilityButton roles={roles} setScreen={setTopScreen} />
       <NotesButton setScreen={setTopScreen} />
       <AlertsButton setScreen={setTopScreen} />
       <hr />
@@ -137,6 +144,7 @@ function MafiaHeader(props) {
 }
 
 function RoleList(props) {
+  const roles = props.roles;
   const roleList = props.roleList;
   let roleCount = new Map();
 
@@ -150,7 +158,7 @@ function RoleList(props) {
   });
 
   const a = Array.from(roleCount).map(([key, value]) => (
-    <div className="roleListItem">{value}x <img src={roles[key].image} alt={key} title={key} width="24px"/></div>)
+    <div className="roleListItem">{value}x <img src={getIcon(roles[key].name)} alt={key} title={key} width="24px"/></div>)
     );
 
   return (
@@ -183,7 +191,7 @@ function getTargetTypesFromAbility(ability) {
   }
 }
 
-function getTargetFromTypesNotSelf(target, players) {
+function getTargetFromTypesNotSelf(target, players, roles) {
   let list = [...players];
 
   for (let j = 0; j < target.length; j++) {
@@ -211,7 +219,7 @@ function getTargetFromTypesNotSelf(target, players) {
   return list;
 }
 
-function filterTargets(ability, allPlayers, selfPlayerState) {
+function filterTargets(ability, allPlayers, selfPlayerState, roles) {
   const types = getTargetTypesFromAbility(ability);
   let results = [];
 
@@ -219,7 +227,7 @@ function filterTargets(ability, allPlayers, selfPlayerState) {
     const target = types[i];
     let list = [...allPlayers];
 
-    list = getTargetFromTypesNotSelf(target, list);
+    list = getTargetFromTypesNotSelf(target, list, roles);
 
     if (target.includes("self")) {
       // Add self to targets if not already included
@@ -297,6 +305,8 @@ function doDayVote(socket, lobbyState, voterId, choiceId) {
 }
 
 function TopScreen(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   const screen = props.screen;
   const socket = props.socket;
 
@@ -306,7 +316,7 @@ function TopScreen(props) {
     case "vote":
       return <Vote socket={socket} />
     case "ability":
-      return <Ability socket={socket} />
+      return <Ability roles={roles} teams={teams} socket={socket} />
     case "notes":
       return <Notes socket={socket} />
     case "alerts":
@@ -360,6 +370,8 @@ function Vote(props) {
 }
 
 function Ability(props) {
+  const roles = props.roles;
+  const teams = props.teams;
   const playerState = useSelector((state) => state.playerState);
   const lobbyState = useSelector((state) => state.lobbyState);
   const players = useSelector((state) => state.lobbyState.playerList);
@@ -368,7 +380,7 @@ function Ability(props) {
   const socket = props.socket;
 
   function TeamAbilityDiv() {
-    const targets = getTargetFromTypesNotSelf(["alive", "nonmafia"], players);
+    const targets = getTargetFromTypesNotSelf(["alive", "nonmafia"], players, roles);
     const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
       lobbyState.gameState.history[phaseNum].mafiaVotes : {};
     const mafiaMembers = lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
@@ -404,7 +416,7 @@ function Ability(props) {
 
   function IndividualAbilityDiv() {
     const ability = roles[playerState.gamePlayerState.role].ability;
-    const targets = filterTargets(ability, players, playerState);
+    const targets = filterTargets(ability, players, playerState, roles);
     return (
       <div className="ability">
         <h3>{role} Ability</h3>
@@ -490,14 +502,15 @@ function Alerts(props) {
 }
 
 function BottomScreen(props) {
+  const roles = props.roles;
   const screen = props.screen;
   switch (screen) {
     case "aliveList":
       return <AliveList />
     case "deadList":
-      return <DeadList />
+      return <DeadList roles={roles} />
     case "mafiaList":
-      return <MafiaList />
+      return <MafiaList roles={roles} />
     default:
       return <AliveList />
   }
@@ -519,7 +532,8 @@ function AliveList() {
   )
 }
 
-function DeadList() {
+function DeadList(props) {
+  const roles = props.roles;
   const lobbyState = useSelector((state) => state.lobbyState);
   // TODO: Check which players are dead
   const players = lobbyState.playerList;
@@ -529,14 +543,15 @@ function DeadList() {
       <h3>Dead: {deadPlayers.length}</h3>
       <ul>
         {deadPlayers.map(player => {return <li key={player.id}>
-          <img src={roles[player.gamePlayerState.role].image} alt={player.gamePlayerState.role} width="25px" /> {player.nickname}
+          <img src={getIcon(player.gamePlayerState.role)} alt={player.gamePlayerState.role} width="25px" /> {player.nickname}
         </li>})}
       </ul>
     </div>
   )
 }
 
-function MafiaList() {
+function MafiaList(props) {
+  const roles = props.roles;
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
   
@@ -558,7 +573,7 @@ function MafiaList() {
       <h3>Mafia: {mafiaPlayers.length}</h3>
       <ul>
         {mafiaPlayers.map(player => {
-          return <li><img src={roles[player.gamePlayerState.role].image} alt={player.role} width="25px" /> {player.nickname}</li>
+          return <li><img src={getIcon(roles[player.gamePlayerState.role].name)} alt={player.role} width="25px" /> {player.nickname}</li>
         })}
       </ul>
     </div>

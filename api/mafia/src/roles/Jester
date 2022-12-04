@@ -1,8 +1,0 @@
-const Teams = require("./Teams");
-const Abilities = require("./Ability");
-
-class Jester extends RoleType {
-  constructor() {
-    super("jester", null, Teams.Jester);
-  }
-}

@@ -12,7 +12,7 @@ function Settings(props) {
   const [settingsTab, setSettingsTab] = useState("roles");
 
   return (
-    <div class="settings">
+    <div className="settings">
       <div className="settingsTabs">
         <button className={"mafiaButton1" + (settingsTab === "roles" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("roles")}>Roles</button>
         <button className={"mafiaButton1" + (settingsTab === "timer" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("timer")}>Timers</button>
