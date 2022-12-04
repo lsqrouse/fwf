@@ -56,6 +56,21 @@
     position: relative;
   }
   
+  .content {
+    list-style-type: none;
+  }
+  
+  .popup-content {
+    display: flex;
+    background: grey;
+    width: 70%;
+    height: 90%;
+    position: relative;
+    border-radius: 5%;
+    border: 8px solid blue;
+    font-size: 25px;
+    right: 0;
+  }
 
   .players{
     display: flex;
@@ -101,6 +116,7 @@
   .myB {
     width: 40%;
     height: 20%;
+    right: 0;
 }
 .myBMaf {
   width: 40%;
@@ -134,8 +150,9 @@
 
 #chatBox {
     position: absolute;
+    width: 90%;
     bottom: 0;
-    left: 0;
+    right: 0;
 }
 
 .line {

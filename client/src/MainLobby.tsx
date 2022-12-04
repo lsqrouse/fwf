@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
+import Popup from 'reactjs-popup';
+//import 'reactjs-popup/dist/index';
 
 
 const socket = io("http://localhost:3001").connect()
@@ -143,6 +145,7 @@ export default function MainLobby() {
     socket.emit("update_lobby_state", curLobbyState);
   }
 
+
   // If just player return player screen
   console.log(playerState.host == false)
   console.log(playerState.id != lobbyState.lobbyHost)
@@ -155,7 +158,7 @@ export default function MainLobby() {
   }
   console.log(result, "ASFASFASFASFFFFFFFFFFFFFFFFFFFFFF");
   const listItems = result.map((msg) =>
-    <li>{msg}</li>
+    <li className='content'>{msg}</li>
   );
   
   if (playerState.id != lobbyState.lobbyHost) {
@@ -175,6 +178,7 @@ export default function MainLobby() {
         <div className='outerBox'>
           <div className='middle'>
             <div className='chat'>Players
+            
               <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
                 <AgGridReact
                   rowData={lobbyState.playerList}
@@ -190,20 +194,17 @@ export default function MainLobby() {
                 handleLeave={handleLeave}
               />
             </div>
-            <div className='chat'>chat
-              
-              <ul>{listItems}</ul>
-                <form onSubmit={handleChatSubmit}>
-                  <div id='chatBox'>
-                    <hr></hr>
-                    <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
-                    <button className='myB' type='submit'>send</button>
-                  </div>
-                </form>
-              
-            </div>
+            <Popup trigger={<button>Open Chat</button>} position="left center">
+                <ul>{listItems}</ul>
+                  <form onSubmit={handleChatSubmit}>
+                    <div id='chatBox'>
+                      <hr></hr>
+                      <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                      <button className='myB' type='submit'>send</button>
+                    </div>
+                  </form>
+             </Popup>
           </div>
-
           <div className='ag-theme-alpine' style={{ height: 75, width: 100 }}>
           </div>
         </div>
@@ -266,22 +267,15 @@ export default function MainLobby() {
               handleLeave={handleLeave}
             />
           </div>
-          <div className='chat'>
-          <hr id = 'chatBox'></hr>
-            <div >
-            
-
-
-            <ul>{listItems}</ul>
-              <form onSubmit={handleChatSubmit}>
-                <div id='chatBox'>
-                  <hr></hr>
-                  <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
-                  <button className='myB' type='submit'>send</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Popup trigger={<button>Open Chat</button>} position="left center">
+                <ul>{listItems}</ul>
+                  <form onSubmit={handleChatSubmit}>
+                    <div id='chatBox'>
+                      <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                      <button className='myB' type='submit'>send</button>
+                    </div>
+                  </form>
+             </Popup>
         </div>
         <div className="box">log</div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
