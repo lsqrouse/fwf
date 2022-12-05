@@ -44,16 +44,9 @@
 
   .chat{
     display: flex;
-    height: 600px;
-    width: 15%;
     border: 8px solid blue;
     align-items: flex-start;
-    padding: 2%;
-    margin: 0 auto;
-    margin-bottom: 2%;
-    margin-top: 2%;
     border-radius: 5%;
-    position: relative;
   }
   
   .content {

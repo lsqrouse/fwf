@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import './MainLobby.css';
 import Game from './pages/game';
@@ -7,7 +7,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
-import Popup from 'reactjs-popup';
+// import Popup from 'reactjs-popup';
+import { Container, Row, Col} from 'reactstrap';
 //import 'reactjs-popup/dist/index';
 
 
@@ -160,41 +161,51 @@ export default function MainLobby() {
   const listItems = result.map((msg) =>
     <li className='content'>{msg}</li>
   );
+
+  const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
+
   
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
-        <div className="login">
-          <Link to="/">
-            <button className='myButton' onClick={handleLeave}>Back</button>
-          </Link>
-          <Link to="/Instructions">
-            <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
-          </Link>
-        </div>
-        <div className='titleBox'>
-          <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.gameState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
-        </div>
-        <div className='outerBox'>
-          <div className='middle'>
-            <div className='chat'>Players
+      <Container style={{maxWidth:'100%', justifyContent:'center'}}>
+        <Row>
+          <Col className='col-2'>
+            <Link to="/">
+              <button className='myButton' onClick={handleLeave}>Back</button>
+            </Link>
+          </Col>
+          <Col className='col-8' style={{textAlign: 'center'}}>
+            <h1>Welcome {playerState.nickname}! <br />  Lobby Code: {lobbyState.lobbyId}</h1>
+          </Col>
+          <Col className='col-2'>
+            <Link to="/Instructions">
+              <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
+            </Link>
+          </Col>
+        </Row>
+        <Row>
+          <Col className='col-3'>
+          <div className='chat'>Players
             
-              <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
-                </AgGridReact>
-              </div>
+            <div style={gridStyle} className="ag-theme-alpine">
+              <AgGridReact
+                rowData={lobbyState.playerList}
+                columnDefs={colDefs}>
+              </AgGridReact>
             </div>
-            <div className='playerScreen'>
-              <Game
+          </div>
+          </Col>
+          <Col className='col-6' style={{backgroundColor:'red'}}>
+          <Game
                 game={lobbyState.game}
                 code={lobbyState.lobbyId}
                 socket={socket}
                 handleLeave={handleLeave}
               />
-            </div>
-            <Popup trigger={<button>Open Chat</button>} position="left center">
+          </Col>
+          <Col className='col-3'>
+            {/* <Popup trigger={<button>Open Chat</button>} position="left center">
                 <ul>{listItems}</ul>
                   <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>
@@ -203,11 +214,10 @@ export default function MainLobby() {
                       <button className='myB' type='submit'>send</button>
                     </div>
                   </form>
-             </Popup>
-          </div>
-          <div className='ag-theme-alpine' style={{ height: 75, width: 100 }}>
-          </div>
-        </div>
+             </Popup> */}
+          </Col>
+        </Row>
+      </Container>
       </>
     )
   }
@@ -267,7 +277,7 @@ export default function MainLobby() {
               handleLeave={handleLeave}
             />
           </div>
-          <Popup trigger={<button>Open Chat</button>} position="left center">
+          {/* <Popup trigger={<button>Open Chat</button>} position="left center">
                 <ul>{listItems}</ul>
                   <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>
@@ -275,7 +285,7 @@ export default function MainLobby() {
                       <button className='myB' type='submit'>send</button>
                     </div>
                   </form>
-             </Popup>
+             </Popup> */}
         </div>
         <div className="box">log</div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
