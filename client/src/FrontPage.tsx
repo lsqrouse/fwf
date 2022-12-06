@@ -82,7 +82,6 @@ export default function FrontPage () {
         </div>
 
 
-
         <h1>Create Lobby</h1>
           <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
           <div>
