@@ -246,7 +246,7 @@ io.on('connection', (socket) => {
       }
       // Check all mafia members have voted for the night's kill target
       const mafiaPlayers = players.filter(player => 
-        mafiaData.roles[player.gamePlayerState.role].team == "Mafia"
+        mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
       );
       for (let i = 0; i < mafiaPlayers.length; i++) {
         if (mafiaPlayers[i].gamePlayerState.isAlive && !mafiaVotes.hasOwnProperty(mafiaPlayers[i].id)) {
@@ -298,7 +298,7 @@ io.on('connection', (socket) => {
           );
 
           // Add the mafia kill to the abilitiesList as a kill
-          const mafiaKiller = Object.keys(mafiaPlayers)[0];
+          const mafiaKiller = Object.keys(mafiaVotes).find(voter => mafiaVotes[voter] === mafiaKill);
           abilitiesList.push({player: mafiaKiller, targets: mafiaKill === null ? [] : [mafiaKill], ability: "kill"});
 
           // Clear messages
@@ -531,7 +531,6 @@ io.on('connection', (socket) => {
   });
 
   function checkMafiaWin(lobbyState) {
-    lobbyState.playerList.forEach(player => { console.log(mafiaData.roles[player.gamePlayerState.role].team === "Mafia"); });
     const mafiaPlayers = lobbyState.playerList.filter(player => 
       mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
     );
