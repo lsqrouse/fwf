@@ -379,7 +379,7 @@ io.on('connection', (socket) => {
             // TODO: Send alert message to the detective
             const targetRole = playerIdMap[investigation.targets[0]].gamePlayerState.role;
             let targetMafia = false;
-            if (mafiaData.roles[targetRole].team == "Mafia") {
+            if (mafiaData.roles[targetRole].team == "Mafia" || framedTargets.includes(investigation.targets[0])) {
               targetMafia = true;
             }
             if (!lobbyState.gameState.messages.hasOwnProperty(investigation.player)) {
