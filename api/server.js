@@ -69,8 +69,6 @@ io.on('connection', (socket) => {
       gameState.lobbyHost = socket.id;
     }
 
-  //gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
-    //io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       db_id: "NONE",
@@ -208,7 +206,7 @@ io.on('connection', (socket) => {
   })
 
 
-  // ---------- Mafia-specific socket events and funtions ----------
+  // ---------- Mafia-specific socket events and functions ----------
   
   socket.on("mafia_request_data", (lobbyId) => {
     const data = {
@@ -248,11 +246,8 @@ io.on('connection', (socket) => {
       }
       // Check all mafia members have voted for the night's kill target
       const mafiaPlayers = players.filter(player => 
-        player.gamePlayerState.role == "Mafia" ||
-        player.gamePlayerState.role == "Distractor" ||
-        player.gamePlayerState.role == "Framer" ||
-        player.gamePlayerState.role == "Informant"
-      ); // This is such bad practice but it works
+        mafiaData.roles[player.gamePlayerState.role].team == "Mafia"
+      );
       for (let i = 0; i < mafiaPlayers.length; i++) {
         if (mafiaPlayers[i].gamePlayerState.isAlive && !mafiaVotes.hasOwnProperty(mafiaPlayers[i].id)) {
           console.log(`${mafiaPlayers[i].nickname} (${mafiaPlayers[i].id}) has not submitted their mafia kill vote`);
@@ -384,7 +379,7 @@ io.on('connection', (socket) => {
             // TODO: Send alert message to the detective
             const targetRole = playerIdMap[investigation.targets[0]].gamePlayerState.role;
             let targetMafia = false;
-            if (targetRole == "Mafia" || targetRole == "Distractor" || targetRole == "Framer" || targetRole == "Informant") {
+            if (mafiaData.roles[targetRole].team == "Mafia") {
               targetMafia = true;
             }
             if (!lobbyState.gameState.messages.hasOwnProperty(investigation.player)) {
@@ -414,7 +409,7 @@ io.on('connection', (socket) => {
           });
 
           // CHECK WIN CONDITIONS
-          //checkMafiaWin(lobbyState);
+          const checkWin = checkMafiaWin(lobbyState);
           
           // Initialize empty night summary string
           let nightSummary = ""
@@ -505,7 +500,7 @@ io.on('connection', (socket) => {
           lobbyState.gameState.messages = {};
 
           // CHECK WIN CONDITIONS
-          //checkMafiaWin(lobbyState);
+          checkMafiaWin(lobbyState);
 
           // Initialize empty day summary string
           let daySummary = ""
@@ -535,7 +530,40 @@ io.on('connection', (socket) => {
     }
   });
 
-  // end of Mafia-specific socket events
+  function checkMafiaWin(lobbyState) {
+    lobbyState.playerList.forEach(player => { console.log(mafiaData.roles[player.gamePlayerState.role].team === "Mafia"); });
+    const mafiaPlayers = lobbyState.playerList.filter(player => 
+      mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
+    );
+    const villagePlayers = lobbyState.playerList.filter(player =>
+      mafiaData.roles[player.gamePlayerState.role].team === "Village"
+    );
+    const aliveMafiaPlayers = mafiaPlayers.filter(player => player.gamePlayerState.isAlive);
+    const aliveVillagePlayers = villagePlayers.filter(player => player.gamePlayerState.isAlive);
+
+    if (aliveMafiaPlayers.length == 0) {
+      lobbyState.gameState.winningTeam = "Village";
+      lobbyState.gameState.winningPlayers = villagePlayers;
+      lobbyState.gameState.gameScreen = "EndGame";
+      console.log("updated lobby state is ", lobbyState)
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+      return true;
+    }
+  
+    if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
+      lobbyState.gameState.winningTeam = "Mafia";
+      lobbyState.gameState.winningPlayers = mafiaPlayers;
+      lobbyState.gameState.gameScreen = "EndGame";
+      console.log("updated lobby state is ", lobbyState)
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+      return true;
+    }
+
+    return false;
+    
+  }
+
+  // end of Mafia-specific socket events and functions
 
 });
 
@@ -664,7 +692,9 @@ app.get("/api/lobby/create", (req, res) => {
       settings: {
         selectedRoles: ["Villager"]
       },
-      gameScreen: 'Settings'
+      gameScreen: 'Settings',
+      winningTeam: null,
+      winningPlayers: []
     }
   }
   curLobbyId++

@@ -30,8 +30,8 @@ const roles = {
 
   "Mafia": {
     name: "Mafia",
-    image: "../../images/mafia/icons/mafia.png",
-    team: "Mafia", winCondition: `${teams.Mafia.winCondition}`,
+    team: "Mafia",
+    winCondition: `${teams.Mafia.winCondition}`,
     abilitiesDesc: "Vote with the other Mafia to kill someone at night!",
   },
 

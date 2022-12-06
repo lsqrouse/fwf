@@ -121,6 +121,11 @@ function MafiaContainer(props) {
           warnMessage={warnMessage}
           socket={socket}
         />)
+      ||
+      (gameScreen === "EndGame" &&
+      <EndGameScreen
+
+      />)
     }
     </>
   );
@@ -173,6 +178,18 @@ function GameScreen(props) {
       <InGame roles={props.roles} teams={props.teams} roleList={props.roleList} socket={props.socket} />
     </>
   );
+}
+
+function EndGameScreen(props) {
+  const gameState = useSelector((state) => state.lobbyState.gameState);
+
+  return (
+    <>
+      <h2>
+        {gameState.winningTeam} has won!
+      </h2>
+    </>
+  )
 }
 
 export default MafiaContainer;
