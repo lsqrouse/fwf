@@ -7,7 +7,7 @@ import SyncTesting from './pages/synchTesting.tsx';
 import FrontPage from './FrontPage.tsx';
 import Login from './Login.tsx';
 import MainLobby from './MainLobby.tsx';
-import Game from './pages/game';
+import Game from './pages/Game.tsx';
 import RoleCard from './components/mafia/RoleCard'
 
 const testRole = {

@@ -1,4 +1,5 @@
 import {useSelector} from 'react-redux';
+import { Container, Row, Col } from 'reactstrap';
 import { getIcon } from "./getIcon";
 
 function RoleSetter(props) {
@@ -80,15 +81,21 @@ function RoleSetter(props) {
   }
 
 
+  let roleCount = 0
   return (
     <div className="roleSetter">
-      {isHost && <div id="chooseRolesDiv">
+      <Container>
+        <Row>
+          
+        {isHost && <Col>
+          <div id="chooseRolesDiv">
         CHOOSE:
         <br/>
         {props.roles && Object.keys(props.roles).map(key =>
           <Role role={props.roles[key]} addRole={addRole} />
         )}
-      </div>}
+      </div></Col>}
+      <Col>
       <div id="selectedRolesDiv">
         SELECTED: {selectedRoles.length}
         <br/>
@@ -98,6 +105,11 @@ function RoleSetter(props) {
         </>}
         <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
       </div>
+      </Col>
+        </Row>
+
+      </Container>
+      
     </div>
   );
 }
@@ -118,9 +130,9 @@ function Role(props) {
 
   return (
     <div className={cn}>
-      <img src={getIcon(role.name)} alt={role.name} width="35px" />
-      <div className="roleLabel">{role.name}</div>
+      <img src={getIcon(role.name)} alt={role.name}/>
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
+      <div className="roleLabel">{role.name}</div>
     </div>
   );
 }

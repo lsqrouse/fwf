@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import './MainLobby.css';
-import Game from './pages/game';
+import Game from './pages/Game.tsx';
 import { AgGridReact } from 'ag-grid-react';
 import { useSelector, useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
-// import Popup from 'reactjs-popup';
+import Popup from 'reactjs-popup';
 import { Container, Row, Col} from 'reactstrap';
 //import 'reactjs-popup/dist/index';
 
@@ -162,33 +162,67 @@ export default function MainLobby() {
     <li className='content'>{msg}</li>
   );
 
-  const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
+  console.log("stategame is ", lobbyState.game)
 
-  
-  if (playerState.id != lobbyState.lobbyHost) {
+
     return (
-      <>
-      <Container style={{maxWidth:'100%', justifyContent:'center'}}>
-        <Row>
+    <div className='pageContent'>
+      <header className='header-area'>
+      <Container style={{maxWidth:'100%', justifyContent:'center', }}>
+      <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
+      <Col className='col-2'>
+        </Col>
           <Col className='col-2'>
             <Link to="/">
-              <button className='myButton' onClick={handleLeave}>Back</button>
+              <button className='second-button' onClick={handleLeave}>Back</button>
             </Link>
           </Col>
-          <Col className='col-8' style={{textAlign: 'center'}}>
+          <Col className='col-4 siteHeader'>
             <h1>Welcome {playerState.nickname}! <br />  Lobby Code: {lobbyState.lobbyId}</h1>
           </Col>
           <Col className='col-2'>
+        </Col>
+          <Col className='col-2'>
             <Link to="/Instructions">
-              <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
+              <button className='main-button' onClick={() => setJoined(true)}>Instructions</button>
             </Link>
           </Col>
+        
         </Row>
+        </Container>
+        </header>
+        <div className='pageContent'>
+        
+        {playerState.id == lobbyState.lobbyHost &&  lobbyState.game == "no game chosen" ? (<>
+          <Container className='gameContainer' style={{maxWidth: '75%'}}>
+        <Row style={{textAlign: 'center'}}>
+          <Col>
+          <h2>Please Choose a game:</h2>
+          <div className='gameDesc'>
+          <button className='second-button' type='submit' onClick={() => { handleGameChoice('Mafia') }}><h4>Mafia</h4>
+            <p >TODO: insert mafia descr.</p>
+          </button>
+       
+          <button className='second-button' type='submit' onClick={() => { handleGameChoice('Werewolf') }}><h4>Werewolf</h4>
+            <p>TODO: insert werewolf desc.</p>
+          </button>
+         
+            <button className='second-button' type='submit' onClick={() => { handleGameChoice('coup') }}><h4>Coup</h4>
+            <p>TODO: insert coup descr.</p>
+          </button>
+          </div>
+         
+          </Col>
+        </Row>
+        </Container>
+
+        </>) : (<></>)}
+        <Container className='gameContainer' style={{maxWidth: '75%'}}>
         <Row>
-          <Col className='col-3'>
-          <div className='chat'>Players
+          <Col className='col-2'>
+          <div  >Players
             
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={{width: '100%', height:lobbyState.playerList.length * 50 + 50 }} className="ag-theme-alpine">
               <AgGridReact
                 rowData={lobbyState.playerList}
                 columnDefs={colDefs}>
@@ -196,7 +230,7 @@ export default function MainLobby() {
             </div>
           </div>
           </Col>
-          <Col className='col-6' style={{backgroundColor:'red'}}>
+          <Col className='col-8'>
           <Game
                 game={lobbyState.game}
                 code={lobbyState.lobbyId}
@@ -204,8 +238,8 @@ export default function MainLobby() {
                 handleLeave={handleLeave}
               />
           </Col>
-          <Col className='col-3'>
-            {/* <Popup trigger={<button>Open Chat</button>} position="left center">
+          <Col className='col-2'>
+            <Popup trigger={<button>Open Chat</button>} position="left center">
                 <ul>{listItems}</ul>
                   <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>
@@ -214,85 +248,14 @@ export default function MainLobby() {
                       <button className='myB' type='submit'>send</button>
                     </div>
                   </form>
-             </Popup> */}
+             </Popup>
           </Col>
         </Row>
-      </Container>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <div className="login">
-        <Link to="/">
-          <button className='myButton' onClick={handleLeave}>Back</button>
-        </Link>
-        <Link to="/Instructions">
-          <button className='myButton'>Instructions</button>
-        </Link>
-      </div>
-      <div className='titleBox'>
-        <h1>Welcome to Fun With Friends, {playerState.nickname}. <br /> Invite friends to play with code {lobbyState.lobbyId}</h1>
-      </div>
-      <div className='outerBox'>
-        <div className='navBar'>
-          {/* <Link to="/Mafia"> */}
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Mafia') }}>Mafia
-            <p className='descMaf'>A game of mystery and deciption that pins citizens against mafia to see who will rule the town.</p>
-          </button>
-          {/* </Link> */}
-
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('avalon') }}>AVALON
-            <p className='descMaf'>HELLO THIS IS AVALON BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
-            <p className='descMaf'>HELLO THIS IS WEREWOLF BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('ghost') }}>GHOST
-            <p className='descMaf'>HELLO THIS IS GHOST BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('fake artist') }}>FAKE ARTIST
-            <p className='descMaf'>HELLO THIS IS FAKE ARTIST BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
-            <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
-          </button>
+        <Row> <p style={{visibility:'hidden'}}></p></Row>
+        </Container>
         </div>
-        <div className='middle'>
-          <div className='chat'>Players:
-
-          <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
-                </AgGridReact>
-              </div>
-          </div>
-          <div className='screen'>
-            <Game
-              game={lobbyState.game}
-              code={lobbyState.lobbyId}
-              socket={socket}
-              handleLeave={handleLeave}
-            />
-          </div>
-          {/* <Popup trigger={<button>Open Chat</button>} position="left center">
-                <ul>{listItems}</ul>
-                  <form onSubmit={handleChatSubmit}>
-                    <div id='chatBox'>
-                      <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
-                      <button className='myB' type='submit'>send</button>
-                    </div>
-                  </form>
-             </Popup> */}
-        </div>
-        <div className="box">log</div>
-        <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
-        </div>
+        
       </div>
-    </>
-
   )
 
 }

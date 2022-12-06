@@ -646,7 +646,7 @@ app.get("/api/lobby/create", (req, res) => {
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
     chatLog: [{msg: 'welcome to lobby'}],
-    game: 'mafia', // name of the game (must correspond to game represented by gameState object)
+    game: 'no game chosen', // name of the game (must correspond to game represented by gameState object)
     gameState: { // this object gets swapped out depending on the game
 
       mafiaList: [],

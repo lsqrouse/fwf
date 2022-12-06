@@ -21,7 +21,7 @@ function RoleCardOpen(props) {
   }
 
   return (
-    <div className="roleCard" onClick={closeCard}>
+    <div className="roleCard" onClick={closeCard} >
       <div className="roleLabel">
         ROLE
       </div>
