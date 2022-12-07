@@ -414,7 +414,7 @@ io.on('connection', (socket) => {
           });
 
           // CHECK WIN CONDITIONS
-          const checkWin = checkMafiaWin(lobbyState);
+          const checkWin = checkMafiaWin(lobbyState, playerIdMap);
           
           // Initialize empty night summary string
           let nightSummary = ""
@@ -505,7 +505,7 @@ io.on('connection', (socket) => {
           lobbyState.gameState.messages = {};
 
           // CHECK WIN CONDITIONS
-          checkMafiaWin(lobbyState);
+          checkMafiaWin(lobbyState, playerIdMap);
 
           // Initialize empty day summary string
           let daySummary = ""
@@ -535,7 +535,10 @@ io.on('connection', (socket) => {
     }
   });
 
-  function checkMafiaWin(lobbyState) {
+  function checkMafiaWin(lobbyState, playerIdMap) {
+    // Note that there can be multiple winners - Jester and Mafia can win at the same time
+    let someoneHasWon = false;
+
     const mafiaPlayers = lobbyState.playerList.filter(player => 
       mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
     );
@@ -545,25 +548,39 @@ io.on('connection', (socket) => {
     const aliveMafiaPlayers = mafiaPlayers.filter(player => player.gamePlayerState.isAlive);
     const aliveVillagePlayers = villagePlayers.filter(player => player.gamePlayerState.isAlive);
 
-    if (aliveMafiaPlayers.length == 0) {
-      lobbyState.gameState.winningTeam = "Village";
-      lobbyState.gameState.winningPlayers = villagePlayers;
-      lobbyState.gameState.gameScreen = "EndGame";
-      console.log("updated lobby state is ", lobbyState)
-      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
-      return true;
-    }
-  
-    if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
-      lobbyState.gameState.winningTeam = "Mafia";
-      lobbyState.gameState.winningPlayers = mafiaPlayers;
-      lobbyState.gameState.gameScreen = "EndGame";
-      console.log("updated lobby state is ", lobbyState)
-      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
-      return true;
+    // Jester win
+    if (lobbyState.gameState.currentPhase === "day") {
+      const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
+      if (playerIdMap[dayVote].gamePlayerState.role === "Jester") {
+        lobbyState.gameState.winningTeams.push("Jester");
+        lobbyState.gameState.winningPlayers.push(dayVote);
+        lobbyState.gameState.gameScreen = "EndGame";
+        someoneHasWon = true;
+      }
     }
 
-    return false;
+    // Mafia win
+    if (aliveMafiaPlayers.length == 0) {
+      lobbyState.gameState.winningTeams.push("Village");
+      lobbyState.gameState.winningPlayers.concat(villagePlayers);
+      lobbyState.gameState.gameScreen = "EndGame";
+      someoneHasWon = true;
+    }
+  
+    // Village win
+    if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
+      lobbyState.gameState.winningTeams.push("Mafia");
+      lobbyState.gameState.winningPlayers.concat(mafiaPlayers);
+      lobbyState.gameState.gameScreen = "EndGame";
+      someoneHasWon = true;
+    }
+
+    if (someoneHasWon) {
+      console.log("updated lobby state is ", lobbyState)
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+    }
+
+    return someoneHasWon;
     
   }
 
@@ -697,7 +714,7 @@ app.get("/api/lobby/create", (req, res) => {
         selectedRoles: ["Villager"]
       },
       gameScreen: 'Settings',
-      winningTeam: null,
+      winningTeams: [],
       winningPlayers: []
     }
   }

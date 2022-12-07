@@ -186,7 +186,9 @@ function EndGameScreen(props) {
   return (
     <>
       <h2>
-        {gameState.winningTeam} has won!
+        {gameState.winningTeams.map((team, index) => 
+          team + (index < gameState.winningTeams.length - 1 ? " and " : "")
+        )} has won!
       </h2>
     </>
   )
