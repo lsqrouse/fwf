@@ -118,7 +118,8 @@ io.on('connection', (socket) => {
           gamePlayerState: {
             role: left[ran],
             isAlive: true,
-            message: ''
+            message: '',
+            timesUsedAbility: 0
           }
         }
         left.splice(ran, 1);
@@ -133,7 +134,8 @@ io.on('connection', (socket) => {
           gamePlayerState: {
             role: 'Villager',
             isAlive: true,
-            message: ''
+            message: '',
+            timesUsedAbility: 0
           }
         }
         assignments.push(newPlayerState)
@@ -305,6 +307,9 @@ io.on('connection', (socket) => {
           // Clear messages
           lobbyState.gameState.messages = {};
 
+          // Remove abilities that don't have a target
+          abilitiesList = abilitiesList.filter(a => !a.targets.includes(null));
+
           // ----- First, deal with the SWAP ability -----
           const swaps = abilitiesList.filter(a => a.ability === "swap");
           swaps.forEach(swap => {
@@ -375,7 +380,8 @@ io.on('connection', (socket) => {
           // ----- Sixth, deal with the RESSURECT ability
           const ressurections = abilitiesList.filter(a => a.ability === "ressurect");
           ressurections.forEach(ressurect => {
-            playerIdMap[ressurect.targets[0]].isAlive = true;
+            playerIdMap[ressurect.targets[0]].gamePlayerState.isAlive = true;
+            console.log("RESSURECTED: ", playerIdMap[ressurect.targets[0]]);
           });
 
           // ----- Seventh, deal with the INVESTIGATE ability -----
@@ -425,7 +431,7 @@ io.on('connection', (socket) => {
           });
           // Add ressurected players' names to summary list.
           ressurections.forEach(p => {
-            nightSummary += `${p.targets[0]} has been ressurected! :)\n`;
+            nightSummary += `${playerIdMap[p.targets[0]].nickname} has been ressurected! :)\n`;
           });
           // Set the message
           lobbyState.gameState.allPlayersMessage = nightSummary;

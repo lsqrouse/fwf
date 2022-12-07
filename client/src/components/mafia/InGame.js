@@ -244,8 +244,9 @@ function filterTargets(ability, allPlayers, selfPlayerState, roles) {
   return results;
 }
 
-function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
+function doRoleAbility(socket, lobbyState, playerState, ability, targets) {
   const phaseNum = lobbyState.gameState.phaseNum;
+  const playerId = playerState.id;
   // Write to history
   if (!lobbyState.gameState.history[phaseNum]) {
     lobbyState.gameState.history[phaseNum] = {
@@ -260,6 +261,11 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
     ability: ability,
     targets: targets
   };
+
+  // Increment times used ability
+  playerState.gamePlayerState.timesUsedAbility += 1;
+  socket.emit("update_player_state", playerState);
+
   lobbyState.gameState.history[phaseNum].night[playerId] = entry;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
@@ -435,7 +441,7 @@ function Ability(props) {
           )}
           <br />
           <input type="button" value="OK" 
-            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
+            onClick={() => doRoleAbility(socket, lobbyState, playerState, ability,
               Array.from(document.getElementById("abilityForm").elements).filter(
                 elem => elem.nodeName.toLowerCase() === "select"
               ).map(select => select.value === "" ? null : select.value)
@@ -456,8 +462,16 @@ function Ability(props) {
         Press the OK button to continue.
         <form>
           <input type="button" value="OK" 
-            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, "ok", [])} />
+            onClick={() => doRoleAbility(socket, lobbyState, playerState, "ok", [])} />
         </form>
+      </div>
+    );
+  }
+
+  if (roles[role].ability === "ressurect" && playerState.gamePlayerState.timesUsedAbility > 0) {
+    return (
+      <div className="topScreen ability">
+        <NoAbilityDiv />
       </div>
     );
   }
