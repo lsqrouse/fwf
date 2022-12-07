@@ -29,10 +29,10 @@ function WerewolfContainer(props) {
             alert("not enough players");
             return;
         } else if (numPlayers == 4) {
-            roles.push("villager");
+            roles.push("werewolf");
         } else if (numPlayers == 5) {
-            roles.push("villager");
-            roles.push("villager");
+            roles.push("werewolf");
+            roles.push("werewolf");
         } else if (numPlayers > 5){
             alert("Too many players");
             return;
@@ -62,9 +62,11 @@ function WerewolfContainer(props) {
         curLobbyState.log.push({ msg: newMsg });
         for (var i = 0; i < lobbyState.playerList.length; i++) {
             if(lobbyState.playerList[i].role == 'werewolf') {
-                wolves.push(lobbyState.playerList[i].nickname + ": is a werewolf");
+                
                 if(lobbyState.playerList[i].nickname == playerState.nickname) {
                     isWolf = true;
+                }else {
+                    wolves.push(lobbyState.playerList[i].nickname + ": is a werewolf \n");
                 }
             }
         }
@@ -74,7 +76,11 @@ function WerewolfContainer(props) {
             for(var i = 0; i < wolves.length; i++){
                 newroleAction += wolves[i]; 
             }
-            setRoleAction(newroleAction);
+            if(wolves.length == 1){
+                setRoleAction("No other WereWolves")
+            }else{
+                setRoleAction(newroleAction);
+            }
         }
         //console.log("roleAction: " , roleAction);
         curLobbyState.wolfGameState.playerTurn = 1;
