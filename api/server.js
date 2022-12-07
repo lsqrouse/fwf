@@ -11,6 +11,7 @@ const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUs
 const bcrypt = require("bcrypt");
 const { NONAME } = require("dns");
 const mafiaData = require("./mafia/src/data/data");
+const { Console } = require("console");
 
 const PORT = process.env.PORT || 3001;
 const userNames = [];
@@ -328,10 +329,13 @@ io.on('connection', (socket) => {
 
           // ----- Second, deal with the BLOCK ability -----
           const blocks = abilitiesList.filter(a => a.ability === "block");
-          // Remove abilities that get blocked, unless the target is a blocking role (they can't be blocked)
-          abilitiesList.filter(a => {
-            a.ability == "block" && playerIdMap[a.targets[0]].gamePlayerState.role !== "Drunk" && playerIdMap[a.targets[0]].gamePlayerState.role !== "Distractor" 
-          })
+          // Remove abilities that get blocked, unless the ability is also a block
+          blocks.forEach(block => {
+            let blocked = abilitiesList.find(a => a.player === block.targets[0] && a.ability !== "block");
+            if (blocked !== undefined) {
+              abilitiesList.splice(abilitiesList.indexOf(blocked));
+            }
+          });
 
           // ----- Third, deal with KILLS, including BOMB and MAFIA KILL by marking targets for death
           let markedForDeath = [];
@@ -355,6 +359,7 @@ io.on('connection', (socket) => {
             let targetIndex = markedForDeath.indexOf(save.targets[0]);
             // Remove saved target from being marked for death
             if (targetIndex !== -1) {
+              console.log("REMOVING " + targetIndex);
               markedForDeath.splice(targetIndex);
               abilitiesList.splice(abilitiesList.indexOf(save), 1);
             }
