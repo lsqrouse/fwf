@@ -50,6 +50,13 @@ var players = {
 }
 
 // this block will run when the client connects
+io.configure(function() {
+  // Force websocket
+  io.set('transports', ['websocket']);
+
+  // Force SSL
+  io.set('match origin protocol', true);
+});
 io.on('connection', (socket) => {
   socket.on("join_lobby", (data) => {
     console.log("Joining lobby ", data);
