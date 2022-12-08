@@ -15,15 +15,27 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
-  const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
+  const lobbyState = useSelector((state) => state.lobbyState);
+  const playerState = useSelector((state) => state.playerState);
+  const playerRole = playerState.gamePlayerState.role;
+  const executionerTargets = useSelector((state) => state.lobbyState.gameState.executionerTargets);
   const socket = props.socket;
+
+  let roleCard = <RoleCard role={roles[playerRole]} />;
+
+  // Pass in executioner target info if player is executioner
+  if (executionerTargets.hasOwnProperty(playerState.id)) {
+    const targetId = executionerTargets[playerState.id];
+    const target = lobbyState.playerList.find(player => player.id === targetId);
+    roleCard = <RoleCard role={roles[playerRole]} executionerTarget={target}/>
+  }
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roles={roles} roleList={props.roleList} />
       <Phase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
-      <RoleCard role={roles[playerRole]} />
+      {roleCard}
     </div>
   );
 }

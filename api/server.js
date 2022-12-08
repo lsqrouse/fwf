@@ -143,6 +143,15 @@ io.on('connection', (socket) => {
       //console.log(newPLIST);
     }
 
+    // Make executioner targets
+    const executioners = assignments.filter(player => player.gamePlayerState.role === "Executioner");
+    const villagePlayers = assignments.filter(player => mafiaData.roles[player.gamePlayerState.role].team === "Village");
+    executioners.forEach(executioner => {
+      var ran = Math.floor(Math.random() * villagePlayers.length);
+      var target = villagePlayers[ran];
+      lobbyState.gameState.executionerTargets[executioner.id] = target.id;
+    });
+
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
         assignments.forEach((newPlayerState) => {
@@ -711,6 +720,7 @@ app.get("/api/lobby/create", (req, res) => {
       nightPhaseTimeLimit: 90,
       nightPhaseStarted: false, // flag
       nightPhaseEnded: false,   // flag
+      executionerTargets: {},
       allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
       history: {},
       messages: {},
