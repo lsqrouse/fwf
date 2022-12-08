@@ -21,7 +21,9 @@ type gameState = {
 type playerState = {
     id: string,
     lobbyId: string,
-    role: string
+    gameState: {
+        role: string
+    }
 }
 
 export default function TestGame(props: testGameProps) {

@@ -1,11 +1,11 @@
 import {useSelector} from 'react-redux';
+import { getIcon } from "./getIcon";
 
 function RoleSetter(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
   // const numPlayers = props.numPlayers;
   const selectedRoles = props.selectedRoles;
   const setSelectedRoles = props.setSelectedRoles;
-
   const isHost = useSelector((state) => state.playerState.host);
 
   function addRole(role) {
@@ -18,7 +18,6 @@ function RoleSetter(props) {
   
   function suggestRoles() {
     if (numPlayers < 4) {
-      alert("Need more than three players!!");
       return;
     } else if (numPlayers == 4) {
       setSelectedRoles(addRolesToList([], "Mafia", 1, "Villager", 3));
@@ -74,61 +73,100 @@ function RoleSetter(props) {
     return newList;
   }
 
+  function removeRoleIndex(index) {
+    let newRoles = [...selectedRoles];
+    newRoles.splice(index, 1);
+    setSelectedRoles(newRoles);
+  }
+
+
   return (
-    <div class="roleSetter">
+    <div className="roleSetter">
       {isHost && <div id="chooseRolesDiv">
         CHOOSE:
         <br/>
-        {props.roles && props.roles.map(role =>
-          <Role roleName={role.name} image={role.image} addRole={addRole} />
+        {props.roles && Object.keys(props.roles).map(key =>
+          <Role role={props.roles[key]} addRole={addRole} />
         )}
       </div>}
       <div id="selectedRolesDiv">
-        SELECTED: {numPlayers}
+        SELECTED: {selectedRoles.length}
         <br/>
         {isHost && <>
-        <button type="button" class="clearRolesButton" onClick={clearRoles}>Clear all</button>
-        <button type="button" class="suggestRolesbutton" onClick={suggestRoles}>Suggest</button>
+        <button type="button" className="clearRolesButton mafiaButton2" onClick={clearRoles}>Clear all</button>
+        <button type="button" className="suggestRolesbutton mafiaButton2" onClick={suggestRoles}>Suggest</button>
         </>}
-        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles}/>
+        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
       </div>
     </div>
   );
 }
 
 function Role(props) {
+  const role = props.role;
+  let cn = "roleDiv";
+  switch (role.team) {
+    case "Village":
+      cn += " villageRole";
+      break;
+    case "Mafia":
+      cn += " mafiaRole";
+      break;
+    default:
+      cn += " otherRole";
+  }
+
   return (
-    <div className="roleDiv">
-      <img src={props.image} alt={props.roleName} width="35px" />
-      {props.roleName}
-      <AddRoleButton roleName={props.roleName} addRole={props.addRole} />
+    <div className={cn}>
+      <img src={getIcon(role.name)} alt={role.name} width="35px" />
+      <div className="roleLabel">{role.name}</div>
+      <AddRoleButton roleName={role.name} addRole={props.addRole} />
     </div>
   );
 }
 
 function AddRoleButton(props) {
   return (
-    <button type="button" class="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
+    <button type="button" className="addRoleButton" onClick={() => props.addRole(props.roleName)}>+</button>
   );
 }
 
 function SelectedRoles(props) {
-  return (
-    <div>
-      {
-        props.selectedRoles && props.selectedRoles.map(roleName =>
-          <img
-          src={
-            props.roles.find(role => {return role.name === roleName}).image
-          }
-          width="35px"
-          alt={roleName}
-          title={roleName}
-          />
-        )
-      }
-    </div>
-  );
+  if (props.isHost) {
+    return (
+      <div id="selectedRoles">
+        {
+          props.selectedRoles && props.selectedRoles.map((roleName, index) =>
+            <span onClick={() => props.removeRoleIndex(index)}>
+              <img
+                src={getIcon(roleName)}
+                width="35px"
+                alt={roleName}
+                title={roleName}
+              />
+            </span>
+          )
+        }
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        {
+          props.selectedRoles && props.selectedRoles.map((roleName, index) =>
+            <span>
+              <img
+                src={getIcon(roleName)}
+                width="35px"
+                alt={roleName}
+                title={roleName}
+              />
+            </span>
+          )
+        }
+      </div>
+    );
+  }
 }
 
 export default RoleSetter;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getIcon } from "./getIcon";
 
 function RoleCard(props) {
   const role = props.role;
@@ -24,12 +25,12 @@ function RoleCardOpen(props) {
       <div className="roleLabel">
         ROLE
       </div>
-      <img src={role.image} alt={role.name} />
+      <img src={getIcon(role.name)} alt={role.name} />
       <h1>{role.name}</h1>
       <hr />
       <p><b>Team:</b> {role.team}</p>
       <p><b>Win Condition:</b> {role.winCondition}</p>
-      {role.abilities && <p><b>Abilities:</b> {role.abilities}</p>}
+      {role.abilitiesDesc && <p><b>Abilities:</b> {role.abilitiesDesc}</p>}
       <div className="tapToHideLabel">
         TAP TO HIDE
       </div>

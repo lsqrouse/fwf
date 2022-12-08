@@ -47,6 +47,7 @@
     height: 600px;
     width: 15%;
     border: 8px solid blue;
+    align-items: flex-start;
     padding: 2%;
     margin: 0 auto;
     margin-bottom: 2%;
@@ -55,6 +56,21 @@
     position: relative;
   }
   
+  .content {
+    list-style-type: none;
+  }
+  
+  .popup-content {
+    display: flex;
+    background: grey;
+    width: 70%;
+    height: 90%;
+    position: relative;
+    border-radius: 5%;
+    border: 8px solid blue;
+    font-size: 25px;
+    right: 0;
+  }
 
   .players{
     display: flex;
@@ -69,7 +85,8 @@
   
   }
 
-  .screen {
+  
+  .screen, .playerScreen {
     display: flex;
     height: 600px;
     width: 75%;
@@ -80,18 +97,6 @@
     margin-top: 2%;
     border-radius: 5%;
     overflow-y:auto
-  }
-
-  .playerScreen
-  {
-    width: 75%;
-    height: 600px;
-    border: 8px solid blue;
-    padding: 2%;
-    margin: 0 auto;
-    margin-bottom: 2%;
-    margin-top: 2%;
-    border-radius: 5%;
   }
 
   .navBar {
@@ -111,6 +116,7 @@
   .myB {
     width: 40%;
     height: 20%;
+    right: 0;
 }
 .myBMaf {
   width: 40%;
@@ -144,8 +150,9 @@
 
 #chatBox {
     position: absolute;
+    width: 90%;
     bottom: 0;
-    left: 0;
+    right: 0;
 }
 
 .line {
@@ -190,4 +197,16 @@
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.chat ul li{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chat ul{
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }

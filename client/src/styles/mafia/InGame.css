@@ -1,5 +1,5 @@
 .inGame {
-  font-size: 14px;
+  font-size: 16px;
   height: 100%;
 }
 
@@ -25,6 +25,13 @@
   display: block;
   border: 1px grey solid;
   height: 40px;
+  overflow: hidden;
+}
+
+.roleListItem {
+  display: inline-block;
+  margin: 8px 4px;
+  font-size: 20px;
 }
 
 .sideButtons {
@@ -46,6 +53,7 @@
   height: 190px;
   border: 1px grey solid;
   padding: 20px;
+  overflow: auto;
 }
 
 .bottomScreen {
@@ -55,11 +63,19 @@
   overflow: auto;
 }
 
-.aliveList ul, .deadList ul {
+.topScreen h3 {
+  margin: 0;
+}
+
+.abilityItem {
+  margin-bottom: 5px;
+}
+
+.aliveList ul, .deadList ul, .mafiaList ul {
   padding-left: 0;
 }
 
-.aliveList li, .deadList li {
+.aliveList li, .deadList li, .mafiaList li {
   list-style: none;
 }
 
@@ -107,4 +123,10 @@
   bottom: 0px;
   padding-bottom: 10px;
   text-align: center;
+}
+
+.mafiaVotes ul, .votes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }

@@ -2,50 +2,37 @@ import { useState } from "react";
 import RoleSetter from "./RoleSetter";
 import "../../styles/mafia/styles.css";
 import { useSelector } from "react-redux";
+import TimerSettings from "./TimerSettings";
 
 function Settings(props) {
   const roles = props.roles;
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
-  const setNumPlayers = props.numPlayersHandler[1];
-  const selectedRoles = props.selectedRolesHandler[0];
-  const setSelectedRoles = props.selectedRolesHandler[1];
-
-  const updateNumPlayers = event => {
-    let num = parseInt(event.target.value);
-    setNumPlayers(num);
-  }
+  const selectedRoles = props.selectedRoles;
+  const setSelectedRoles = props.setSelectedRoles;
+  const [settingsTab, setSettingsTab] = useState("roles");
 
   return (
-    <div class="settings">
-      <div>
-        <p>
-          <h3>MAFIA: Settings</h3>
-        </p>
-        There are {numPlayers} players. Minimum 2 required.
+    <div className="settings">
+      <div className="settingsTabs">
+        <button className={"mafiaButton1" + (settingsTab === "roles" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("roles")}>Roles</button>
+        <button className={"mafiaButton1" + (settingsTab === "timer" ? " mafiaPrimary" : " mafiaSecondary")} onClick={() => setSettingsTab("timer")}>Timers</button>
       </div>
+      
+      {
+      settingsTab === "roles" ?
       <RoleSetter
         roles={roles}
         numPlayers={numPlayers}
         selectedRoles={selectedRoles}
         setSelectedRoles={setSelectedRoles}
+        socket={props.socket}
       />
-
-      <div>
-        <input type="text" id="dayTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
-            var fname = document.getElementById("dayTime");
-            var time = fname.value;
-            //handleDayPhaseTime(time);
-          }}>Set day phase time in seconds </button>
-
-          <input type="text" id="nightPhaseTime" name="frameName"></input>
-          <button id="frameButton" onClick={() => {
-            var fname = document.getElementById("nightPhaseTime");
-            var time = fname.value;
-            //handleNightPhaseTime(time);
-          }}>Set night phase time in seconds </button>
-      </div>
-
+      :
+      settingsTab === "timer" ?
+      <TimerSettings />
+      :
+      <></>
+      }
     </div>
   );
 }
