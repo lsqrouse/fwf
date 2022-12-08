@@ -27,6 +27,8 @@ function WerewolfContainer(props) {
 
     var dayTurn = false || lobbyState.wolfGameState.playerTurn == 4;
 
+    var voted = false;
+
     //console.log('GAME STARTED STATE', gameStart);
     const [roleAction, setRoleAction] = useState("");
     const [isSeeing, setisSeeing] = useState(false);
@@ -118,16 +120,20 @@ function WerewolfContainer(props) {
             if (lobbyState.wolfGameState.midCards.includes("robber")) {
                 if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
                     curLobbyState.wolfGameState.playerTurn = 4;
+                    curLobbyState.wolfGameState.gameAction = "waiting on votes";
                 } else {
                     curLobbyState.wolfGameState.playerTurn = 3;
+                    curLobbyState.wolfGameState.gameAction = "waiting on roles to act";
                 }
 
             } else {
                 curLobbyState.wolfGameState.playerTurn = 2;
+                curLobbyState.wolfGameState.gameAction = "waiting on roles to act";
             }
 
         } else {
             curLobbyState.wolfGameState.playerTurn = 1; //seer turn = true
+            curLobbyState.wolfGameState.gameAction = "waiting on roles to act";
         }
         socket.emit("update_lobby_state", curLobbyState);
     }
@@ -164,6 +170,7 @@ function WerewolfContainer(props) {
         if (lobbyState.wolfGameState.midCards.includes("robber")) {
             if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
                 curLobbyState.wolfGameState.playerTurn = 4;
+                curLobbyState.wolfGameState.gameAction = "waiting on votes";
             } else {
                 curLobbyState.wolfGameState.playerTurn = 3;
             }
@@ -198,6 +205,7 @@ function WerewolfContainer(props) {
 
         if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
             curLobbyState.wolfGameState.playerTurn = 4;
+            curLobbyState.wolfGameState.gameAction = "waiting on votes";
         } else {
             curLobbyState.wolfGameState.playerTurn = 3;
         }
@@ -221,6 +229,7 @@ function WerewolfContainer(props) {
         if (lobbyState.wolfGameState.midCards.includes("robber")) {
             if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
                 curLobbyState.wolfGameState.playerTurn = 4;
+                curLobbyState.wolfGameState.gameAction = "waiting on votes";
             } else {
                 curLobbyState.wolfGameState.playerTurn = 3;
             }
@@ -241,6 +250,9 @@ function WerewolfContainer(props) {
         setRoleAction(seeRole);
         var curLobbyState = lobbyState;
         curLobbyState.wolfGameState.votes.push(msg)
+        seeRole = 'you voted for ' + msg;
+        setRoleAction(seeRole);
+        
         socket.emit("update_lobby_state", curLobbyState);
 
         if (curLobbyState.wolfGameState.votes.length >= numPlayers) {
@@ -260,9 +272,34 @@ function WerewolfContainer(props) {
                     mostCommonValue = value;
                 }
             }
+            var numVotes =  countValue(arr, mostCommonValue);
+            console.log("NUM VOTES---------------------------------: " + numVotes);
+            if(numVotes == 1) {
+                curLobbyState.wolfGameState.gameAction = "All votes even. No one dies! ";
+                if(roles.includes("werewolf")){
+                    curLobbyState.wolfGameState.gameAction += "WereWolves Win!";
+                }else{
+                    curLobbyState.wolfGameState.gameAction += "Villagers Win!";
+                }
+            }else{
+                var deathRole = '';
+                
+                for (var i = 0; i < lobbyState.playerList.length; i++) {
+                    if (lobbyState.playerList[i].nickname == mostCommonValue) {
+                        deathRole = lobbyState.playerList[i].role;
+                    }
+                }
+                curLobbyState.wolfGameState.gameAction =  mostCommonValue + " HAS BEEN KILLED!" + " They were a " + deathRole + ".";
+                if (deathRole == 'werewolf'){
+                    curLobbyState.wolfGameState.gameAction += " Villagers Win!";
+                }else if(deathRole == 'villager' || deathRole == 'seer' || deathRole == 'robber' || deathRole == 'troublemaker'){
+                    curLobbyState.wolfGameState.gameAction += " Werewolves Win!";
+                }
+            }
 
-            seeRole = mostCommonValue + " HAS BEEN KILLED!"
-            setRoleAction(seeRole);
+           
+            
+
             curLobbyState.wolfGameState.playerTurn = 5;
             socket.emit("update_lobby_state", curLobbyState);
         }
@@ -298,8 +335,25 @@ function WerewolfContainer(props) {
 
         setRoleAction(seeRole);
         lobbyState.wolfGameState.playerTurn = 4;
+        lobbyState.wolfGameState.gameAction = "waiting on votes";
         socket.emit("update_lobby_state", lobbyState);
     }
+    function countValue(arr, value) {
+        // Create a Map to store the counts of each value
+        const valueCounts = new Map();
+      
+        // Iterate over the array and increment the count for each value
+        for (const val of arr) {
+          if (valueCounts.has(val)) {
+            valueCounts.set(val, valueCounts.get(val) + 1);
+          } else {
+            valueCounts.set(val, 1);
+          }
+        }
+      
+        // Return the count for the given value
+        return valueCounts.get(value);
+      }
 
 
 
@@ -335,12 +389,13 @@ function WerewolfContainer(props) {
                 <div>
                     GAME STARTED
                     {isRob && <>
-                        <h1>your role is {lobbyState.playerList[uIndex].role}</h1>
+                        <h1>your role is {lobbyState.playerList[uIndex].role}</h1>   
                     </>}
                     {!isRob && <>
-                        <h1>your role is {playerState.role}</h1>
+                        <h1>your role on first pickup is {playerState.role}</h1>
                     </>}
                     <h1>{roleAction}</h1>
+                    <h1>{lobbyState.wolfGameState.gameAction}</h1>
                     {seerTurn && isSeer && <>
                         <button type="button" onClick={seePlayercard}>See player card</button>
                         <button type="button" onClick={seeMidCard}>See two cards from middle</button>
@@ -375,7 +430,7 @@ function WerewolfContainer(props) {
                             </div>
                         </form>
                     </>}
-                    {dayTurn && <>
+                    {dayTurn && !voted &&<>
                         <form onSubmit={handleVote}>
                             <div >
                                 <h1>You have made it through the night and it has turned to day! Please cast vote for a user with the box below</h1>

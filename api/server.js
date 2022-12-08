@@ -457,6 +457,7 @@ app.get("/api/lobby/create", (req, res) => {
       lastTurnPlayer: -1,
       lastTurnPlayerId: '',
       lastTurnPlayerRole: -1,
+      gameAction: '',
       midCards: [],
       votes: [],
     },
