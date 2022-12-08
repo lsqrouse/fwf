@@ -88,34 +88,37 @@ function RoleSetter(props) {
         <Row>
           
         {isHost && <Col>
-          <div id="chooseRolesDiv">
+        <Row>
         CHOOSE:
+        </Row>
+        <Row>
+        <div id="chooseRolesDiv">
+        
         <br/>
         {props.roles && Object.keys(props.roles).map(key =>
           <Role role={props.roles[key]} addRole={addRole} />
         )}
-      </div></Col>}
+      </div>
+        </Row>
+       </Col>}
       </Row>
       <Row>
-      <Col>
-        <Row>
+
          SELECTED: {selectedRoles.length}
 
-        </Row>
-        <Row>
+      </Row>
+      <Row>
         {isHost && <>
         <button type="button" className="clearRolesButton mafiaButton2" onClick={clearRoles}>Clear all</button>
         <button type="button" className="suggestRolesbutton mafiaButton2" onClick={suggestRoles}>Suggest</button>
         </>}
         </Row>
-        <Row>
-        
 
-          <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
-        
-        </Row>
-      </Col>
-        </Row>
+      <Row>
+        <Col>
+          <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />    
+        </Col>
+      </Row>
 
       </Container>
       
@@ -159,13 +162,18 @@ function SelectedRoles(props) {
       <div id="selectedRolesDiv">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
-            <span onClick={() => props.removeRoleIndex(index)}>
+          <div id="roleDiv">
+              <span onClick={() => props.removeRoleIndex(index)}>
               <img
                 src={getIcon(roleName)}
                 alt={roleName}
                 title={roleName}
               />
             </span>
+                  <p style={{visibility:'hidden'}}>For Sizing</p>
+
+            </div>
+
           )
         }
       </div>

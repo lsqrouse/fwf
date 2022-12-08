@@ -54,8 +54,8 @@
   margin: 1px;
   display: flex;
   max-width: 100%;
-  overflow-x: auto;
-  background-color: red;
+  overflow-x: scroll;
+  overflow-y:hidden;;
   
 
 }
@@ -67,17 +67,8 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* #selectedRoles {
-  margin-top: 10px;
-  display:flex;
-  overflow-x: auto;
-} */
 
-#selectedRoles img {
-  margin: 1px;
-  width: 100%;
 
-}
 
 .timeInput {
   width: 100px;
