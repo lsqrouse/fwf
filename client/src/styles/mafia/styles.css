@@ -13,12 +13,12 @@
 
 .roleSetter {
   width: 100%;
+  
 }
 
 .roleDiv {
   border-radius: 10px;
   height: 100%;
-  width:45%;
   margin-top: 4px;
   padding: 10px;
 }
@@ -52,6 +52,11 @@
 #chooseRolesDiv, #selectedRolesDiv {
   
   margin: 1px;
+  display: flex;
+  max-width: 100%;
+  overflow-x: auto;
+  background-color: red;
+  
 
 }
 
@@ -62,16 +67,16 @@
   font-family: 'Inter', sans-serif;
 }
 
-#selectedRolesDiv {
-  float: left;
-}
-
-#selectedRoles {
+/* #selectedRoles {
   margin-top: 10px;
-}
+  display:flex;
+  overflow-x: auto;
+} */
 
 #selectedRoles img {
   margin: 1px;
+  width: 100%;
+
 }
 
 .timeInput {

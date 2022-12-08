@@ -95,16 +95,25 @@ function RoleSetter(props) {
           <Role role={props.roles[key]} addRole={addRole} />
         )}
       </div></Col>}
+      </Row>
+      <Row>
       <Col>
-      <div id="selectedRolesDiv">
-        SELECTED: {selectedRoles.length}
-        <br/>
+        <Row>
+         SELECTED: {selectedRoles.length}
+
+        </Row>
+        <Row>
         {isHost && <>
         <button type="button" className="clearRolesButton mafiaButton2" onClick={clearRoles}>Clear all</button>
         <button type="button" className="suggestRolesbutton mafiaButton2" onClick={suggestRoles}>Suggest</button>
         </>}
-        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
-      </div>
+        </Row>
+        <Row>
+        
+
+          <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
+        
+        </Row>
       </Col>
         </Row>
 
@@ -133,6 +142,7 @@ function Role(props) {
       <img src={getIcon(role.name)} alt={role.name}/>
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
       <div className="roleLabel">{role.name}</div>
+      <p style={{visibility:'hidden'}}>Ressurectionistt</p>
     </div>
   );
 }
@@ -146,13 +156,12 @@ function AddRoleButton(props) {
 function SelectedRoles(props) {
   if (props.isHost) {
     return (
-      <div id="selectedRoles">
+      <div id="selectedRolesDiv">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
             <span onClick={() => props.removeRoleIndex(index)}>
               <img
                 src={getIcon(roleName)}
-                width="35px"
                 alt={roleName}
                 title={roleName}
               />
@@ -163,17 +172,16 @@ function SelectedRoles(props) {
     );
   } else {
     return (
-      <div>
+      <div id="selectedRolesDiv">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
-            <span>
+            // <span>
               <img
                 src={getIcon(roleName)}
-                width="35px"
                 alt={roleName}
                 title={roleName}
               />
-            </span>
+            // </span>
           )
         }
       </div>
