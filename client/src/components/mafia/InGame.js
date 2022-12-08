@@ -404,14 +404,14 @@ function Ability(props) {
           </select>
           <br />
           <input type="button" value="OK" onClick={() =>
-            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
+            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value === "" ? null : document.getElementById("teamChoice").value)} />
         </form>
         <div className="mafiaVotes">
           <ul>
           {mafiaMembers.map(mafiaMember =>
             <li key={mafiaMember.nickname}>
               {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? 
-                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "" : ""}
+                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "No one" : ""}
             </li>
           )}
           </ul>
@@ -432,7 +432,7 @@ function Ability(props) {
           <span><b>You choose: </b></span>
           {targets.map(
             (target, index) =>
-            <select is={"abilityChoice" + index}>
+            <select id={"abilityChoice" + index}>
               <option value="">No one (skip)</option>
               {target.map(player => 
                   <option value={player.id}>{player.nickname}</option>

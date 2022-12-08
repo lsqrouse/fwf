@@ -364,7 +364,6 @@ io.on('connection', (socket) => {
             let targetIndex = markedForDeath.indexOf(save.targets[0]);
             // Remove saved target from being marked for death
             if (targetIndex !== -1) {
-              console.log("REMOVING " + targetIndex);
               markedForDeath.splice(targetIndex);
               abilitiesList.splice(abilitiesList.indexOf(save), 1);
             }
@@ -381,7 +380,6 @@ io.on('connection', (socket) => {
           const ressurections = abilitiesList.filter(a => a.ability === "ressurect");
           ressurections.forEach(ressurect => {
             playerIdMap[ressurect.targets[0]].gamePlayerState.isAlive = true;
-            console.log("RESSURECTED: ", playerIdMap[ressurect.targets[0]]);
           });
 
           // ----- Seventh, deal with the INVESTIGATE ability -----
