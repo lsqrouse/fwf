@@ -14,12 +14,15 @@ function WerewolfContainer(props) {
     var gameStart = false || lobbyState.wolfGameState.gameStarted;
     var seerTurn = false || lobbyState.wolfGameState.playerTurn == 1;
     console.log('GAME STARTED STATE', gameStart);
-    const [roleAction, setRoleAction] = useState("");  
+    const [roleAction, setRoleAction] = useState("");
+    const [isSeeing, setisSeeing] = useState(false);
+    const [msg, setMsg] = useState('');
     var wolves = [''];
     var isWolf = false || playerState.role == "werewolf";
+    //const [isSeer, setisSeer] = useState(false || playerState.role == "seer");
     var isSeer = false || playerState.role == "seer";
     const minPlayers = 3;
-    
+
     var roles = ["werewolf", "werewolf", "seer", "robber", "troublemaker", "villager"]; //load in roles alternative way here
 
 
@@ -35,7 +38,7 @@ function WerewolfContainer(props) {
         } else if (numPlayers == 5) {
             roles.push("villager");
             roles.push("villager");
-        } else if (numPlayers > 5){
+        } else if (numPlayers > 5) {
             alert("Too many players");
             return;
         }
@@ -52,25 +55,25 @@ function WerewolfContainer(props) {
                 lobbyState.playerList[i].name = playerState.nickname;
             }
             var midCards = roles;
-            console.log("midcards: " + midCards);
+            //console.log("midcards: " + midCards);
             lobbyState.wolfGameState.midCards = midCards;
             socket.emit("update_lobby_state", lobbyState); //
             socket.emit("start_wolf_game", lobbyState);
         }
     }
-    console.log("SEER TURN: ", seerTurn);
+    //console.log("SEER TURN: ", seerTurn);
     if (gameStart && !seerTurn) {
-        console.log("SHOWING WEREWOLVES");
+        //console.log("SHOWING WEREWOLVES");
         var curLobbyState = lobbyState;
         var newMsg = "Werewolves, wake up and look for other werewolves";
         var newroleAction = '';
         curLobbyState.log.push({ msg: newMsg });
         for (var i = 0; i < lobbyState.playerList.length; i++) {
-            if(lobbyState.playerList[i].role == 'werewolf') {
-                
-                if(lobbyState.playerList[i].nickname == playerState.nickname) {
+            if (lobbyState.playerList[i].role == 'werewolf') {
+
+                if (lobbyState.playerList[i].nickname == playerState.nickname) {
                     isWolf = true;
-                }else {
+                } else {
                     wolves.push(lobbyState.playerList[i].nickname + ": is a werewolf \n");
                 }
             }
@@ -78,12 +81,12 @@ function WerewolfContainer(props) {
         //console.log("WOLVES: " , wolves);
         //console.log("PLAYER ROLE: ", isWolf);
         if (isWolf) {
-            for(var i = 0; i < wolves.length; i++){
-                newroleAction += wolves[i]; 
+            for (var i = 0; i < wolves.length; i++) {
+                newroleAction += wolves[i];
             }
-            if(wolves.length == 1){
+            if (wolves.length == 1) {
                 setRoleAction("No other WereWolves")
-            }else{
+            } else {
                 setRoleAction(newroleAction);
             }
         }
@@ -91,7 +94,7 @@ function WerewolfContainer(props) {
         curLobbyState.wolfGameState.playerTurn = 1; //seer turn = true
         socket.emit("update_lobby_state", curLobbyState);
     }
-    
+
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex != 0) {
@@ -104,24 +107,39 @@ function WerewolfContainer(props) {
     }
 
     function seePlayercard() {
-        curLobbyState.wolfGameState.playerTurn = 2; 
-        socket.emit("update_lobby_state", curLobbyState);
+        console.log("See player card ran  --------------------------");
+        setisSeeing(true);
     }
 
-    function seeMidCard(){
+    
+
+    const handleSeerSubmit = event => {
+        event.preventDefault();
+        console.log("message is -----------------" + msg);
+        var seeRole = 'player not found';
+        for (var i = 0; i < lobbyState.playerList.length; i++) {
+            if (lobbyState.playerList[i].nickname == msg) {
+                seeRole = "player " + lobbyState.playerList[i].nickname + " \'s card is " + lobbyState.playerList[i].role;
+            }
+        }
+        setRoleAction(seeRole);
+    }
+
+    function seeMidCard() {
         var midSeer = '';
-        console.log("WOLF GAME STATE" + lobbyState.wolfGameState.midCards);
+        //console.log("WOLF GAME STATE" + lobbyState.wolfGameState.midCards);
         var midCards = lobbyState.wolfGameState.midCards;
-        console.log("midcards in seer: " + midCards);
-        
+        //console.log("midcards in seer: " + midCards);
+
         midSeer += "two cards from the middle are: ";
         midSeer += midCards[0] + "\n";
         midSeer += midCards[1] + "\n";
-        console.log("midseer: " + midSeer);
+        //console.log("midseer: " + midSeer);
         setRoleAction(midSeer);
         var curLobbyState = lobbyState;
-        curLobbyState.wolfGameState.playerTurn = 2; 
+        curLobbyState.wolfGameState.playerTurn = 2;
         socket.emit("update_lobby_state", curLobbyState);
+        setisSeeing(false);
     }
 
     function Settings() {
@@ -157,9 +175,18 @@ function WerewolfContainer(props) {
                     GAME STARTED
                     <h1>your role is {playerState.role}</h1>
                     <h1>{roleAction}</h1>
-                    {seerTurn && isSeer &&<>
+                    {seerTurn && isSeer && <>
                         <button type="button" onClick={seePlayercard}>See player card</button>
                         <button type="button" onClick={seeMidCard}>See two cards from middle</button>
+                    </>}
+                    {isSeeing && <>
+                        <form onSubmit={handleSeerSubmit}>
+                            <div >
+                                <hr></hr>
+                                <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                                <button className='myB' type='submit'>send</button>
+                            </div>
+                        </form>
                     </>}
                 </div>
             </>
