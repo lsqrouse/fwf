@@ -17,7 +17,9 @@ function WerewolfContainer(props) {
     const [roleAction, setRoleAction] = useState("");  
     var wolves = [''];
     var isWolf = false || playerState.role == "werewolf";
+    var isSeer = false || playerState.role == "seer";
     const minPlayers = 3;
+    
     var roles = ["werewolf", "werewolf", "seer", "robber", "troublemaker", "villager"]; //load in roles alternative way here
 
 
@@ -29,10 +31,10 @@ function WerewolfContainer(props) {
             alert("not enough players");
             return;
         } else if (numPlayers == 4) {
-            roles.push("werewolf");
+            roles.push("villager");
         } else if (numPlayers == 5) {
-            roles.push("werewolf");
-            roles.push("werewolf");
+            roles.push("villager");
+            roles.push("villager");
         } else if (numPlayers > 5){
             alert("Too many players");
             return;
@@ -46,12 +48,15 @@ function WerewolfContainer(props) {
             }
 
             for (var i = 0; i < lobbyState.playerList.length; i++) {
-                lobbyState.playerList[i].role = roles[i];
+                lobbyState.playerList[i].role = roles.pop();
                 lobbyState.playerList[i].name = playerState.nickname;
             }
+            var midCards = roles;
+            console.log("midcards: " + midCards);
+            lobbyState.wolfGameState.midCards = midCards;
+            socket.emit("update_lobby_state", lobbyState); //
             socket.emit("start_wolf_game", lobbyState);
         }
-
     }
     console.log("SEER TURN: ", seerTurn);
     if (gameStart && !seerTurn) {
@@ -83,10 +88,10 @@ function WerewolfContainer(props) {
             }
         }
         //console.log("roleAction: " , roleAction);
-        curLobbyState.wolfGameState.playerTurn = 1;
+        curLobbyState.wolfGameState.playerTurn = 1; //seer turn = true
         socket.emit("update_lobby_state", curLobbyState);
     }
-
+    
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex != 0) {
@@ -97,6 +102,28 @@ function WerewolfContainer(props) {
         }
         return array;
     }
+
+    function seePlayercard() {
+        curLobbyState.wolfGameState.playerTurn = 2; 
+        socket.emit("update_lobby_state", curLobbyState);
+    }
+
+    function seeMidCard(){
+        var midSeer = '';
+        console.log("WOLF GAME STATE" + lobbyState.wolfGameState.midCards);
+        var midCards = lobbyState.wolfGameState.midCards;
+        console.log("midcards in seer: " + midCards);
+        
+        midSeer += "two cards from the middle are: ";
+        midSeer += midCards[0] + "\n";
+        midSeer += midCards[1] + "\n";
+        console.log("midseer: " + midSeer);
+        setRoleAction(midSeer);
+        var curLobbyState = lobbyState;
+        curLobbyState.wolfGameState.playerTurn = 2; 
+        socket.emit("update_lobby_state", curLobbyState);
+    }
+
     function Settings() {
         // Initialize stuff
         const isHost = useSelector((state) => state.playerState.host);
@@ -130,6 +157,10 @@ function WerewolfContainer(props) {
                     GAME STARTED
                     <h1>your role is {playerState.role}</h1>
                     <h1>{roleAction}</h1>
+                    {seerTurn && isSeer &&<>
+                        <button type="button" onClick={seePlayercard}>See player card</button>
+                        <button type="button" onClick={seeMidCard}>See two cards from middle</button>
+                    </>}
                 </div>
             </>
             }
