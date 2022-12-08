@@ -11,7 +11,7 @@ import Popup from 'reactjs-popup';
 //import 'reactjs-popup/dist/index';
 
 
-const socket = io("http://localhost:3001").connect()
+const socket = io("http://localhost:8080").connect()
 
 // @ts-ignore
 export default function MainLobby() {

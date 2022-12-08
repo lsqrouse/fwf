@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
-const socket = io("http://localhost:3001").connect()
+const socket = io("http://localhost:8080").connect()
 
 type testGameProps = {
     lobbyId: string,
