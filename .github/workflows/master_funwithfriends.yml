@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'FunWithFriends'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A110A34E97874DAF94DC8F04B62BEA7A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3A91554B81454488970318C60B20B94D }}
           package: .
