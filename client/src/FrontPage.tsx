@@ -68,7 +68,7 @@ export default function FrontPage () {
       </div>
 
       <div className='box'>
-        <h1>Fun With Friends</h1>
+        <h1>Fun With Friendsss</h1>
       </div>
 
       <div className='box'>
