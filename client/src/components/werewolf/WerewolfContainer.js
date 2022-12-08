@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 
 function WerewolfContainer(props) {
-    console.log("LOADED WEREWOLF");
+    //console.log("LOADED WEREWOLF");
 
     const numPlayers = useSelector((state) => state.lobbyState.playerList).length;
     //const gameScreen = useSelector((state) => state.lobbyState.gameState.gameScreen);
@@ -12,15 +12,37 @@ function WerewolfContainer(props) {
     const lobbyState = useSelector((state) => state.lobbyState);
     const [warnMessage, setWarnMessage] = useState("");
     var gameStart = false || lobbyState.wolfGameState.gameStarted;
+
     var seerTurn = false || lobbyState.wolfGameState.playerTurn == 1;
-    console.log('GAME STARTED STATE', gameStart);
+    var isSeer = false || playerState.role == "seer";
+
+    var wolfTurn = false || lobbyState.wolfGameState.playerTurn == 0;
+    var isWolf = false || playerState.role == "werewolf";
+
+    var robTurn = false || lobbyState.wolfGameState.playerTurn == 2;
+    var isRob = false || playerState.role == "robber";
+
+    var trblTurn = false || lobbyState.wolfGameState.playerTurn == 3;
+    var isTrbl = false || playerState.role == "troublemaker";
+
+    var dayTurn = false || lobbyState.wolfGameState.playerTurn == 4;
+
+    //console.log('GAME STARTED STATE', gameStart);
     const [roleAction, setRoleAction] = useState("");
     const [isSeeing, setisSeeing] = useState(false);
     const [msg, setMsg] = useState('');
     var wolves = [''];
-    var isWolf = false || playerState.role == "werewolf";
+
+    var uIndex = 0;
+
+    for (var i = 0; i < lobbyState.playerList.length; i++) {
+        if (lobbyState.playerList[i].nickname == playerState.nickname) {
+            uIndex = i;
+        }
+    }
+
     //const [isSeer, setisSeer] = useState(false || playerState.role == "seer");
-    var isSeer = false || playerState.role == "seer";
+
     const minPlayers = 3;
 
     var roles = ["werewolf", "werewolf", "seer", "robber", "troublemaker", "villager"]; //load in roles alternative way here
@@ -62,7 +84,7 @@ function WerewolfContainer(props) {
         }
     }
     //console.log("SEER TURN: ", seerTurn);
-    if (gameStart && !seerTurn) {
+    if (gameStart && wolfTurn) {
         //console.log("SHOWING WEREWOLVES");
         var curLobbyState = lobbyState;
         var newMsg = "Werewolves, wake up and look for other werewolves";
@@ -91,7 +113,22 @@ function WerewolfContainer(props) {
             }
         }
         //console.log("roleAction: " , roleAction);
-        curLobbyState.wolfGameState.playerTurn = 1; //seer turn = true
+
+        if (lobbyState.wolfGameState.midCards.includes("seer")) {
+            if (lobbyState.wolfGameState.midCards.includes("robber")) {
+                if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
+                    curLobbyState.wolfGameState.playerTurn = 4;
+                } else {
+                    curLobbyState.wolfGameState.playerTurn = 3;
+                }
+
+            } else {
+                curLobbyState.wolfGameState.playerTurn = 2;
+            }
+
+        } else {
+            curLobbyState.wolfGameState.playerTurn = 1; //seer turn = true
+        }
         socket.emit("update_lobby_state", curLobbyState);
     }
 
@@ -107,15 +144,15 @@ function WerewolfContainer(props) {
     }
 
     function seePlayercard() {
-        console.log("See player card ran  --------------------------");
+        //console.log("See player card ran  --------------------------");
         setisSeeing(true);
     }
 
-    
+
 
     const handleSeerSubmit = event => {
         event.preventDefault();
-        console.log("message is -----------------" + msg);
+        //console.log("message is -----------------" + msg);
         var seeRole = 'player not found';
         for (var i = 0; i < lobbyState.playerList.length; i++) {
             if (lobbyState.playerList[i].nickname == msg) {
@@ -123,6 +160,50 @@ function WerewolfContainer(props) {
             }
         }
         setRoleAction(seeRole);
+        var curLobbyState = lobbyState;
+        if (lobbyState.wolfGameState.midCards.includes("robber")) {
+            if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
+                curLobbyState.wolfGameState.playerTurn = 4;
+            } else {
+                curLobbyState.wolfGameState.playerTurn = 3;
+            }
+        } else {
+            curLobbyState.wolfGameState.playerTurn = 2;
+        }
+
+        socket.emit("update_lobby_state", curLobbyState);
+        setisSeeing(false);
+    }
+
+    const handleRobSubmit = event => {
+        event.preventDefault();
+        //console.log("message is -----------------" + msg);
+        var seeRole = 'player not found';
+
+        var tIndex = 0;
+
+        for (var i = 0; i < lobbyState.playerList.length; i++) {
+            //console.log("uindex" + uIndex);
+            if (lobbyState.playerList[i].nickname == msg) {
+                const temp = lobbyState.playerList[uIndex].role;
+                //console.log("TEMP ----------- " + temp);
+                lobbyState.playerList[uIndex].role = lobbyState.playerList[i].role;
+                //console.log("uIndex----------- " + lobbyState.playerList[uIndex].role);
+                lobbyState.playerList[i].role = temp;
+                seeRole = 'you have switched cards';
+            }
+        }
+        setRoleAction(seeRole);
+        var curLobbyState = lobbyState;
+
+        if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
+            curLobbyState.wolfGameState.playerTurn = 4;
+        } else {
+            curLobbyState.wolfGameState.playerTurn = 3;
+        }
+
+
+        socket.emit("update_lobby_state", lobbyState);
     }
 
     function seeMidCard() {
@@ -137,10 +218,90 @@ function WerewolfContainer(props) {
         //console.log("midseer: " + midSeer);
         setRoleAction(midSeer);
         var curLobbyState = lobbyState;
-        curLobbyState.wolfGameState.playerTurn = 2;
+        if (lobbyState.wolfGameState.midCards.includes("robber")) {
+            if (lobbyState.wolfGameState.midCards.includes("troublemaker")) {
+                curLobbyState.wolfGameState.playerTurn = 4;
+            } else {
+                curLobbyState.wolfGameState.playerTurn = 3;
+            }
+        } else {
+            curLobbyState.wolfGameState.playerTurn = 2;
+        }
+
+
         socket.emit("update_lobby_state", curLobbyState);
         setisSeeing(false);
     }
+
+    const handleVote = event => {
+        event.preventDefault();
+        //console.log("message is -----------------" + msg);
+        var seeRole = 'player not found';
+
+        setRoleAction(seeRole);
+        var curLobbyState = lobbyState;
+        curLobbyState.wolfGameState.votes.push(msg)
+        socket.emit("update_lobby_state", curLobbyState);
+
+        if (curLobbyState.wolfGameState.votes.length >= numPlayers) {
+            const counts = {};
+            var arr = lobbyState.wolfGameState.votes;
+            // Loop through the array and count the number of occurrences of each value
+            for (const value of arr) {
+                counts[value] = (counts[value] || 0) + 1;
+            }
+
+            // Find the most common value
+            let mostCommonValue;
+            let highestCount = 0;
+            for (const value in counts) {
+                if (counts[value] > highestCount) {
+                    highestCount = counts[value];
+                    mostCommonValue = value;
+                }
+            }
+
+            seeRole = mostCommonValue + " HAS BEEN KILLED!"
+            setRoleAction(seeRole);
+            curLobbyState.wolfGameState.playerTurn = 5;
+            socket.emit("update_lobby_state", curLobbyState);
+        }
+    }
+
+    const handleTrblSubmit = event => {
+        event.preventDefault();
+        //console.log("message is -----------------" + msg);
+        var seeRole = 'player not found';
+        const names = msg.split(",");
+
+        var t1 = names[0];
+        var t2 = names[1];
+
+        var t1ind = -1;
+        var t2ind = -1;
+
+        for (var i = 0; i < lobbyState.playerList.length; i++) {
+            if (lobbyState.playerList[i].nickname == t1) {
+                t1ind = i;
+            }
+            if (lobbyState.playerList[i].nickname == t2) {
+                t2ind = i;
+            }
+        }
+        if (t1ind !== -1 && t2ind !== -1) {
+            seeRole = 'Players cards have been switched';
+        }
+
+        const temp = lobbyState.playerList[t1ind].role;
+        lobbyState.playerList[t1ind].role = lobbyState.playerList[t2ind].role;
+        lobbyState.playerList[t2ind].role = temp;
+
+        setRoleAction(seeRole);
+        lobbyState.wolfGameState.playerTurn = 4;
+        socket.emit("update_lobby_state", lobbyState);
+    }
+
+
 
     function Settings() {
         // Initialize stuff
@@ -173,7 +334,12 @@ function WerewolfContainer(props) {
             {gameStart && <>
                 <div>
                     GAME STARTED
-                    <h1>your role is {playerState.role}</h1>
+                    {isRob && <>
+                        <h1>your role is {lobbyState.playerList[uIndex].role}</h1>
+                    </>}
+                    {!isRob && <>
+                        <h1>your role is {playerState.role}</h1>
+                    </>}
                     <h1>{roleAction}</h1>
                     {seerTurn && isSeer && <>
                         <button type="button" onClick={seePlayercard}>See player card</button>
@@ -182,6 +348,37 @@ function WerewolfContainer(props) {
                     {isSeeing && <>
                         <form onSubmit={handleSeerSubmit}>
                             <div >
+                                <h1>Type name of player whos card you want to see.</h1>
+                                <hr></hr>
+                                <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                                <button className='myB' type='submit'>send</button>
+                            </div>
+                        </form>
+                    </>}
+                    {isRob && robTurn && <>
+                        <form onSubmit={handleRobSubmit}>
+                            <div >
+                                <h1>Type name of player whos card you want to switch with.</h1>
+                                <hr></hr>
+                                <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                                <button className='myB' type='submit'>send</button>
+                            </div>
+                        </form>
+                    </>}
+                    {isTrbl && trblTurn && <>
+                        <form onSubmit={handleTrblSubmit}>
+                            <div >
+                                <h1>Type the names of the two players cards to switch in "name,name" format.</h1>
+                                <hr></hr>
+                                <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+                                <button className='myB' type='submit'>send</button>
+                            </div>
+                        </form>
+                    </>}
+                    {dayTurn && <>
+                        <form onSubmit={handleVote}>
+                            <div >
+                                <h1>You have made it through the night and it has turned to day! Please cast vote for a user with the box below</h1>
                                 <hr></hr>
                                 <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
                                 <button className='myB' type='submit'>send</button>

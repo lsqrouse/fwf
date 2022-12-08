@@ -458,6 +458,7 @@ app.get("/api/lobby/create", (req, res) => {
       lastTurnPlayerId: '',
       lastTurnPlayerRole: -1,
       midCards: [],
+      votes: [],
     },
     settings: {
       selectedRoles: ["Villager"]
