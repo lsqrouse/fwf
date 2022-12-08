@@ -431,7 +431,7 @@ io.on('connection', (socket) => {
           
           // Initialize empty night summary string
           let nightSummary = ""
-          nightSummary += `Night ${lobbyState.gameState.phaseNum} has ended. You can turn around and face each other now.`;
+          nightSummary += `Night ${lobbyState.gameState.phaseNum} has ended. You can turn around and face each other now.\n`;
           // Add dead players' names to summary list
           markedForDeath.forEach(p => {
             nightSummary += `${playerIdMap[p].nickname} has died :(\n`
@@ -522,9 +522,9 @@ io.on('connection', (socket) => {
 
           // Initialize empty day summary string
           let daySummary = ""
-          daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.`;
+          daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.\n`;
           // Add voted player's name to summary list
-          daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.`;
+          daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.\n`;
           // Set the message
           lobbyState.gameState.allPlayersMessage = daySummary;
           // Set the next phase
@@ -584,7 +584,7 @@ io.on('connection', (socket) => {
       }
     }
 
-    // Mafia win
+    // Village win
     if (aliveMafiaPlayers.length == 0) {
       lobbyState.gameState.winningTeams.push("Village");
       lobbyState.gameState.winningPlayers.concat(villagePlayers);
@@ -592,7 +592,7 @@ io.on('connection', (socket) => {
       someoneHasWon = true;
     }
   
-    // Village win
+    // Mafia win
     if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
       lobbyState.gameState.winningTeams.push("Mafia");
       lobbyState.gameState.winningPlayers.concat(mafiaPlayers);
