@@ -566,7 +566,7 @@ io.on('connection', (socket) => {
       const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
       if (playerIdMap[dayVote].gamePlayerState.role === "Jester") {
         lobbyState.gameState.winningTeams.push("Jester");
-        lobbyState.gameState.winningPlayers.push(dayVote);
+        lobbyState.gameState.winningPlayers.push(playerIdMap[dayVote]);
         lobbyState.gameState.gameScreen = "EndGame";
         someoneHasWon = true;
       }
