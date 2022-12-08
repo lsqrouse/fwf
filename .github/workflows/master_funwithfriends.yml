@@ -55,4 +55,5 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3A91554B81454488970318C60B20B94D }}
           package: ./api
       - run: |
+          cd client
           npm start
