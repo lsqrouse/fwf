@@ -587,7 +587,7 @@ io.on('connection', (socket) => {
     // Village win
     if (aliveMafiaPlayers.length == 0) {
       lobbyState.gameState.winningTeams.push("Village");
-      lobbyState.gameState.winningPlayers.concat(villagePlayers);
+      lobbyState.gameState.winningPlayers = lobbyState.gameState.winningPlayers.concat(villagePlayers);
       lobbyState.gameState.gameScreen = "EndGame";
       someoneHasWon = true;
     }
@@ -595,7 +595,7 @@ io.on('connection', (socket) => {
     // Mafia win
     if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
       lobbyState.gameState.winningTeams.push("Mafia");
-      lobbyState.gameState.winningPlayers.concat(mafiaPlayers);
+      lobbyState.gameState.winningPlayers = lobbyState.gameState.winningPlayers.concat(mafiaPlayers);
       lobbyState.gameState.gameScreen = "EndGame";
       someoneHasWon = true;
     }
