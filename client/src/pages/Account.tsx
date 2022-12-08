@@ -25,19 +25,33 @@ export default function Account(props: accountProps) {
         <NoLogin/>
     </>) : (<>
     {/* Page displayed when we are logged in */}
-        <div style={{marginTop: '2%', marginLeft: '2%'}}>
-        <Link to="/">
-            <button className='myButton'>Home</button>
-          </Link>
-        </div>
+    <div className='pageContent'>
 
-        <Container>
-            <Row style={{border:'8px solid blue', borderRadius:'5%', marginTop:'2%', marginBottom:'2%', padding:'1%'}}>
-                    <Col>            
-                        <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />
+    <header className='header-area'>
+      <Container style={{maxWidth:'100%', justifyContent:'center', }}>
+      <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
+        <Col className='col-2'>
+        </Col>
+        <Col className='col-2'>
+        <Link to="/">
+          <button className='second-button' >Home</button>
+        </Link>
+        </Col>
+        <Col className='col-4 siteHeader'>
+          <h1>Fun with Friends</h1>
+        </Col>
+        <Col className='col-2'>
+        <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />
                         <Link to={`/u/${lookupUser}`}>Search</Link>
-                    </Col>
-            </Row>
+        </Col>
+        <Col className='col-2'>
+        </Col>
+      </Row>
+      </Container>
+      </header>
+       
+        <Container>
+        <div className='myBox'>
             <Row >
                 <Col></Col>
                 <Col>
@@ -49,7 +63,9 @@ export default function Account(props: accountProps) {
                 </Col>
                 <Col></Col>
             </Row>
+            </div>
         </Container>
+        </div>
 
     </>)}
     

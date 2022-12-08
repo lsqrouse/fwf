@@ -4,6 +4,9 @@ import './FrontPage.css';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col } from 'reactstrap';
+
+import './styles/imported/seo.css'
 
 export default function Login() {
 
@@ -61,21 +64,36 @@ export default function Login() {
     return (
       <>
       {!isLoading ? (<>
-        <div className='container'>
-        <div className="login">
-          <Link to="/">
-            <button className='myButton'>Back</button>
-          </Link>
-        </div>
-
-        <div className='box'>
-
-          <h1>Fun With Friends</h1>
-        </div>
-
-        <div className='box'>
+        <header className='header-area'>
+      <Container style={{maxWidth:'100%', justifyContent:'center', }}>
+      <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
+        <Col className='col-2'>
+        </Col>
+        <Col className='col-2'>
+        <Link to="/">
+          <button className='second-button' >Back</button>
+        </Link>
+        </Col>
+        <Col className='col-4 siteHeader'>
+          <h1>Fun with Friends</h1>
+        </Col>
+        <Col className='col-2'>
+          
+        </Col>
+        <Col className='col-2'>
+        </Col>
+      </Row>
+      </Container>
+      </header>
+      <div className='pageContent'>
+      <Container>
+        <Row>
+          <Col className='col-3'></Col>
+          <Col className='col-6'>
+          <div className='myBox'>
           <h1>Login</h1>
-            <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+          <hr></hr>
+            <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} /><br/>
             <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
             <div>
                 <button className='myButton' type='submit' onClick={handleLogin}>Login</button>
@@ -83,17 +101,25 @@ export default function Login() {
 
 
 
-          <h1>Create Account</h1>
-          <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
-            <input type="text" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+          <h1 className='loginTitle'>Create Account</h1>
+          <hr></hr>
+
+          <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} /><br/>
+            <input type="text" placeholder="Password" onChange={(e) => setPassword(e.target.value)} /><br/>
             <input type="text" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
             <div>
                 <button className='myButton' type='submit' onClick={handleCreateAccount}>Sign Up</button>
             </div>
+          </div>
+          </Col>
+          <Col className='col-3'></Col>
 
-        </div>
+        </Row>
 
+
+      </Container>
       </div>
+
         </>) : (<></>)}
       </>
     )

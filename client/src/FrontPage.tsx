@@ -74,7 +74,7 @@ export default function FrontPage () {
               
             </>) : (<>
             {/* Code displayed if user is defined */}
-            <p><Link to="/account">{userName}</Link></p>
+            <p><Link to="/account"><button className='main-button'>My Account</button></Link></p>
             </>)}
         </Col>
         <Col className='col-2'>

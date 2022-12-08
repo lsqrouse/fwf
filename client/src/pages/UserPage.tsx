@@ -14,7 +14,9 @@ type accountProps = {
 }
 
 export default function UserPage() {
-    let { curUsername } = useParams()
+    let { curUsername } = useParams();
+    const [lookupUser, setLookupUser] = useState('');
+
 
     // console.log(`got ${curUsername} as username and ${curUserId} as userid`)
     // if (curUserId == -1) {
@@ -28,12 +30,33 @@ export default function UserPage() {
 
     return <>
     {/* Page displayed when we are logged in */}
-    <div style={{marginTop: '2%', marginLeft: '2%'}}>
-        <Link to="/">
-            <button className='myButton'>Home</button>
-          </Link>
-        </div>
-        <Container>
+    <div className='pageContent'>
+
+<header className='header-area'>
+  <Container style={{maxWidth:'100%', justifyContent:'center', }}>
+  <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
+    <Col className='col-2'>
+    </Col>
+    <Col className='col-2'>
+    <Link to="/">
+      <button className='second-button' >Home</button>
+    </Link>
+    </Col>
+    <Col className='col-4 siteHeader'>
+      <h1>Fun with Friends</h1>
+    </Col>
+    <Col className='col-2'>
+           <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />
+                        <Link to={`/u/${lookupUser}`}>Search</Link>
+    </Col>
+    <Col className='col-2'>
+    </Col>
+  </Row>
+  </Container>
+  </header>
+  
+  <Container>
+  <div className='myBox'>
             <Row className="justify-content-md-center">
                 <Profile  username={curUsername}></Profile>
             </Row>
@@ -44,8 +67,11 @@ export default function UserPage() {
             <Row className="justify-content-md-center">
                 <AccountHistory username={curUsername}></AccountHistory>
             </Row>
+  </div>
         </Container>
-
   
+        
+
+  </div>
     </>
 }
