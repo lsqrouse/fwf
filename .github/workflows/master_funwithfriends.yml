@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - FunWithFriends
+name: Build and deploy Node.js app to Azure Web App - funwithfriends
 
 on:
   push:
@@ -24,6 +24,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
+
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -48,7 +49,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'FunWithFriends'
+          app-name: 'funwithfriends'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3A91554B81454488970318C60B20B94D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F9FD9CF0C8794B288772DFB7A3362B8E }}
           package: .
