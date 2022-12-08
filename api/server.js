@@ -572,6 +572,18 @@ io.on('connection', (socket) => {
       }
     }
 
+    // Executioner win
+    if (lobbyState.gameState.currentPhase === "day") {
+      const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
+      const executionerId = Object.keys(lobbyState.gameState.executionerTargets).find(t => lobbyState.gameState.executionerTargets[t] === dayVote);
+      if (executionerId) {
+        lobbyState.gameState.winningTeams.push("Executioner");
+        lobbyState.gameState.winningPlayers.push(playerIdMap[executionerId]);
+        lobbyState.gameState.gameScreen = "EndGame";
+        someoneHasWon = true;
+      }
+    }
+
     // Mafia win
     if (aliveMafiaPlayers.length == 0) {
       lobbyState.gameState.winningTeams.push("Village");
