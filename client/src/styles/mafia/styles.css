@@ -179,3 +179,18 @@
 #warnMessage {
   height: 30px;
 }
+
+.endGameInfo {
+  display: flex;
+}
+
+.winningPlayersDiv, .gameSummaryDiv {
+  display: inline-block;
+  width: 50%;
+  overflow: auto;
+}
+
+.winningPlayersList {
+  list-style: none;
+  padding: 0;
+}
