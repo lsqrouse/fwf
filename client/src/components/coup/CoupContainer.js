@@ -1938,48 +1938,6 @@ function CoupContainer(props)
 }
 
 // Roles for coup
-// function RoleList(props) 
-// {
-//     // Get role list based on game version
-//     const gameVersion = props.gameVersion;
-//     const roleList = props.roleList[gameVersion];
-  
-//     return (
-//       <div class="parent carousel">
-//         {roleList.map((role) => 
-//         {
-//           return (
-//             <div class="bigItem"
-//               style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-//               {/* <div class="couponcode">
-//                 <span class="coupontooltip">
-//                   <h2>{role.name}</h2>
-//                   <h3>{role.ability}</h3>
-//                 </span>
-//               </div> */}
-//             </div>
-//           );
-//         })}
-//       </div>
-//       // <div className="parent">
-//       //   <ul class="centerStuffXY">
-//       //     {roleList.map(role => {
-//       //       return (
-//       //         <div>
-//       //           <div class="couponcode">
-//       //             {role.name}
-//       //             <span class="coupontooltip">
-//       //               <h2>{role.name}</h2>
-//       //               <h3>{role.ability}</h3>
-//       //             </span>
-//       //           </div>
-//       //         </div>
-//       //       )
-//       //       })}
-//       //   </ul>
-//       // </div>
-//     );
-// }
 function RoleListCircle(props)
 {
   // Get role list based on game version
