@@ -259,6 +259,7 @@ function GameSummary() {
               &nbsp;went out to&nbsp;
               {data.night[playerId].ability}&nbsp;
               {data.night[playerId].targets.map((target, index) =>
+                target !== null && target !== "null" &&
                 <><b>{getPlayerFromId(target).nickname}</b>{index < data.night[playerId].targets.length - 1 ? ", " : "."}</>
               )}
             </li>
