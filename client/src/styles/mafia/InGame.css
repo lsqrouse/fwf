@@ -22,31 +22,39 @@
 }
 
 .roleList {
-  display: block;
+  display: flex;
+  float: left;
   border: 1px grey solid;
-  height: 40px;
+  width: 40% !important;
+  height: 50% !important;
   overflow: hidden;
+  position: relative;
 }
 
 .roleListItem {
   display: inline-block;
   margin: 8px 4px;
   font-size: 20px;
+  column-span: all;
 }
 
 .sideButtons {
   display: inline-block;
-  width: 50px;
+  width: 10%;
   height: 460px;
+  float: right;
 }
 
 .phase {
-  display: flex;
+  position: relative;
+  width: 60%;
+  float: right;
 }
 
 .mainInfo {
   display: inline-block;
-  width: 400px;
+  width: 90%;
+  float: left;
 }
 
 .topScreen {
@@ -82,7 +90,7 @@
 .roleCardTab {
   height: 20px;
   width: 300px;
-  position: relative;
+  position: absolute;
   bottom: 0px;
   left: 50px;
   border: 2px #856c4e solid;

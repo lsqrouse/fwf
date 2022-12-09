@@ -54,12 +54,18 @@
   .content {
     list-style-type: none;
   }
-  
+
+  .col-2-1{
+    float: left;
+  }
+
+
   .popup-content {
     display: flex;
+    text-align: center;
     background: grey;
     width: 70%;
-    height: 90%;
+    height: 70%;
     position: relative;
     border-radius: 5%;
     border: 8px solid blue;

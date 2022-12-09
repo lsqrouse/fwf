@@ -178,9 +178,7 @@ export default function MainLobby() {
       <header className='header-area'>
       <Container style={{maxWidth:'100%', justifyContent:'center', }}>
       <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
-      <Col className='col-2'>
-        </Col>
-          <Col className='col-2'>
+          <Col className='col-2-1'>
             <Link to="/">
               <button className='second-button' onClick={handleLeave}>Back</button>
             </Link>
@@ -190,7 +188,7 @@ export default function MainLobby() {
           </Col>
           <Col className='col-2'>
         </Col>
-          <Col className='col-2'>
+          <Col className='col-2-2'>
             <Link to="/Instructions">
               <button className='main-button' onClick={() => setJoined(true)}>Instructions</button>
             </Link>
@@ -247,7 +245,7 @@ export default function MainLobby() {
               />
           </Col>
           <Col className='col-2'>
-            <Popup trigger={<button>Open Chat</button>} position="left center">
+            <Popup trigger={<button>Open Chat</button>} position="left top">
                 <ul>{listItems}</ul>
                   <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>

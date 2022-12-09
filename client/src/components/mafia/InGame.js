@@ -385,9 +385,19 @@ function TopScreen(props) {
 }
 
 function Chat(props) {
+
+  const chat = useSelector((state) => state.lobbyState.chatLog);
+  var result = [''];
+  if(chat != undefined)
+  for(var i = 0; i < chat.length; i++){
+    result.push(chat[i].msg);
+  }
+  const listItems = result.map((msg) =>
+    <li className='content'>{msg}</li>
+  );
   return (
     <div className="topScreen chatbox">
-      Chat box
+      <ul>{listItems}</ul>
     </div>
   );
 }
