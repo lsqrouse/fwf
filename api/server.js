@@ -495,7 +495,6 @@ io.on('connection', (socket) => {
         }
 
         // See who has most votes
-        console.log("VOTES COUNT:", votesCount)
         let mostVoted = Object.keys(votesCount)[0];
         let mostVotedTie = false;
         for (let i = 1; i < Object.keys(votesCount).length; i++) {
@@ -509,8 +508,6 @@ io.on('connection', (socket) => {
           }
         }
 
-        console.log("MOST VOTED: ", mostVoted);
-        console.log("MOST VOTED TIE?: ", mostVotedTie);
         if (!mostVotedTie) {
           // If no tie, update state
           lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote = mostVoted;
