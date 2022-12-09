@@ -15,6 +15,7 @@ function MafiaContainer(props) {
   const minPlayers = 4;
   const [roles, setRoles] = useState({});
   const [teams, setTeams] = useState({})
+  const [notes, setNotes] = useState("");
 
   // Get roles data from server.
   if (Object.keys(roles).length === 0 || Object.keys(teams).length === 0) {
@@ -108,6 +109,8 @@ function MafiaContainer(props) {
           teams={teams}
           roles={roles}
           roleList={selectedRoles}
+          notes={notes}
+          setNotes={setNotes} 
           socket={socket}
         />)
       ||
@@ -176,7 +179,7 @@ function SettingsScreen(props) {
 function GameScreen(props) {
   return (
     <>
-      <InGame roles={props.roles} teams={props.teams} roleList={props.roleList} socket={props.socket} />
+      <InGame roles={props.roles} teams={props.teams} roleList={props.roleList} notes={props.notes} setNotes={props.setNotes} socket={props.socket} />
     </>
   );
 }

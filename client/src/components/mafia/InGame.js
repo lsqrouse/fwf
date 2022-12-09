@@ -15,6 +15,9 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
+  const notes = props.notes;
+  const setNotes = props.setNotes;
+
   const lobbyState = useSelector((state) => state.lobbyState);
   const playerState = useSelector((state) => state.playerState);
   const playerRole = playerState.gamePlayerState.role;
@@ -34,7 +37,17 @@ function InGame(props) {
     <div className="inGame">
       <MafiaHeader />
       <RoleList roles={roles} roleList={props.roleList} />
-      <Phase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+      <Phase
+        roles={roles}
+        teams={teams}
+        topScreen={topScreen}
+        setTopScreen={setTopScreen}
+        bottomScreen={bottomScreen}
+        setBottomScreen={setBottomScreen}
+        notes={notes}
+        setNotes={setNotes}
+        socket={socket}
+      />
       {roleCard}
     </div>
   );
@@ -48,6 +61,8 @@ function Phase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   socket.on("mafia_night_phase_ended", (data) => {
@@ -62,13 +77,32 @@ function Phase(props) {
     case "day":
       return (
         <div className="phase">
-          <DayPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <DayPhase
+            roles={roles}
+            teams={teams}
+            topScreen={topScreen}
+            setTopScreen={setTopScreen}
+            bottomScreen={bottomScreen}
+            setBottomScreen={setBottomScreen}
+            notes={notes}
+            setNotes={setNotes}
+            socket={socket}
+          />
         </div>
       );
     case "night":
       return (
         <div className="phase">
-          <NightPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <NightPhase
+            roles={roles}
+            teams={teams}
+            topScreen={topScreen}
+            setTopScreen={setTopScreen}
+            bottomScreen={bottomScreen}
+            setBottomScreen={setBottomScreen}
+            notes={notes}
+            setNotes={setNotes}
+            socket={socket} />
         </div>
       );
     default:
@@ -82,13 +116,15 @@ function DayPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
+  const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   return (
     <>
       <div className="mainInfo">
-        <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+        <TopScreen roles={roles} teams={teams} screen={topScreen} notes={notes} setNotes={setNotes} socket={socket} />
         <BottomScreen roles={roles} screen={bottomScreen} />
       </div>
       <div className="sideButtons">
@@ -112,12 +148,14 @@ function NightPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   return (
     <>
     <div className="mainInfo">
-      <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+      <TopScreen roles={roles} teams={teams} screen={topScreen} notes={notes} setNotes={setNotes} socket={socket} />
       <BottomScreen roles={roles} screen={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -326,6 +364,8 @@ function TopScreen(props) {
   const roles = props.roles;
   const teams = props.teams;
   const screen = props.screen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   switch (screen) {
@@ -336,7 +376,7 @@ function TopScreen(props) {
     case "ability":
       return <Ability roles={roles} teams={teams} socket={socket} />
     case "notes":
-      return <Notes socket={socket} />
+      return <Notes socket={socket} notes={notes} setNotes={setNotes} />
     case "alerts":
       return <Alerts />
     default:
@@ -524,9 +564,13 @@ function Ability(props) {
 }
 
 function Notes(props) {
+  const notes = props.notes;
+  const setNotes = props.setNotes;
+
   return (
     <div className="topScreen notes">
-      Notes go here
+      <h4>Notes</h4>
+      <textarea type="text" className="notesInput" rows="4" onChange={(text) => setNotes(text.target.value)} value={notes} />
     </div>
   );
 }
