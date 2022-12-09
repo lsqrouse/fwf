@@ -183,7 +183,19 @@ html, body {
 .siteHeader {
   color: #fff;
   text-align: center;
+  height: 100px;
 }
+
+.siteHeader h2 {
+  font-size: 28px;
+  line-height: 28px;
+}
+
+.siteHeader h3 {
+  font-size: 24px;
+  line-height: 24px;
+}
+
 .main-button {
   font-size: 14px;
   color: #fff;

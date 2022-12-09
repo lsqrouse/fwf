@@ -187,10 +187,10 @@ export default function MainLobby() {
             </Link>
           </Col>
           <Col className='col-4 siteHeader'>
-            <h1>Welcome {playerState.nickname}! <br />  Lobby Code: {lobbyState.lobbyId}</h1>
+            <h3>Welcome {playerState.nickname}!</h3> <br />  <h2>{lobbyState.game !== "" && `${lobbyState.game} | `} Code: {lobbyState.lobbyId}</h2>
           </Col>
           <Col className='col-2'>
-        </Col>
+          </Col>
           <Col className='col-2'>
             <Link to="/Instructions">
               <button className='main-button' onClick={() => setJoined(true)}>Instructions</button>
@@ -202,7 +202,7 @@ export default function MainLobby() {
         </header>
         <div className='pageContent'>
         
-        {playerState.id == lobbyState.lobbyHost &&  lobbyState.game == "no game chosen" ? (<>
+        {playerState.id == lobbyState.lobbyHost &&  lobbyState.game == "" ? (<>
           <Container className='gameContainer' style={{maxWidth: '75%'}}>
         <Row style={{textAlign: 'center'}}>
           <Col>
