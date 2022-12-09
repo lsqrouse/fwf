@@ -286,17 +286,17 @@ io.on('connection', (socket) => {
           }
           // See who has most votes
           let mostVoted = Object.keys(mafiaVotesCount)[0];
-          let mostVotedTie = null;
-          for (let i = 1; i < mafiaVotesCount.length; i++) {
+          let mostVotedTie = false;
+          for (let i = 1; i < Object.keys(mafiaVotesCount).length; i++) {
             const contender = Object.keys(mafiaVotesCount)[i];
             if (mafiaVotesCount[contender] > mafiaVotesCount[mostVoted]) {
               mostVoted = contender;
-              mostVotedTie = null;
+              mostVotedTie = false;
             } else if (mafiaVotesCount[contender] === mafiaVotesCount[mostVoted]) {
-              mostVotedTie = contender;
+              mostVotedTie = true;
             }
           }
-          if (mostVotedTie !== null) {
+          if (mostVotedTie) {
             voteTie = true;
           }
           mafiaKill = mostVoted;
@@ -495,19 +495,23 @@ io.on('connection', (socket) => {
         }
 
         // See who has most votes
+        console.log("VOTES COUNT:", votesCount)
         let mostVoted = Object.keys(votesCount)[0];
-        let mostVotedTie = null;
-        for (let i = 1; i < votesCount.length; i++) {
+        let mostVotedTie = false;
+        for (let i = 1; i < Object.keys(votesCount).length; i++) {
           const contender = Object.keys(votesCount)[i];
+          console.log("Contentder vs most voted: ", votesCount[contender], votesCount[mostVoted]);
           if (votesCount[contender] > votesCount[mostVoted]) {
             mostVoted = contender;
-            mostVotedTie = null;
+            mostVotedTie = false;
           } else if (votesCount[contender] === votesCount[mostVoted]) {
-            mostVotedTie = contender;
+            mostVotedTie = true;
           }
         }
 
-        if (mostVotedTie === null) {
+        console.log("MOST VOTED: ", mostVoted);
+        console.log("MOST VOTED TIE?: ", mostVotedTie);
+        if (!mostVotedTie) {
           // If no tie, update state
           lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote = mostVoted;
 
