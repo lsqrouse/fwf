@@ -12,7 +12,7 @@ import Popup from 'reactjs-popup';
 
 
 // const socket = io("http://localhost:8080", {transports:['websocket']}).connect()
-var socket = io('http://localhost');
+var socket = io('http://localhost:8080');
 
 // @ts-ignore
 export default function MainLobby() {
