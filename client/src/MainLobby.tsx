@@ -9,6 +9,7 @@ import TextLog from './textLog.jsx';
 import { json } from 'stream/consumers';
 import Popup from 'reactjs-popup';
 import { Container, Row, Col} from 'reactstrap';
+import { initialState } from './redux/reducer';
 //import 'reactjs-popup/dist/index';
 
 
@@ -106,7 +107,7 @@ export default function MainLobby() {
     if (window.confirm("Are you sure you want to leave the lobby?")) {
       var curLobbyState = lobbyState;
       setJoined(false)
-      dispatch({ type: 'updateLobby', payload: {gameState: {}}})
+      dispatch({ type: 'updateLobby', payload: initialState.lobbyState})
       console.log("disconnecting: ");
     }
 
@@ -215,7 +216,7 @@ export default function MainLobby() {
             <p>TODO: insert werewolf desc.</p>
           </button>
          
-            <button className='second-button' type='submit' onClick={() => { handleGameChoice('coup') }}><h4>Coup</h4>
+            <button className='second-button' type='submit' onClick={() => { handleGameChoice('Coup') }}><h4>Coup</h4>
             <p>TODO: insert coup descr.</p>
           </button>
           </div>
