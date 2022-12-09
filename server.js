@@ -11,7 +11,7 @@ const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUs
 const bcrypt = require("bcrypt");
 const { NONAME } = require("dns");
 const mafiaData = require("./mafia/src/data/data");
-
+const path = require("path")
 const PORT = process.env.PORT || 8080;
 const userNames = [];
 
@@ -34,7 +34,7 @@ console.log(process.cwd()+"/client/build/")
 
 
 app.get("*", async(req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", index.html));
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 })
 
 
