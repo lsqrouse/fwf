@@ -14,35 +14,23 @@ const mafiaData = require("./mafia/src/data/data");
 
 const PORT = process.env.PORT || 8080;
 const userNames = [];
+
+
 const app = express();
-
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
-  // intercept OPTIONS method
-  if ('OPTIONS' == req.method) {
-    res.send(200);
-  }
-  else {
-    next();
-  }
-};
+const server = http.createServer(app);
+var io = require('socket.io')(server);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"]
+//   },
+// });
 
 
 app.use(cors());
-app.use(allowCrossDomain);
+// app.use(allowCrossDomain);
 app.use(express.static(process.cwd()+"/client/build/"));
 console.log(process.cwd()+"/client/build/")
-
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  },
-});
 
 
 
@@ -69,15 +57,12 @@ var players = {
 
 }
 
-// this block will run when the client connects
-io.configure(function() {
-  // Force websocket
-  io.set('transports', ['websocket']);
 
-  // Force SSL
-  io.set('match origin protocol', true);
-});
 io.on('connection', (socket) => {
+  // io.set('transports', ['websocket']);
+  // io.set('match origin protocol', true);
+
+
   socket.on("join_lobby", (data) => {
     console.log("Joining lobby ", data);
     socket.join(data.lobbyId)
