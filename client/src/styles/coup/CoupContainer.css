@@ -108,7 +108,12 @@
 
 .hoverMe:hover
 {
-  border: 5px solid black;
+  transform: scale(1.1);
+}
+
+.hoverMeOutline:hover
+{
+  border: 2.5px solid black;
 }
 
 .item h2
@@ -142,14 +147,15 @@
 .coupontooltip 
 {
   display: none;
-  background: #C8C8C8;
-  margin-left: 28px;
+  margin-left: 25px;
   padding: 10px;
   position: absolute;
   z-index: 1000;
   width: 300px;
   text-align: center;
   white-space: normal;
+  background: #C8C8C8;
+  border:3px solid black;
 }
 .coupontooltip h2
 {
@@ -188,4 +194,91 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
+}
+
+/* Button icons */
+.sideButton 
+{
+  width: 50px;
+  height: 50px;
+  border: none;
+  background-color: transparent;
+  display: inline-block;
+}
+
+.sideButton:active 
+{
+  background-color: skyblue;
+}
+
+#allPlayersButton 
+{
+  background-image: url("../../images/mafia/buttons/person.png");
+  background-size: cover;
+}
+
+#coupButton 
+{
+  background-image: url("../../images/mafia/buttons/rip.png");
+  background-size: cover;
+}
+
+#truthButton 
+{
+  background-image: url("../../images/mafia/sun.png");
+  background-size: cover;
+}
+
+#lieButton 
+{
+  background-image: url("../../images/mafia/moon.png");
+  background-size: cover;
+}
+
+#endGameButton 
+{
+  background-image: url("../../images/mafia/buttons/vote.png");
+  background-size: cover;
+}
+
+#incomeButton 
+{
+  background-image: url("../../images/coup/coin1.png");
+  background-size: cover;
+}
+
+#foreignAidButton 
+{
+  background-image: url("../../images/coup/coin2.png");
+  background-size: cover;
+}
+
+.tooltip 
+{
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext 
+{
+  width: 150px;
+  z-index: 1000;
+  visibility: hidden;
+  position: absolute;
+  margin-left: -30px;
+  text-align: center;
+  white-space: normal;
+  background: #C8C8C8;
+  border:3px solid black;
+}
+
+.tooltiptext h2
+{
+  padding-bottom: 5px;
+  border-bottom: 2px solid black;
+}
+
+.tooltip:hover .tooltiptext 
+{
+  visibility: visible;
 }

@@ -1366,7 +1366,9 @@ function CoupContainer(props)
             <div id="playerStatsModal" class="modal">
               <div class="modal-content">
                 <div class="centerStuff">
-                  <h1>Player Stats</h1>
+                  <h1>
+                    Player Stats
+                  </h1>
                   <div class="carousel">
                     {playerStatsArray.map((player) => 
                     {
@@ -1396,7 +1398,7 @@ function CoupContainer(props)
                                 {
                                   if (player.cards > 0) 
                                   {
-                                    return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
+                                    return (<div class="item hoverMeOutline" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                                   }
                                   return;
                                 })}
@@ -1437,7 +1439,7 @@ function CoupContainer(props)
                               {
                                 if (player.cards > 0) 
                                 {
-                                  return (<div class="item hoverMe" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
+                                  return (<div class="item hoverMeOutline" onClick={() => choosePlayerTarget(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                                 }
                                 return;
                               })}
@@ -1486,7 +1488,7 @@ function CoupContainer(props)
                     <h1>{lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].nickname} played foreign aid.</h1>
                     <h3>{lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].nickname} has {lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].numCoins} coins {lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].numCards} cards</h3>
                     {playerState.isAlive && <>
-                      <div class="soloCard hoverMe" onClick={challengeCard}>
+                      <div class="soloCard hoverMeOutline" onClick={challengeCard}>
                         <h1>Challenge</h1>
                         <h3>With a duke</h3>
                       </div>
@@ -1498,11 +1500,11 @@ function CoupContainer(props)
                     {roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].pvp && <>
                       {playerState.isAlive && <>
                         <div class="parent">
-                          <div class="card hoverMe" onClick={callingBs}>
+                          <div class="card hoverMeOutline" onClick={callingBs}>
                             <h1>Call BS</h1>
                             <h3>Liar liar pants on fire</h3>
                           </div>
-                          <div class="card hoverMe">
+                          <div class="card hoverMeOutline">
                             <h1>Challenge</h1>
                             <h3>I challenge you to a duel</h3>
                           </div>
@@ -1511,7 +1513,7 @@ function CoupContainer(props)
                     </>}
                     {!roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].pvp && <>
                       {playerState.isAlive && <>
-                        <div class="soloCard hoverMe" onClick={callingBs}>
+                        <div class="soloCard hoverMeOutline" onClick={callingBs}>
                           <h1>Call BS</h1>
                           <h3>Liar liar pants on fire</h3>
                         </div>
@@ -1545,7 +1547,7 @@ function CoupContainer(props)
                       {
                         if (player.cards > 0) 
                         {
-                          return (<div class="item hoverMe" onClick={() => choosePlayerCoup(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
+                          return (<div class="item hoverMeOutline" onClick={() => choosePlayerCoup(player.index)}> <h1>{player.name}</h1> <h3>cards: {player.cards}</h3> <h3>{player.coins}<img src={coinIcon} width={17} height={13}/></h3></div>);
                         }
                         return;
                       })}
@@ -1685,11 +1687,11 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   <h1>{lobbyState.playerList[lobbyState.coupGameState.lastTurnPlayer].nickname} played {roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].name} on you</h1>
                   <div class="parent">
-                    <div class="cardWithOutline hoverMe" onClick={callingBs}>
+                    <div class="cardWithOutline hoverMeOutline" onClick={callingBs}>
                       <h1>Call BS</h1>
                       <h3>Liar liar pants on fire</h3>
                     </div>
-                    <div class="cardWithOutline hoverMe" onClick={challengeCard}>
+                    <div class="cardWithOutline hoverMeOutline" onClick={challengeCard}>
                       <h1>Challenge</h1>
                       {(roles[gameVersion][lobbyState.coupGameState.lastTurnPlayerRole].name == "Captain") && <>
                         <h3>With a captain or ambassador</h3>
@@ -1773,7 +1775,7 @@ function CoupContainer(props)
               <div class="modal-content">
                 <div class="centerStuff">
                   <h1>{lobbyState.playerList[lobbyState.coupGameState.playerChallenged].nickname} challenged you with {lobbyState.coupGameState.playerChallengedWith}</h1>
-                  <div class="soloCard hoverMe" onClick={callingBs}>
+                  <div class="soloCard hoverMeOutline" onClick={callingBs}>
                     <h1>Call BS</h1>
                     <h3>Liar liar pants on fire</h3>
                   </div>
@@ -1826,10 +1828,28 @@ function CoupContainer(props)
               {/* If not player turn only let them see stats */}
               {!isPlayerTurn && <>
                 <div class="turnStuff">
-                  <span>{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn</span>
-                  <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
+                  <button type="button" class="sideButton" id="allPlayersButton" onClick={viewStats}>
+                    <div class="couponcode">
+                      <span class="coupontooltip">
+                        <h2>
+                          Player list
+                          {!isPlayerTurn && <>
+                            <span> &#40;{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn&#41; </span>
+                          </>}
+                        </h2>
+                        <h3>View all player stats</h3>
+                      </span>
+                    </div>
+                  </button>
                   {playerState.host && <>
-                    <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                    <button type="button" class="sideButton" id="endGameButton" onClick={endGame}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>End Game</h2>
+                          <h3>End game as lobby host</h3>
+                        </span>
+                      </div>
+                    </button>
                   </>}
                 </div>
               </>}
@@ -1837,13 +1857,72 @@ function CoupContainer(props)
               {/* If player turn let them do turn stuff */}
               {isPlayerTurn && <>
                 <div class="turnStuff">
-                  <button type="button" class="startGameButton" onClick={playLie}>Play {(playingLie == 0) && <>Lie</>}{(playingLie == 1) && <>Truth</>}</button>
-                  <button type="button" class="startGameButton" onClick={playCoup}>COUP</button>
-                  <button type="button" class="startGameButton" onClick={playForeignAid}>Play foreign aid</button>
-                  <button type="button" class="startGameButton" onClick={playIncome}>Play Income</button>
-                  <button type="button" class="startGameButton" onClick={viewStats}>View Player Stats</button>
+                  {(playingLie == 0) && <>
+                    <button type="button" class="sideButton" id="lieButton" onClick={playLie}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>Play Lie</h2>
+                          <h3>View lie cards</h3>
+                        </span>
+                      </div>
+                    </button>
+                  </>}
+                  {(playingLie == 1) && <>
+                    <button type="button" class="sideButton" id="truthButton" onClick={playLie}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>Play Truth</h2>
+                          <h3>View your cards</h3>
+                        </span>
+                      </div>
+                    </button>
+                  </>}
+                  <button type="button" class="sideButton" id="coupButton" onClick={playCoup}>
+                    <div class="couponcode">
+                      <span class="coupontooltip">
+                        <h2>Coup</h2>
+                        <h3>Eliminate a player's card</h3>
+                      </span>
+                    </div>
+                  </button>
+                  <button type="button" class="sideButton" id="foreignAidButton" onClick={playForeignAid}>
+                    <div class="couponcode">
+                      <span class="coupontooltip">
+                        <h2>Foreign Aid</h2>
+                        <h3>Draw 2 coins</h3>
+                      </span>
+                    </div>
+                  </button>
+                  <button type="button" class="sideButton" id="incomeButton" onClick={playIncome}>
+                    <div class="couponcode">
+                      <span class="coupontooltip">
+                        <h2>Take Income</h2>
+                        <h3>Draw 1 coins</h3>
+                      </span>
+                    </div>
+                  </button>
+                  <button type="button" class="sideButton" id="allPlayersButton" onClick={viewStats}>
+                    <div class="couponcode">
+                      <span class="coupontooltip">
+                        <h2>
+                          Player list
+                          {!isPlayerTurn && <>
+                            <span> &#40;{lobbyState.playerList[lobbyState.coupGameState.playerTurn].nickname}'s turn&#41; </span>
+                          </>}
+                        </h2>
+                        <h3>View all player stats</h3>
+                      </span>
+                    </div>
+                  </button>
                   {playerState.host && <>
-                    <button type="button" class="startGameButton" onClick={endGame}>End Game</button>
+                    <button type="button" class="sideButton" id="endGameButton" onClick={endGame}>
+                      <div class="couponcode">
+                        <span class="coupontooltip">
+                          <h2>End Game</h2>
+                          <h3>End game as lobby host</h3>
+                        </span>
+                      </div>
+                    </button>
                   </>}
                 </div>
               </>}
@@ -1925,14 +2004,12 @@ function RoleListCircle(props)
       {roleList.map((role) =>
         {
           return (
-            <div class="circle"
+            <div class="circle tooltip"
               style={{ backgroundImage: `url(${role.roleIcon})`, backgroundSize: "100% 100%", backgroundRepeat: 'no-repeat'}}>
-              {/* <div class="couponcode">
-                <span class="coupontooltip">
-                  <h2>{role.name}</h2>
-                  <h3>{role.ability}</h3>
-                </span>
-              </div> */}
+              <span class="tooltiptext">
+                <h2>{role.name}</h2>
+                <h3>{role.abilityShort}</h3>
+              </span>
             </div>
           );
         })}
@@ -1953,7 +2030,14 @@ function SettingStuff(props)
       <div className="actionStuff">
         {isHost && <>
             <div>
-              <h3><button type="button" class="startGameButton" onClick={startGame}>Start Game</button></h3>
+              <button type="button" class="sideButton" id="endGameButton" onClick={startGame}>
+                <div class="couponcode">
+                  <span class="coupontooltip">
+                    <h2>Start Game</h2>
+                    <h3>Start game as lobby host</h3>
+                  </span>
+                </div>
+              </button>
             </div>
         </>}
         {!isHost && <> 
