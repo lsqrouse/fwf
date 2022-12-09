@@ -11,7 +11,6 @@ type gameProps = {
 export default function Game(props: gameProps)  {
   return (
     <div id="game">
-      <Header game={props.game} code={props.code} handleLeave={props.handleLeave} />
       <GameContainer game={props.game} socket={props.socket} />
     </div>
   );
