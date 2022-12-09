@@ -706,6 +706,6 @@ app.get("/api/lobby/join", (req, res) => {
 })
 
 //starts the application
-server.listen(8080, () => {
+server.listen(PORT, () => {
   console.log("server is running")
  })
