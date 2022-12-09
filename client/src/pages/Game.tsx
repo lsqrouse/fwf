@@ -1,7 +1,15 @@
 import MafiaContainer from '../components/mafia/MafiaContainer';
 import CoupContainer from '../components/coup/CoupContainer'
+import React, { useState, useEffect, useMemo} from 'react';
 
-const Game = (props) => {
+type gameProps = {
+  game: any
+  code: any
+  handleLeave: any
+  socket: any
+
+}
+export default function Game(props: gameProps)  {
   return (
     <div id="game" style={{width: '99%', height: '99%'}}>
       <GameContainer game={props.game} socket={props.socket} />
@@ -9,10 +17,10 @@ const Game = (props) => {
   );
 };
 
-const Header = (props) => {
+function Header(props) {
   return (
     <div id="header">
-      <div id="headerContent">
+      <div id="mafiaHeaderContent">
 
         <div className="headerDiv">
           <HamburgerMenu handleLeave={props.handleLeave}/>
@@ -35,7 +43,7 @@ const Header = (props) => {
   );
 }
 
-const GameContainer = (props) => {
+function GameContainer(props) {
   if (props.game === "Mafia") {
     return (
     <MafiaContainer socket={props.socket} />
@@ -55,11 +63,11 @@ const GameContainer = (props) => {
   }
 }
 
-const HamburgerMenu = (props) => {
+function HamburgerMenu(props){
   return (
     <div id="menu">
       <input id="menuButton" type="checkbox" />
-      <label for="menuButton" />
+      <label htmlFor="menuButton" />
       
       <div id="menuItems">
         <ul>
@@ -70,5 +78,3 @@ const HamburgerMenu = (props) => {
     </div>
   );
 }
-
-export default Game;

@@ -1,4 +1,5 @@
 import {useSelector} from 'react-redux';
+import { Container, Row, Col } from 'reactstrap';
 import { getIcon } from "./getIcon";
 
 function RoleSetter(props) {
@@ -80,24 +81,47 @@ function RoleSetter(props) {
   }
 
 
+  let roleCount = 0
   return (
     <div className="roleSetter">
-      {isHost && <div id="chooseRolesDiv">
+      <Container>
+        <Row>
+          
+        {isHost && <Col>
+        <Row>
         CHOOSE:
+        </Row>
+        <Row>
+        <div id="chooseRolesDiv">
+        
         <br/>
         {props.roles && Object.keys(props.roles).map(key =>
           <Role role={props.roles[key]} addRole={addRole} />
         )}
-      </div>}
-      <div id="selectedRolesDiv">
-        SELECTED: {selectedRoles.length}
-        <br/>
+      </div>
+        </Row>
+       </Col>}
+      </Row>
+      <Row>
+
+         SELECTED: {selectedRoles.length}
+
+      </Row>
+      <Row>
         {isHost && <>
         <button type="button" className="clearRolesButton mafiaButton2" onClick={clearRoles}>Clear all</button>
         <button type="button" className="suggestRolesbutton mafiaButton2" onClick={suggestRoles}>Suggest</button>
         </>}
-        <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />
-      </div>
+        </Row>
+
+      <Row>
+        <Col>
+          <SelectedRoles roles={props.roles} selectedRoles={selectedRoles} removeRoleIndex={removeRoleIndex} isHost={isHost} />    
+        </Col>
+      </Row>
+
+      </Container>
+      
     </div>
   );
 }
@@ -118,9 +142,10 @@ function Role(props) {
 
   return (
     <div className={cn}>
-      <img src={getIcon(role.name)} alt={role.name} width="35px" />
-      <div className="roleLabel">{role.name}</div>
+      <img src={getIcon(role.name)} alt={role.name}/>
       <AddRoleButton roleName={role.name} addRole={props.addRole} />
+      <div className="roleLabel">{role.name}</div>
+      <p style={{visibility:'hidden'}}>Ressurectionistt</p>
     </div>
   );
 }
@@ -134,34 +159,37 @@ function AddRoleButton(props) {
 function SelectedRoles(props) {
   if (props.isHost) {
     return (
-      <div id="selectedRoles">
+      <div id="selectedRolesDiv">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
-            <span onClick={() => props.removeRoleIndex(index)}>
+          <div id="roleDiv">
+              <span onClick={() => props.removeRoleIndex(index)}>
               <img
                 src={getIcon(roleName)}
-                width="35px"
                 alt={roleName}
                 title={roleName}
               />
             </span>
+                  <p style={{visibility:'hidden'}}>For Sizing</p>
+
+            </div>
+
           )
         }
       </div>
     );
   } else {
     return (
-      <div>
+      <div id="selectedRolesDiv">
         {
           props.selectedRoles && props.selectedRoles.map((roleName, index) =>
-            <span>
+            // <span>
               <img
                 src={getIcon(roleName)}
-                width="35px"
                 alt={roleName}
                 title={roleName}
               />
-            </span>
+            // </span>
           )
         }
       </div>

@@ -30,6 +30,8 @@ export default function AccountHistory(props: accountStatisticsProps) {
     return (<>
     <div style={{textAlign: 'center'}}>
     <h3> {props.username}'s game history</h3>
+    <hr></hr>
+
     <div className="ag-theme-alpine" style={{height: 400, width: 600, textShadow:'none', color: 'black', marginTop:'5%'}}>
            <AgGridReact
                rowData={statData}

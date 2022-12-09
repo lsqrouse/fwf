@@ -12,12 +12,13 @@
 }
 
 .roleSetter {
-  width: 400px;
+  width: 100%;
+  
 }
 
 .roleDiv {
   border-radius: 10px;
-  height: 55px;
+  height: 100%;
   margin-top: 4px;
   padding: 10px;
 }
@@ -35,11 +36,10 @@
 }
 
 .roleDiv img {
-  float: left;
+  width: 50%;
 }
 
 .addRoleButton {
-  float: right;
   width: 35px;
   height: 35px;
   font-size: 24px;
@@ -50,12 +50,14 @@
 }
 
 #chooseRolesDiv, #selectedRolesDiv {
-  width: 198px;
+  
   margin: 1px;
-}
+  display: flex;
+  max-width: 100%;
+  overflow-x: scroll;
+  overflow-y:hidden;
+  
 
-#chooseRolesDiv {
-  float: left;
 }
 
 #chooseRolesDiv .roleLabel {
@@ -65,26 +67,17 @@
   font-family: 'Inter', sans-serif;
 }
 
-#selectedRolesDiv {
-  float: left;
-}
 
-#selectedRoles {
-  margin-top: 10px;
-}
 
-#selectedRoles img {
-  margin: 1px;
-}
 
 .timeInput {
   width: 100px;
 }
 
 #header {
-  width: 450px;
+  width: 100%;
   border: 1px black solid;
-  height: 55px;
+  height: 20%;
 }
 
 #headerContent {
@@ -94,7 +87,7 @@
 
 .headerDiv {
   width: 33%;
-  height: 35px;
+  height: 30%;
   display: inline-block;
   text-align: center;
   vertical-align: top;

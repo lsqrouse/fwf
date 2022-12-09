@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import './FrontPage.css';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { Container, Row, Col} from 'reactstrap';
+
+// import './FrontPage.css';
+import './styles/imported/seo.css'
+
 
 export default function FrontPage () {
   const isLoading = useState(false)
@@ -47,52 +51,73 @@ export default function FrontPage () {
 
 
   return (
-    <div className='container'>
-      <div className='login'>
+    <>
+      <header className='header-area'>
+      <Container style={{maxWidth:'100%', justifyContent:'center', }}>
+      <Row style={{paddingBottom: '1%', paddingTop: '1%'}}>
+        <Col className='col-2'>
+        </Col>
+        <Col className='col-2'>
         <Link to="/Login">
-          <button className='myButton' type='submit'>Login</button>
+          <button className='second-button' type='submit'>Login</button>
         </Link>
-        
+        </Col>
+        <Col className='col-4 siteHeader'>
+          <h1>Fun with Friends</h1>
+        </Col>
+        <Col className='col-2'>
           {userName == undefined ? (<>
-          {/* code displayed if username is undefined */}
-          <p>
-          <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} />
-          <Link to={`/u/${lookupUser}`}>Search</Link>
-            </p>
-          </>) : (<>
-          {/* Code displayed if user is defined */}
-          <p><Link to="/account">{userName}</Link></p>
-          </>)}
-          
+            {/* code displayed if username is undefined */}
+            
 
-      </div>
-
-      <div className='box'>
-        <h1>Fun With Friends</h1>
-      </div>
-
-      <div className='box'>
-        <h1>Join Lobby</h1>
-        <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
-        <input type="text" placeholder="LobbyID" onChange={(e) => setLobbyCode(e.target.value)} />
-        <div>
-        <Link to="/MainLobby">
-            <button className='myButton' type='submit' onClick={handleSubmit}>Join</button>
-          </Link>
+          <input type="text" placeholder="Username" onChange={(e) => setLookupUser(e.target.value)} /><button className='main-button'><Link to={`/u/${lookupUser}`} style={{color:'white'}}>Search</Link></button>
+              
+            </>) : (<>
+            {/* Code displayed if user is defined */}
+            <p><Link to="/account"><button className='main-button'>My Account</button></Link></p>
+            </>)}
+        </Col>
+        <Col className='col-2'>
+        </Col>
+      </Row>
+      </Container>
+      </header>
+      <div className='pageContent'>
+      <Container>
+      <Row >
+        <Col className='col-3'></Col>
+        <Col className='col-6'>
+        <div className='myBox'>
+          <h1>Play a game</h1>
+          <hr></hr>
+            <div className=''>
+              <h2>Join Lobby</h2>
+              <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
+              <input type="text" placeholder="LobbyID" onChange={(e) => setLobbyCode(e.target.value)} />
+            <div>
+            <Link to="/MainLobby">
+              <button  className='main-button' type='submit' onClick={handleSubmit}>Join</button>
+              </Link>
+            </div>
+            <h2>Create Lobby</h2>
+            <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
+            <div>
+              <Link to="/MainLobby">
+              <button  className='main-button' type='submit' onClick={handleSubmitCreate}>Create</button>
+              </Link>
+            </div>
+          </div>
         </div>
 
+        </Col>
+        <Col className='col-3'></Col>
 
-        <h1>Create Lobby</h1>
-          <input type="text" placeholder="Nickname" onChange={(e) => setNickname(e.target.value)} />
-          <div>
-            <Link to="/MainLobby">
-              <button className='myButton' type='submit' onClick={handleSubmitCreate}>Create</button>
-            </Link>
-          </div>
+      </Row>
+    </Container>
       </div>
-
-    </div>
-
+   
+    </>
+    
 
   )
 }
