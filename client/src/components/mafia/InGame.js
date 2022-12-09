@@ -363,22 +363,27 @@ function Vote(props) {
 
   return (
     <div className="topScreen vote">
+      {!lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive ?
+      <p>
+        <b>You are dead and cannot vote.</b>
+      </p>
+      :
       <form>
         <label for="voteChoice"><b>You vote: </b></label>
         <select id="voteChoice">
-          <option value={null}>No one</option>
+          <option value="">No one</option>
           {alivePlayers.map((player) => (<option value={player.id}>{player.nickname}</option>))}
         </select>
         <br />
           <input type="button" value="OK" onClick={() =>
-            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value)} />
-      </form>
+            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value === "" ? null : document.getElementById("voteChoice").value)} />
+      </form>}
       <div className="votes">
           <ul>
           {alivePlayers.map(voter =>
             <li key={voter.nickname}>
               {voter.nickname} <i>votes</i> {votes.hasOwnProperty(voter.id) ? 
-                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "" : ""}
+                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "No one" : ""}
             </li>
           )}
           </ul>
@@ -402,6 +407,7 @@ function Ability(props) {
     const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
       lobbyState.gameState.history[phaseNum].mafiaVotes : {};
     const mafiaMembers = lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
+    const aliveMafiaPlayers = mafiaMembers.filter(player => player.gamePlayerState.isAlive);    
     console.log(mafiaMembers);
 
     return (
@@ -420,7 +426,7 @@ function Ability(props) {
         </form>
         <div className="mafiaVotes">
           <ul>
-          {mafiaMembers.map(mafiaMember =>
+          {aliveMafiaPlayers.map(mafiaMember =>
             <li key={mafiaMember.nickname}>
               {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? 
                 votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "No one" : ""}
@@ -485,6 +491,20 @@ function Ability(props) {
       <div className="topScreen ability">
         <NoAbilityDiv />
       </div>
+    );
+  }
+
+  // If dead, prevent from viewing ability screen.
+  if (!lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive) {
+    return (
+    <div className="topScreen ability">
+      <p>
+        <b>You are dead.</b>   
+      </p>
+      <p>
+          Rest in Peace.
+      </p>
+    </div>
     );
   }
 

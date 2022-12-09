@@ -493,6 +493,7 @@ io.on('connection', (socket) => {
             votesCount[choice] = 1;
           }
         }
+
         // See who has most votes
         let mostVoted = Object.keys(votesCount)[0];
         let mostVotedTie = null;
@@ -510,7 +511,7 @@ io.on('connection', (socket) => {
           // If no tie, update state
           lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote = mostVoted;
 
-          if (mostVoted !== null) {
+          if (mostVoted !== null && mostVoted !== "null") {
             playerIdMap[mostVoted].gamePlayerState.isAlive = false;
           }
 
@@ -524,7 +525,9 @@ io.on('connection', (socket) => {
           let daySummary = ""
           daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.\n`;
           // Add voted player's name to summary list
-          daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.\n`;
+          if (mostVoted !== null && mostVoted !== "null") {
+            daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.\n`;
+          }
           // Set the message
           lobbyState.gameState.allPlayersMessage = daySummary;
           // Set the next phase
@@ -561,26 +564,27 @@ io.on('connection', (socket) => {
     const aliveMafiaPlayers = mafiaPlayers.filter(player => player.gamePlayerState.isAlive);
     const aliveVillagePlayers = villagePlayers.filter(player => player.gamePlayerState.isAlive);
 
-    // Jester win
-    if (lobbyState.gameState.currentPhase === "day") {
-      const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
-      if (playerIdMap[dayVote].gamePlayerState.role === "Jester") {
-        lobbyState.gameState.winningTeams.push("Jester");
-        lobbyState.gameState.winningPlayers.push(playerIdMap[dayVote]);
-        lobbyState.gameState.gameScreen = "EndGame";
-        someoneHasWon = true;
+    const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
+    if (dayVote !== null && dayVote !== "null") {
+      // Jester win
+      if (lobbyState.gameState.currentPhase === "day") {
+        if (playerIdMap[dayVote].gamePlayerState.role === "Jester") {
+          lobbyState.gameState.winningTeams.push("Jester");
+          lobbyState.gameState.winningPlayers.push(playerIdMap[dayVote]);
+          lobbyState.gameState.gameScreen = "EndGame";
+          someoneHasWon = true;
+        }
       }
-    }
 
-    // Executioner win
-    if (lobbyState.gameState.currentPhase === "day") {
-      const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
-      const executionerId = Object.keys(lobbyState.gameState.executionerTargets).find(t => lobbyState.gameState.executionerTargets[t] === dayVote);
-      if (executionerId) {
-        lobbyState.gameState.winningTeams.push("Executioner");
-        lobbyState.gameState.winningPlayers.push(playerIdMap[executionerId]);
-        lobbyState.gameState.gameScreen = "EndGame";
-        someoneHasWon = true;
+      // Executioner win
+      if (lobbyState.gameState.currentPhase === "day") {
+        const executionerId = Object.keys(lobbyState.gameState.executionerTargets).find(t => lobbyState.gameState.executionerTargets[t] === dayVote);
+        if (executionerId) {
+          lobbyState.gameState.winningTeams.push("Executioner");
+          lobbyState.gameState.winningPlayers.push(playerIdMap[executionerId]);
+          lobbyState.gameState.gameScreen = "EndGame";
+          someoneHasWon = true;
+        }
       }
     }
 

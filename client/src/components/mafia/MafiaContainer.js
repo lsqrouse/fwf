@@ -234,7 +234,7 @@ function GameSummary() {
         <h6>Day {phaseNum}</h6>
         <ul>
           <li key="dayVote">
-            <b>{data.dayVote ? getPlayerFromId(data.dayVote).nickname : "No one"}</b> was voted out.
+            {data.dayVote && data.dayVote !== null && data.dayVote !== "null" ? <b>{getPlayerFromId(data.dayVote).nickname}</b> : "No one"} was voted out.
           </li>
         </ul>
       </div>
@@ -261,7 +261,7 @@ function GameSummary() {
             </li>
           )}
           
-          {data.mafiaKill &&
+          {data.mafiaKill && data.mafiaKill !== null && data.mafiaKill !== "null" &&
             <li key="mafiaKill">
               The mafia went out to kill <b>{getPlayerFromId(data.mafiaKill).nickname}</b>.
             </li>
