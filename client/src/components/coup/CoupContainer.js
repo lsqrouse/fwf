@@ -2004,7 +2004,7 @@ function SettingStuff(props)
         </>}
         {!isHost && <> 
             <div>
-                <h3>Waiting for {props.lobbyState.lobbyHostName} to start the game</h3>
+                <h3>Waiting for host to start the game</h3>
             </div>
         </>}
       </div>

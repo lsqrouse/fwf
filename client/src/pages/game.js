@@ -3,7 +3,7 @@ import CoupContainer from '../components/coup/CoupContainer'
 
 const Game = (props) => {
   return (
-    <div id="game">
+    <div id="game" style={{width: '99%', height: '99%'}}>
       <GameContainer game={props.game} socket={props.socket} />
     </div>
   );

@@ -12,11 +12,6 @@
   text-align: center;
 }
 
-.coupHeader span 
-{
-  margin: 0 10px 0 10px;
-}
-
 .parent
 {
   display: flex;
@@ -134,8 +129,8 @@
 .modal-content 
 {
   width: 40%;
-  background-color: #fefefe;
   border: 1px solid #888;
+  background-color: #fefefe;
 }
 
 /* On hover modal thing */
