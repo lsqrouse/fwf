@@ -1,4 +1,6 @@
-
+.mainPage {
+  background-color: #889ebd;
+}
 
   .outerBox {
     width: 80%;
@@ -44,18 +46,26 @@
 
   .chat{
     display: flex;
-    height: 600px;
-    width: 15%;
     border: 8px solid blue;
     align-items: flex-start;
-    padding: 2%;
-    margin: 0 auto;
-    margin-bottom: 2%;
-    margin-top: 2%;
     border-radius: 5%;
-    position: relative;
   }
   
+  .content {
+    list-style-type: none;
+  }
+  
+  .popup-content {
+    display: flex;
+    background: grey;
+    width: 70%;
+    height: 90%;
+    position: relative;
+    border-radius: 5%;
+    border: 8px solid blue;
+    font-size: 25px;
+    right: 0;
+  }
 
   .players{
     display: flex;
@@ -98,20 +108,15 @@
     align-items: center;
   }
 
-  .myB {
-    width: 40%;
-    height: 20%;
-}
 .myBMaf {
-  width: 40%;
-  height: 20%;
+
   cursor: pointer;
   overflow: hidden;
+  margin-left: 1%;
+  margin-right: 1%;
 }
-
 .myBMaf:hover .descMaf{
   opacity: 1;
-  size: auto;
   width: 100%;
   height: auto;
 }
@@ -120,9 +125,7 @@
 
 .descMaf {
   opacity: 0;
-  size: 0px;
-  width: 0px;
-  height: 0px;
+  font-size: 100%;
 }
 
 .textBox {
@@ -134,8 +137,9 @@
 
 #chatBox {
     position: absolute;
+    width: 90%;
     bottom: 0;
-    left: 0;
+    right: 0;
 }
 
 .line {

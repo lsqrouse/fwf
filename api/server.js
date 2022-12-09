@@ -634,50 +634,7 @@ var db_config = {
     }
 };  
 
-function executeStatement() {  
-    request = new Request("SELECT * FROM testing_table;", function(err) {  
-    if (err) {  
-        console.log(err);}  
-    });  
-    var result = "";  
-    request.on('row', function(columns) {  
-        columns.forEach(function(column) {  
-          if (column.value === null) {  
-            console.log('NULL');  
-          } else {  
-            result+= column.value + " ";  
-          }  
-        });  
-        console.log(result);  
-        result ="";  
-    });  
 
-    request.on('done', function(rowCount, more) {  
-    console.log(rowCount + ' rows returned');  
-    });  
-    
-    // Close the connection after the final event emitted by the request, after the callback passes
-    request.on("requestCompleted", function (rowCount, more) {
-        // connection.close();
-    });
-    connection.execSql(request);  
-}
-
-
-var connection = new Connection(db_config);  
-connection.on('connect', function(err) {  
-  if (err) {
-    console.error('Connection error', err);
- } else {
-    console.log('Connected');
- }
-    // If no error, then good to proceed.
-    console.log("Connected, testing...");
-    executeStatement();  
-  
-});
-
-connection.connect();
 
 // basic testing endpoint
 app.get("/api", (req, res) => {
@@ -687,31 +644,92 @@ app.get("/api", (req, res) => {
  
 app.get("/api/accounts/login", (req, res) => {
   console.log("received request for login", req.query)
-  login(connection, req.query, res)
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    login(connection, req.query, res);  
+  
+});
+
+connection.connect();
+  
 })
 
 app.get("/api/accounts/getUser", (req, res) => {
   console.log("received request to lookup user", req.query.username);
-  getUserByUsername(connection, req.query, res)
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    getUserByUsername(connection, req.query, res)
+  
+  });
+
+  connection.connect();
 })
 
 app.get("/api/accounts/create", (req, res) => {
   console.log("received request to create an account")
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    createUser(connection, req.query , res)
   
-  createUser(connection, req.query , res)
+  });
+
+  connection.connect();
 })
 
 let doingDB = false
 app.get("/api/accounts/stats", (req, res) => {
   console.log("received request to create an account")
-  doingDB = true
-  getStatsByUserId(connection, req.query , res)
-  doingDB = false
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    getStatsByUserId(connection, req.query , res)  
+  });  
+  connection.connect();
+
+  
 })
 
 app.get("/api/accounts/history", (req, res) => {
-  console.log("received request to create an account")
-  getHistoryByUserId(connection, req.query , res)
+  console.log("received request to get account history")
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    getHistoryByUserId(connection, req.query , res)
+  });
+  connection.connect();
   
 })
 
@@ -725,7 +743,7 @@ app.get("/api/lobby/create", (req, res) => {
     lobbyHost: undefined,
     lobbyCode: curLobbyId.toString(),
     chatLog: [{msg: 'welcome to lobby'}],
-    game: 'mafia', // name of the game (must correspond to game represented by gameState object)
+    game: 'no game chosen', // name of the game (must correspond to game represented by gameState object)
     gameState: { // this object gets swapped out depending on the game
 
       mafiaList: [],
@@ -756,7 +774,19 @@ app.get("/api/lobby/create", (req, res) => {
 
   //TODO 
   // save lobby data in database
-  createLobby(connection, newLobby)
+  var connection = new Connection(db_config);  
+  connection.on('connect', function(err) {  
+  if (err) {
+    console.error('Connection error', err);
+  } else {
+    console.log('Connected');
+  }  
+    // If no error, then good to proceed.
+    console.log("Connected, testing...");
+    createLobby(connection, newLobby)
+  });
+  connection.connect();
+
   
 })
 
