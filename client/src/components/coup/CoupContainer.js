@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import roles from "../../data/coup/roles";
+import roles from "../coup/roles";
 import "../../styles/coup/CoupContainer.css"
 
 // Coup container
