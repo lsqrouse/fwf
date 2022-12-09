@@ -22,7 +22,7 @@ export default function FrontPage () {
       .then((data) => {
         console.log("got data from api: ", data)
         dispatch({type: 'updateLobby', payload: data})
-        dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: true}})
+        dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: true, isAlive: true, card1: 0, card1Alive: true, card2: 0, card2Alive: true, numCoins: 3, numCards: 2}})
 
       })    
   }
@@ -33,7 +33,7 @@ export default function FrontPage () {
     .then((data) => {
       console.log("got data from api: ", data)
       dispatch({type: 'updateLobby', payload: data})
-      dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: false}})
+      dispatch({type: 'updatePlayer', payload: {nickname: nickname, host: false, isAlive: true, card1: 0, card1Alive: true, card2: 0, card2Alive: true, numCoins: 3, numCards: 2}})
 
     })
 
