@@ -4,6 +4,8 @@ import InGame from './InGame';
 import { useSelector } from "react-redux";
 import "../../styles/mafia/reusable.css";
 import { getIcon } from "./getIcon";
+import SunIcon from "../../images/mafia/sun.png";
+import MoonIcon from "../../images/mafia/moon.png";
 
 function MafiaContainer(props) {
   const numPlayers = useSelector((state) => state.lobbyState.playerList).length;;
@@ -195,7 +197,10 @@ function EndGameScreen(props) {
         )} has won!
       </h2>
       <div className="endGameInfo">
-        <WinningPlayers />
+        <div className="endGameLeft">
+          <WinningPlayers />
+          <AllPlayersReveal />
+        </div>
         <GameSummary />
       </div>
     </div>
@@ -220,6 +225,24 @@ function WinningPlayers() {
   );
 }
 
+function AllPlayersReveal() {
+  const playerList = useSelector((state) => state.lobbyState.playerList);
+
+  return (
+    <div className="allPlayersRevealDiv">
+      <h3>All players:</h3>
+      <ul className="allPlayersRevealList">
+        {playerList.map(player =>
+          <li key={player.id}>
+            <img src={getIcon(player.gamePlayerState.role)} width="25px" alt={player.gamePlayerState.role}/>
+            {player.nickname}
+          </li>
+        )}
+      </ul>
+    </div>
+  );
+}
+
 function GameSummary() {
   const lobbyState = useSelector((state) => state.lobbyState);
   const history = lobbyState.gameState.history;
@@ -234,7 +257,7 @@ function GameSummary() {
 
     return (
       <div>
-        <h6>Day {phaseNum}</h6>
+        <h6>Day <img src={SunIcon} width="20px" alt="sun" /> {phaseNum}</h6>
         <ul>
           <li key="dayVote">
             {data.dayVote && data.dayVote !== null && data.dayVote !== "null" ? <b>{getPlayerFromId(data.dayVote).nickname}</b> : "No one"} was voted out.
@@ -250,7 +273,7 @@ function GameSummary() {
 
     return (
       <div>
-        <h6>Night {phaseNum}</h6>
+        <h6>Night <img src={MoonIcon} width="20px" alt="moon" /> {phaseNum}</h6>
         <ul>
           {Object.keys(data.night).map(playerId =>
             data.night[playerId].ability !== "ok" &&
@@ -265,9 +288,10 @@ function GameSummary() {
             </li>
           )}
           
-          {data.mafiaKill && data.mafiaKill !== null && data.mafiaKill !== "null" &&
+          {data.mafiaKill && 
             <li key="mafiaKill">
-              The mafia went out to kill <b>{getPlayerFromId(data.mafiaKill).nickname}</b>.
+              The mafia went out to kill {(data.mafiaKill !== null && data.mafiaKill !== "null") ?
+              <b>{getPlayerFromId(data.mafiaKill).nickname}</b> : "no one"}.
             </li>
           }
         </ul>
@@ -278,10 +302,10 @@ function GameSummary() {
   function SummaryList() {
    return (
     Object.keys(history).map(phaseNum =>
-      <>
+      <div className="summaryListDiv">
         <NightSummary phaseNum={phaseNum} data={history[phaseNum]} />
         {history[phaseNum].hasOwnProperty("dayVote") && <DaySummary phaseNum={phaseNum} data={history[phaseNum]} />}
-      </>
+      </div>
     )
    );
   }

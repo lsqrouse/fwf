@@ -180,17 +180,36 @@
   height: 30px;
 }
 
+/* EndGame stuff */
+
+.summaryListDiv {
+  padding: 10px;
+}
+
 .endGameInfo {
   display: flex;
 }
 
-.winningPlayersDiv, .gameSummaryDiv {
+.endGameLeft, .gameSummaryDiv {
   display: inline-block;
   width: 50%;
   overflow: auto;
 }
 
-.winningPlayersList {
+.winningPlayersDiv, .allPlayersRevealDiv {
+  width: 100%;
+  height: 40%;
+}
+
+.winningPlayersList, .allPlayersRevealList {
   list-style: none;
-  padding: 0;
+  padding: 10px;
+}
+
+.winningPlayersList li, .allPlayersRevealList li {
+  margin: 5px;
+}
+
+.winningPlayersList li img, .allPlayersRevealList li img {
+  margin-right: 10px;
 }
