@@ -29,13 +29,13 @@ var io = require('socket.io')(server);
 
 app.use(cors());
 // app.use(allowCrossDomain);
-app.use(express.static(process.cwd()+"/client/build/"));
-console.log(process.cwd()+"/client/build/")
+app.use(express.static(path.join(__dirname, "client", "build")));
+console.log(path.join(__dirname, "client", "build"))
 
 
 app.get("*", async(req, res) => {
   res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-})
+});
 
 
 /*
