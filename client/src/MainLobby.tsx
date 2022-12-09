@@ -186,11 +186,9 @@ export default function MainLobby() {
           <Col className='col-4 siteHeader'>
             <h1>Welcome {playerState.nickname}! <br />  Lobby Code: {lobbyState.lobbyId}</h1>
           </Col>
-          <Col className='col-2'>
-        </Col>
           <Col className='col-2-2'>
             <Link to="/Instructions">
-              <button className='main-button' onClick={() => setJoined(true)}>Instructions</button>
+              <button className='col-2-2-button' onClick={() => setJoined(true)}>Instructions</button>
             </Link>
           </Col>
         
@@ -228,7 +226,7 @@ export default function MainLobby() {
           <Col className='col-2'>
           <div  >Players
             
-            <div style={{width: '100%', height:lobbyState.playerList.length * 50 + 50 }} className="ag-theme-alpine">
+            <div style={{width: '100%', height:lobbyState.playerList.length * 50 + 50, overflowInline: 'hidden' }} className="ag-theme-alpine">
               <AgGridReact
                 rowData={lobbyState.playerList}
                 columnDefs={colDefs}>

@@ -59,6 +59,10 @@
     float: left;
   }
 
+  .col-2-2-button {
+    float: right;
+  }
+
 
   .popup-content {
     display: flex;

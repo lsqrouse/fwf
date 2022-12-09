@@ -8,13 +8,13 @@
 }
 
 .mafiaHeaderContent {
-  display: flex;
+  display: grid;
   margin: auto;
   border: 1px grey solid;
   padding: 10px 10px 10px 150px;
   font-size: 20px;
   font-weight: bold;
-  text-align: center;
+  grid-template-columns: 1fr 2fr 2fr;
 }
 
 .mafiaHeader span {
@@ -22,20 +22,21 @@
 }
 
 .roleList {
-  display: flex;
   float: left;
   border: 1px grey solid;
   width: 40% !important;
-  height: 50% !important;
-  overflow: hidden;
+  height: 80% !important;
+  overflow: scroll;
   position: relative;
 }
 
 .roleListItem {
-  display: inline-block;
+  display: grid;
   margin: 8px 4px;
   font-size: 20px;
   column-span: all;
+  grid-template-columns: repeat(2, 50px);
+  grid-template-rows: repeat(2, 50px);
 }
 
 .sideButtons {
