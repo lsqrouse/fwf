@@ -1466,8 +1466,10 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   <h1>Playing Foreign Aid</h1>
                   <h3>Note: This action can be blocked by a Duke</h3>
-                  <h2>+2 <img src={coinIcon} width={35} height={25}/> ?</h2>
-                  <button type="button" class="startGameButton" onClick={confirmForeignAid}>Draw 2 Coins</button>
+                  <div class="item hoverMeOutline" onClick={confirmForeignAid}>
+                    <h1>Confirm Draw</h1>
+                    <h3>+2<img src={coinIcon} width={17} height={13}/></h3>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1476,8 +1478,10 @@ function CoupContainer(props)
                 <div class="centerStuff">
                   <h1>Playing Income</h1>
                   <h3>Note: This can't be blocked or challenged.</h3>
-                  <h2>+1 <img src={coinIcon} width={35} height={25}/> ?</h2>
-                  <button type="button" class="startGameButton" onClick={confirmIncome}>Draw 1 Coin</button>
+                  <div class="item hoverMeOutline" onClick={confirmIncome}>
+                    <h1>Confirm Draw</h1>
+                    <h3>+1<img src={coinIcon} width={17} height={13}/></h3>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1570,11 +1574,11 @@ function CoupContainer(props)
                   {(playerState.numCards == 2) && <>
                     <h3>Choose card to give up</h3>
                     <div class="parent">
-                      <div class="cardWithOutline hoverMe" onClick={playCoupCard1}>
+                      <div class="cardWithOutline hoverMeOutline" onClick={playCoupCard1}>
                         <h1>{roles[gameVersion][playerState.card1].name}</h1>
                         <h3>{roles[gameVersion][playerState.card1].ability}</h3>
                       </div>
-                      <div class="cardWithOutline hoverMe" onClick={playCoupCard2}>
+                      <div class="cardWithOutline hoverMeOutline" onClick={playCoupCard2}>
                         <h1>{roles[gameVersion][playerState.card2].name}</h1>
                         <h3>{roles[gameVersion][playerState.card2].ability}</h3>
                       </div>
@@ -1626,11 +1630,11 @@ function CoupContainer(props)
                   {(playerState.numCards == 2 && (lobbyState.coupGameState.lastTurnPlayerRole != 3 || playerState.id == lobbyState.coupGameState.lastTurnPlayerId)) && <>
                     <h3>Choose card to give up</h3>
                     <div class="parent">
-                      <div class="cardWithOutline hoverMe" onClick={playBluffCard1}>
+                      <div class="cardWithOutline hoverMeOutline" onClick={playBluffCard1}>
                         <h1>{roles[gameVersion][playerState.card1].name}</h1>
                         <h3>{roles[gameVersion][playerState.card1].ability}</h3>
                       </div>
-                      <div class="cardWithOutline hoverMe" onClick={playBluffCard2}>
+                      <div class="cardWithOutline hoverMeOutline" onClick={playBluffCard2}>
                         <h1>{roles[gameVersion][playerState.card2].name}</h1>
                         <h3>{roles[gameVersion][playerState.card2].ability}</h3>
                       </div>
