@@ -37,6 +37,7 @@ function login(connection, query, res) {
       if (!sentSomething) {
         res.json({ token: "BAD_LOGIN"})
       }
+      connection.close();
     });
     connection.execSql(request);  
 }
@@ -49,13 +50,17 @@ function getUserByUsername(connection, query, res) {
     });  
 
     var sentSomething = false
+    var resp = {}
     request.on('row', function(columns) {
       columns.forEach((column) => {
         if (column.metadata.colName =='id') {
-          res.json({userId: column.value})
-          sentSomething = true
-          console.log("sent something")
-          return
+          resp['userId'] = column.value
+        }
+        if (column.metadata.colName == 'profDesc') {
+          resp['profDesc'] = column.value
+          res.json(resp);
+          sentSomething = true;
+          return;
         }
       })
     });  
@@ -67,6 +72,8 @@ function getUserByUsername(connection, query, res) {
         console.log("returning bad stuff")
         res.json({userId: '-2'})
       }
+      connection.close();
+
     });
     connection.execSql(request);  
 }
@@ -74,7 +81,7 @@ function getUserByUsername(connection, query, res) {
 
 function createUser(connection, query, res) {
   console.log(query);
-  request = new Request(`INSERT INTO accounts (username, pass, email) VALUES ('${query.uname}', '${query.pass}', '${query.email}');`, function(err) {  
+  request = new Request(`INSERT INTO accounts (username, pass, email, profDesc) VALUES ('${query.uname}', '${query.pass}', '${query.email}', '${query.profDesc}');`, function(err) {  
     if (err) {  
         console.log(err);}  
     });  
@@ -85,7 +92,10 @@ function createUser(connection, query, res) {
       console.log("completed: ", rowCount, more)
       console.log("added new user")
       //TODO: get the actual userId and not just hard code it
+      
       res.json({username: query.uname, userId: 1,  token: '123',})
+      connection.close();
+
 
     });
     connection.execSql(request);
@@ -112,6 +122,8 @@ function saveGameHistory(connection, lobbyState) {
       
       console.log("completed: ", rowCount, more)
       console.log("Saved a game")
+      connection.close();
+
     });
     connection.execSql(request);
 }
@@ -131,6 +143,8 @@ function createLobby(connection, lobbyState) {
       
       console.log("completed: ", rowCount, more)
       console.log("Created a new lobby")
+      connection.close();
+
     });
     connection.execSql(request);
 }
@@ -178,6 +192,8 @@ function getStatsByUserId(connection, query, res) {
     request.on("requestCompleted", function (rowCount, more) {
       console.log("completed stats: ", rowCount, more)
       res.json(stats)
+      connection.close();
+
     });
     connection.execSql(request);  
 }
@@ -202,9 +218,12 @@ function getHistoryByUserId(connection, query, res) {
     request.on("requestCompleted", function (rowCount, more) {
       console.log("completed stats: ", rowCount, more)
       res.json(history)
+      connection.close();
+
     });
     connection.execSql(request);  
 }
+
 
 function seeIfSend(connection, request) {
   const sleep = ms => new Promise(r => setTimeout(r, ms));

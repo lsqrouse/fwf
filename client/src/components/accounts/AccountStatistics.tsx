@@ -30,6 +30,7 @@ export default function AccountStatistics(props: accountStatisticsProps) {
     return (<>
     <div style={{textAlign: 'center'}}>
     <h3>{props.username}'s Game Statistics</h3>
+    <hr></hr>
     <Container style={{color: 'black', textShadow: 'none'}}>
         <Row style={{marginBottom: '5%', marginTop: '5%'}}>
             <Col style={{	borderRadius:'5px', border:'4px solid #337bc4'}}> 
