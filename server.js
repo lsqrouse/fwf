@@ -15,18 +15,6 @@ const mafiaData = require("./mafia/src/data/data");
 const PORT = process.env.PORT || 8080;
 const userNames = [];
 const app = express();
-app.use(cors());
-app.use(express.static(process.cwd()+"/client/build/"));
-console.log(process.cwd()+"/client/build/")
-
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  },
-});
-
 
 var allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -41,9 +29,23 @@ var allowCrossDomain = function(req, res, next) {
     next();
   }
 };
-app.configure(function () {
-  app.use(allowCrossDomain);
-})
+
+
+app.use(cors());
+app.use(allowCrossDomain);
+app.use(express.static(process.cwd()+"/client/build/"));
+console.log(process.cwd()+"/client/build/")
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+});
+
+
+
 
 /*
  *  Constant Caching variables 
