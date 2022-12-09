@@ -327,9 +327,41 @@ function TopScreen(props) {
 }
 
 function Chat(props) {
+  const socket = props.socket;
+  const playerState = useSelector((state) => state.playerState);
+  const curLobbyState = useSelector((state) => state.lobbyState);
+  const [msg, setMsg] = useState('');
+  const HandleChatSubmit = event => {
+    event.preventDefault();
+    var newMsg = playerState.nickname + ": " + msg;
+    curLobbyState.chatLog.push({ msg: newMsg });
+    socket.emit("update_lobby_state", curLobbyState);
+    refreshChat();
+  }
+
+  const refreshChat = () => {
+    setMsg('');
+  }
+
+  const chat = useSelector((state) => state.lobbyState.chatLog);
+  var result = [''];
+  if(chat != undefined)
+  for(var i = 0; i < chat.length; i++){
+    result.push(chat[i].msg);
+  }
+  const listItems = result.map((msg) =>
+    <li className='content'>{msg}</li>
+  );
   return (
     <div className="topScreen chatbox">
-      Chat box
+      <ul>{listItems}</ul>
+      <form onSubmit={HandleChatSubmit}>
+        <div >
+          <hr></hr>
+          <input value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
+            <button type='submit'>send</button>
+          </div>
+      </form>
     </div>
   );
 }
