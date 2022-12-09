@@ -1,4 +1,7 @@
 import MafiaContainer from '../components/mafia/MafiaContainer';
+import { Link } from 'react-router-dom';
+import './game.css';
+
 
 const Game = (props) => {
   return (
@@ -20,11 +23,11 @@ const Header = (props) => {
 
         <div className="headerDiv">
           <div id="gameTitle">
-            <h1>{props.game !== undefined && props.game.toUpperCase()}</h1>
+            <h1 id='gameTitle'>{props.game !== undefined && props.game.toUpperCase()}</h1>
           </div>
         </div>
 
-        <div className="headerDiv">
+        <div className="headerDiv3">
           <div id="lobbyCode">
             {props.code}
           </div>
@@ -55,8 +58,12 @@ const HamburgerMenu = (props) => {
       
       <div id="menuItems">
         <ul>
-          <a href="./Instructions" target="_blank"><li>How to play</li></a>
-          <li onClick={props.handleLeave}>Leave Lobby</li>
+          <Link to="/Instructions">
+            <li onClick={() => props.setJoined(true)}>Instructions</li>
+          </Link>
+          <Link to="/">
+            <li onClick={props.handleLeave}>Back</li>
+          </Link>
         </ul>
       </div>
     </div>

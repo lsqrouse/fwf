@@ -1,0 +1,17 @@
+#game {
+    position: relative;
+    width: 100%;
+}
+#header {
+    width: 100%;
+    display: flex;
+    position: relative;
+}
+
+#gameTitle {
+    font-size: 150% !important;
+}
+
+.headerDiv3 {
+    float: right;
+}

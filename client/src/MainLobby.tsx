@@ -164,123 +164,62 @@ export default function MainLobby() {
   if (playerState.id != lobbyState.lobbyHost) {
     return (
       <>
-        <div className="login">
-          <Link to="/">
-            <button className='myButton' onClick={handleLeave}>Back</button>
-          </Link>
-          <Link to="/Instructions">
-            <button className='myButton' onClick={() => setJoined(true)}>Instructions</button>
-          </Link>
-        </div>
-        <div className='titleBox'>
-          <h1>Welcome {playerState.nickname}! <br /> Game: {lobbyState.gameState.game} <br /> Lobby Code: {lobbyState.lobbyId}</h1>
-        </div>
-        <div className='outerBox'>
           <div className='middle'>
-            <div className='chat'>Players
-            
-              <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
-                </AgGridReact>
-              </div>
-            </div>
-            <div className='playerScreen'>
               <Game
                 game={lobbyState.game}
                 code={lobbyState.lobbyId}
                 socket={socket}
                 handleLeave={handleLeave}
               />
-            </div>
-            <Popup trigger={<button>Open Chat</button>} position="left center">
-                <ul>{listItems}</ul>
-                  <form onSubmit={handleChatSubmit}>
+              <Popup trigger ={<button>Chat</button>} position="left center">
+            <ul>{listItems}</ul>
+              <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>
                       <hr></hr>
                       <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
                       <button className='myB' type='submit'>send</button>
                     </div>
                   </form>
-             </Popup>
+          </Popup>
           </div>
-          <div className='ag-theme-alpine' style={{ height: 75, width: 100 }}>
-          </div>
-        </div>
       </>
     )
   }
 
   return (
     <>
-      <div className="login">
-        <Link to="/">
-          <button className='myButton' onClick={handleLeave}>Back</button>
-        </Link>
-        <Link to="/Instructions">
-          <button className='myButton'>Instructions</button>
-        </Link>
-      </div>
-      <div className='titleBox'>
-        <h1>Welcome to Fun With Friends, {playerState.nickname}. <br /> Invite friends to play with code {lobbyState.lobbyId}</h1>
-      </div>
-      <div className='outerBox'>
-        <div className='navBar'>
-          {/* <Link to="/Mafia"> */}
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Mafia') }}>Mafia
-            <p className='descMaf'>A game of mystery and deciption that pins citizens against mafia to see who will rule the town.</p>
-          </button>
-          {/* </Link> */}
-
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('avalon') }}>AVALON
-            <p className='descMaf'>HELLO THIS IS AVALON BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
-            <p className='descMaf'>HELLO THIS IS WEREWOLF BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('ghost') }}>GHOST
-            <p className='descMaf'>HELLO THIS IS GHOST BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('fake artist') }}>FAKE ARTIST
-            <p className='descMaf'>HELLO THIS IS FAKE ARTIST BABY hi</p>
-          </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
-            <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
-          </button>
-        </div>
         <div className='middle'>
-          <div className='chat'>Players:
-
-          <div style={{ width: "100%", height: "90%", marginTop: '10%' }}>
-                <AgGridReact
-                  rowData={lobbyState.playerList}
-                  columnDefs={colDefs}>
-                </AgGridReact>
-              </div>
-          </div>
-          <div className='screen'>
             <Game
               game={lobbyState.game}
               code={lobbyState.lobbyId}
               socket={socket}
               handleLeave={handleLeave}
             />
-          </div>
-          <Popup trigger={<button>Open Chat</button>} position="left center">
-                <ul>{listItems}</ul>
-                  <form onSubmit={handleChatSubmit}>
+            <Popup trigger ={<button>Chat</button>} position="left center">
+            <ul>{listItems}</ul>
+              <form onSubmit={handleChatSubmit}>
                     <div id='chatBox'>
+                      <hr></hr>
                       <input className='textBox' value={msg} type="text" placeholder="message" onChange={(e) => setMsg(e.target.value)} />
                       <button className='myB' type='submit'>send</button>
                     </div>
                   </form>
-             </Popup>
+          </Popup>
         </div>
-        <div className="box">log</div>
+        <div className='navBar'>
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Mafia') }}>Mafia
+            <p className='descMaf'>A game of mystery and deciption that pins citizens against mafia to see who will rule the town.</p>
+          </button>
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Werewolf') }}>WEREWOLF
+            <p className='descMaf'>HELLO THIS IS WEREWOLF BABY hi</p>
+          </button>
+
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
+            <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
+          </button>
+        </div>
         <div className='ag-theme-alpine' style={{ height: 400, width: 600 }}>
         </div>
-      </div>
     </>
 
   )
