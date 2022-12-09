@@ -1,8 +1,9 @@
 import MafiaContainer from '../components/mafia/MafiaContainer';
+import CoupContainer from '../components/coup/CoupContainer'
 
 const Game = (props) => {
   return (
-    <div id="game">
+    <div id="game" style={{width: '99%', height: '99%'}}>
       <GameContainer game={props.game} socket={props.socket} />
     </div>
   );
@@ -39,7 +40,15 @@ const GameContainer = (props) => {
     return (
     <MafiaContainer socket={props.socket} />
     );
-  } else {
+  }
+  else if (props.game === "Coup")
+  {
+    return (
+      <CoupContainer socket={props.socket} />
+      );
+  }
+  else 
+  {
     return (
       <p>Please choose a game</p>
     );

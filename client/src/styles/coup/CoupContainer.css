@@ -1,0 +1,279 @@
+.coupContainer 
+{
+  height: 99%;
+  width: 100%;
+  font-size: 14px;
+}
+
+.coupHeaderContent 
+{
+  font-size: 55px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.parent
+{
+  display: flex;
+  height: 75%;
+  padding-bottom: 15px;
+}
+
+.roleList 
+{
+  height: 100%;
+  width: 50%;
+  text-align: center;
+  border: 1.5px grey solid;
+}
+
+.card
+{
+  width: 50%;
+  text-align: center;
+}
+
+.cardWithOutline
+{
+  width: 50%;
+  text-align: center;
+  border: 1.5px grey solid;
+}
+
+.soloCard
+{
+  margin-left: 25%;
+  margin-right: 25%;
+  vertical-align: text-bottom;
+  border: 1.5px grey solid;
+}
+
+.coins
+{
+  padding: 15px;
+  text-align: center;
+}
+
+.turnStuff
+{
+  padding: 15px;
+  text-align: center;
+}
+
+.centerStuff
+{
+  text-align: center;
+}
+
+.centerStuff h1
+{
+  padding-bottom: 15px;
+  border-bottom: 2px solid black;
+}
+
+.centerStuff h2
+{
+  font-size: 35px;
+}
+
+.carousel
+{
+  width: 100%;
+  display: block;
+  padding-top: 15px;
+  overflow-x: scroll;
+  white-space: nowrap;
+}
+
+.item 
+{
+  width: 130px;
+  height: 150px;
+  display: inline-block;
+  border: 1.5px solid grey;
+}
+
+.bigItem 
+{
+  width: 250px;
+  height: 97%;
+  display: inline-block;
+  border: 1.5px solid grey;
+}
+
+.hoverMe:hover
+{
+  transform: scale(1.1);
+}
+
+.hoverMeOutline:hover
+{
+  border: 2.5px solid black;
+}
+
+.item h2
+{
+  text-align: center;
+}
+
+.modal 
+{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content 
+{
+  width: 40%;
+  border: 1px solid #888;
+  background-color: #fefefe;
+}
+
+/* On hover modal thing */
+.couponcode:hover .coupontooltip 
+{
+  display: block;
+}
+
+.coupontooltip 
+{
+  display: none;
+  margin-left: 25px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1000;
+  width: 300px;
+  text-align: center;
+  white-space: normal;
+  background: #C8C8C8;
+  border:3px solid black;
+}
+.coupontooltip h2
+{
+  padding-bottom: 5px;
+  border-bottom: 2px solid black;
+}
+
+.couponcode 
+{
+  height: 100%;
+}
+
+/* Algin divs in circle*/
+.actionStuff 
+{
+  width: 100%;
+  text-align: center;
+  border-radius: 15px;
+  background-color: blanchedalmond;
+  border: 1.5px grey solid;
+}
+
+.circlegraph
+{
+  width: 55%;
+  height: 70%;
+  position: relative;
+  margin: calc(50px / 2 + 0px);
+}
+
+.circlegraph .circle
+{
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+/* Button icons */
+.sideButton 
+{
+  width: 50px;
+  height: 50px;
+  border: none;
+  background-color: transparent;
+  display: inline-block;
+}
+
+.sideButton:active 
+{
+  background-color: skyblue;
+}
+
+#allPlayersButton 
+{
+  background-image: url("../../images/mafia/buttons/person.png");
+  background-size: cover;
+}
+
+#coupButton 
+{
+  background-image: url("../../images/mafia/buttons/rip.png");
+  background-size: cover;
+}
+
+#truthButton 
+{
+  background-image: url("../../images/mafia/sun.png");
+  background-size: cover;
+}
+
+#lieButton 
+{
+  background-image: url("../../images/mafia/moon.png");
+  background-size: cover;
+}
+
+#endGameButton 
+{
+  background-image: url("../../images/mafia/buttons/vote.png");
+  background-size: cover;
+}
+
+#incomeButton 
+{
+  background-image: url("../../images/coup/coin1.png");
+  background-size: cover;
+}
+
+#foreignAidButton 
+{
+  background-image: url("../../images/coup/coin2.png");
+  background-size: cover;
+}
+
+.tooltip 
+{
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext 
+{
+  width: 150px;
+  z-index: 1000;
+  visibility: hidden;
+  position: absolute;
+  margin-left: -30px;
+  text-align: center;
+  white-space: normal;
+  background: #C8C8C8;
+  border:3px solid black;
+}
+
+.tooltiptext h2
+{
+  padding-bottom: 5px;
+  border-bottom: 2px solid black;
+}
+
+.tooltip:hover .tooltiptext 
+{
+  visibility: visible;
+}

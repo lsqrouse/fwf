@@ -41,7 +41,15 @@ export default function MainLobby() {
       lobbyId: lobbyState.lobbyId,
       host: playerState.host,
       nickname: playerState.nickname,
-      gamePlayerState: playerState.gamePlayerState
+      gamePlayerState: playerState.gamePlayerState,
+      isAlive: playerState.isAlive,
+      role: playerState.role,
+      card1: playerState.card1,
+      card1Alive: playerState.card1Alive,
+      card2: playerState.card2,
+      card2Alive: playerState.card2Alive,
+      numCoins: playerState.numCoins,
+      numCards: playerState.numCards,
     }
     var rejoin = false;
     for (var i = 0; i < lobbyState.playerList.length; i++) {
@@ -245,7 +253,7 @@ export default function MainLobby() {
           <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('fake artist') }}>FAKE ARTIST
             <p className='descMaf'>HELLO THIS IS FAKE ARTIST BABY hi</p>
           </button>
-          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('coup') }}>COUP
+          <button className='myBMaf' type='submit' onClick={() => { handleGameChoice('Coup') }}>COUP
             <p className='descMaf'>HELLO THIS IS COUP BABY hi</p>
           </button>
         </div>
