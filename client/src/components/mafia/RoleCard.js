@@ -3,18 +3,20 @@ import { getIcon } from "./getIcon";
 
 function RoleCard(props) {
   const role = props.role;
+  let executionerTarget = props.executionerTarget;
   const [open, setOpen] = useState(false);
 
   if (open) {
-    return <RoleCardOpen role={role} setOpen={setOpen} />;
+    return <RoleCardOpen role={role} setOpen={setOpen} executionerTarget={executionerTarget} />;
   } else {
-    return <RoleCardTab setOpen={setOpen} />;
+    return <RoleCardTab setOpen={setOpen} executionerTarget={executionerTarget} />;
   }
 }
 
 function RoleCardOpen(props) {
   const role = props.role;
   const setOpen = props.setOpen;
+  const executionerTarget = props.executionerTarget;
 
   function closeCard() {
     setOpen(false);
@@ -30,6 +32,7 @@ function RoleCardOpen(props) {
       <hr />
       <p><b>Team:</b> {role.team}</p>
       <p><b>Win Condition:</b> {role.winCondition}</p>
+      {executionerTarget && <p>Your target is <b>{executionerTarget.nickname}</b>. Their role is {executionerTarget.gamePlayerState.role}.</p>}
       {role.abilitiesDesc && <p><b>Abilities:</b> {role.abilitiesDesc}</p>}
       <div className="tapToHideLabel">
         TAP TO HIDE

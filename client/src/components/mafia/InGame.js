@@ -15,15 +15,40 @@ function InGame(props) {
   // aliveList, deadList
   const [bottomScreen, setBottomScreen] = useState("aliveList");
 
-  const playerRole = useSelector((state) => state.playerState.gamePlayerState.role);
+  const notes = props.notes;
+  const setNotes = props.setNotes;
+
+  const lobbyState = useSelector((state) => state.lobbyState);
+  const playerState = useSelector((state) => state.playerState);
+  const playerRole = playerState.gamePlayerState.role;
+  const executionerTargets = useSelector((state) => state.lobbyState.gameState.executionerTargets);
   const socket = props.socket;
+
+  let roleCard = <RoleCard role={roles[playerRole]} />;
+
+  // Pass in executioner target info if player is executioner
+  if (executionerTargets.hasOwnProperty(playerState.id)) {
+    const targetId = executionerTargets[playerState.id];
+    const target = lobbyState.playerList.find(player => player.id === targetId);
+    roleCard = <RoleCard role={roles[playerRole]} executionerTarget={target}/>
+  }
 
   return (
     <div className="inGame">
       <MafiaHeader />
       <RoleList roles={roles} roleList={props.roleList} />
-      <Phase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
-      <RoleCard role={roles[playerRole]} />
+      <Phase
+        roles={roles}
+        teams={teams}
+        topScreen={topScreen}
+        setTopScreen={setTopScreen}
+        bottomScreen={bottomScreen}
+        setBottomScreen={setBottomScreen}
+        notes={notes}
+        setNotes={setNotes}
+        socket={socket}
+      />
+      {roleCard}
     </div>
   );
 }
@@ -36,6 +61,8 @@ function Phase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   socket.on("mafia_night_phase_ended", (data) => {
@@ -50,13 +77,32 @@ function Phase(props) {
     case "day":
       return (
         <div className="phase">
-          <DayPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <DayPhase
+            roles={roles}
+            teams={teams}
+            topScreen={topScreen}
+            setTopScreen={setTopScreen}
+            bottomScreen={bottomScreen}
+            setBottomScreen={setBottomScreen}
+            notes={notes}
+            setNotes={setNotes}
+            socket={socket}
+          />
         </div>
       );
     case "night":
       return (
         <div className="phase">
-          <NightPhase roles={roles} teams={teams} topScreen={topScreen} setTopScreen={setTopScreen} bottomScreen={bottomScreen} setBottomScreen={setBottomScreen} socket={socket} />
+          <NightPhase
+            roles={roles}
+            teams={teams}
+            topScreen={topScreen}
+            setTopScreen={setTopScreen}
+            bottomScreen={bottomScreen}
+            setBottomScreen={setBottomScreen}
+            notes={notes}
+            setNotes={setNotes}
+            socket={socket} />
         </div>
       );
     default:
@@ -70,13 +116,15 @@ function DayPhase(props) {
   const topScreen = props.topScreen;
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
-  const setBottomScreen = props.setBottomScreen
+  const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   return (
     <>
       <div className="mainInfo">
-        <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+        <TopScreen roles={roles} teams={teams} screen={topScreen} notes={notes} setNotes={setNotes} socket={socket} />
         <BottomScreen roles={roles} screen={bottomScreen} />
       </div>
       <div className="sideButtons">
@@ -100,12 +148,14 @@ function NightPhase(props) {
   const setTopScreen = props.setTopScreen;
   const bottomScreen = props.bottomScreen;
   const setBottomScreen = props.setBottomScreen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   return (
     <>
     <div className="mainInfo">
-      <TopScreen roles={roles} teams={teams} screen={topScreen} socket={socket} />
+      <TopScreen roles={roles} teams={teams} screen={topScreen} notes={notes} setNotes={setNotes} socket={socket} />
       <BottomScreen roles={roles} screen={bottomScreen} />
     </div>
     <div className="sideButtons">
@@ -244,8 +294,9 @@ function filterTargets(ability, allPlayers, selfPlayerState, roles) {
   return results;
 }
 
-function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
+function doRoleAbility(socket, lobbyState, playerState, ability, targets) {
   const phaseNum = lobbyState.gameState.phaseNum;
+  const playerId = playerState.id;
   // Write to history
   if (!lobbyState.gameState.history[phaseNum]) {
     lobbyState.gameState.history[phaseNum] = {
@@ -260,6 +311,11 @@ function doRoleAbility(socket, lobbyState, playerId, ability, targets) {
     ability: ability,
     targets: targets
   };
+
+  // Increment times used ability
+  playerState.gamePlayerState.timesUsedAbility += 1;
+  socket.emit("update_player_state", playerState);
+
   lobbyState.gameState.history[phaseNum].night[playerId] = entry;
   // Emit to server
   socket.emit("update_lobby_state", lobbyState);
@@ -308,6 +364,8 @@ function TopScreen(props) {
   const roles = props.roles;
   const teams = props.teams;
   const screen = props.screen;
+  const notes = props.notes;
+  const setNotes = props.setNotes;
   const socket = props.socket;
 
   switch (screen) {
@@ -318,7 +376,7 @@ function TopScreen(props) {
     case "ability":
       return <Ability roles={roles} teams={teams} socket={socket} />
     case "notes":
-      return <Notes socket={socket} />
+      return <Notes socket={socket} notes={notes} setNotes={setNotes} />
     case "alerts":
       return <Alerts />
     default:
@@ -345,22 +403,27 @@ function Vote(props) {
 
   return (
     <div className="topScreen vote">
+      {!lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive ?
+      <p>
+        <b>You are dead and cannot vote.</b>
+      </p>
+      :
       <form>
         <label for="voteChoice"><b>You vote: </b></label>
         <select id="voteChoice">
-          <option value={null}>No one</option>
+          <option value="">No one</option>
           {alivePlayers.map((player) => (<option value={player.id}>{player.nickname}</option>))}
         </select>
         <br />
           <input type="button" value="OK" onClick={() =>
-            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value)} />
-      </form>
+            doDayVote(socket, lobbyState, playerState.id, document.getElementById("voteChoice").value === "" ? null : document.getElementById("voteChoice").value)} />
+      </form>}
       <div className="votes">
           <ul>
           {alivePlayers.map(voter =>
             <li key={voter.nickname}>
               {voter.nickname} <i>votes</i> {votes.hasOwnProperty(voter.id) ? 
-                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "" : ""}
+                votes[voter.id] !== null ? players.find(p => p.id === votes[voter.id]).nickname : "No one" : ""}
             </li>
           )}
           </ul>
@@ -384,6 +447,7 @@ function Ability(props) {
     const votes = lobbyState.gameState.history.hasOwnProperty([lobbyState.gameState.phaseNum]) ?
       lobbyState.gameState.history[phaseNum].mafiaVotes : {};
     const mafiaMembers = lobbyState.playerList.filter(player => roles[player.gamePlayerState.role].team === "Mafia");
+    const aliveMafiaPlayers = mafiaMembers.filter(player => player.gamePlayerState.isAlive);    
     console.log(mafiaMembers);
 
     return (
@@ -398,14 +462,14 @@ function Ability(props) {
           </select>
           <br />
           <input type="button" value="OK" onClick={() =>
-            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value)} />
+            doMafiaVote(socket, lobbyState, playerState.id, document.getElementById("teamChoice").value === "" ? null : document.getElementById("teamChoice").value)} />
         </form>
         <div className="mafiaVotes">
           <ul>
-          {mafiaMembers.map(mafiaMember =>
+          {aliveMafiaPlayers.map(mafiaMember =>
             <li key={mafiaMember.nickname}>
               {mafiaMember.nickname} <i>votes</i> {votes.hasOwnProperty(mafiaMember.id) ? 
-                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "" : ""}
+                votes[mafiaMember.id] !== null ? players.find(p => p.id === votes[mafiaMember.id]).nickname : "No one" : ""}
             </li>
           )}
           </ul>
@@ -426,7 +490,7 @@ function Ability(props) {
           <span><b>You choose: </b></span>
           {targets.map(
             (target, index) =>
-            <select is={"abilityChoice" + index}>
+            <select id={"abilityChoice" + index}>
               <option value="">No one (skip)</option>
               {target.map(player => 
                   <option value={player.id}>{player.nickname}</option>
@@ -435,7 +499,7 @@ function Ability(props) {
           )}
           <br />
           <input type="button" value="OK" 
-            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, ability,
+            onClick={() => doRoleAbility(socket, lobbyState, playerState, ability,
               Array.from(document.getElementById("abilityForm").elements).filter(
                 elem => elem.nodeName.toLowerCase() === "select"
               ).map(select => select.value === "" ? null : select.value)
@@ -456,9 +520,31 @@ function Ability(props) {
         Press the OK button to continue.
         <form>
           <input type="button" value="OK" 
-            onClick={() => doRoleAbility(socket, lobbyState, playerState.id, "ok", [])} />
+            onClick={() => doRoleAbility(socket, lobbyState, playerState, "ok", [])} />
         </form>
       </div>
+    );
+  }
+
+  if (roles[role].ability === "ressurect" && playerState.gamePlayerState.timesUsedAbility > 0) {
+    return (
+      <div className="topScreen ability">
+        <NoAbilityDiv />
+      </div>
+    );
+  }
+
+  // If dead, prevent from viewing ability screen.
+  if (!lobbyState.playerList.find(p => p.id === playerState.id).gamePlayerState.isAlive) {
+    return (
+    <div className="topScreen ability">
+      <p>
+        <b>You are dead.</b>   
+      </p>
+      <p>
+          Rest in Peace.
+      </p>
+    </div>
     );
   }
 
@@ -478,9 +564,13 @@ function Ability(props) {
 }
 
 function Notes(props) {
+  const notes = props.notes;
+  const setNotes = props.setNotes;
+
   return (
     <div className="topScreen notes">
-      Notes go here
+      <h4>Notes</h4>
+      <textarea type="text" className="notesInput" rows="4" onChange={(text) => setNotes(text.target.value)} value={notes} />
     </div>
   );
 }

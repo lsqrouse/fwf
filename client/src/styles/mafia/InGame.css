@@ -130,3 +130,9 @@
   margin: 0;
   padding: 0;
 }
+
+.notesInput {
+  width: 100%;
+  height: 70%;
+  resize: none;
+}

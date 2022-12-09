@@ -11,6 +11,7 @@ const {getUserByUsername, createUser, saveGameHistory, createLobby, getStatsByUs
 const bcrypt = require("bcrypt");
 const { NONAME } = require("dns");
 const mafiaData = require("./mafia/src/data/data");
+const { Console } = require("console");
 
 const PORT = process.env.PORT || 3001;
 const userNames = [];
@@ -69,8 +70,6 @@ io.on('connection', (socket) => {
       gameState.lobbyHost = socket.id;
     }
 
-  //gameState.playerList.push({id: socket.id, host: data.host, nickname: data.nickname, gamePlayerState: data.gamePlayerState})
-    //io.in(gameState.lobbyId).emit("receive_lobby_state", gameState)
     var newPlayerState = {
       id: socket.id,
       db_id: "NONE",
@@ -119,7 +118,8 @@ io.on('connection', (socket) => {
           gamePlayerState: {
             role: left[ran],
             isAlive: true,
-            message: ''
+            message: '',
+            timesUsedAbility: 0
           }
         }
         left.splice(ran, 1);
@@ -134,13 +134,23 @@ io.on('connection', (socket) => {
           gamePlayerState: {
             role: 'Villager',
             isAlive: true,
-            message: ''
+            message: '',
+            timesUsedAbility: 0
           }
         }
         assignments.push(newPlayerState)
       }
       //console.log(newPLIST);
     }
+
+    // Make executioner targets
+    const executioners = assignments.filter(player => player.gamePlayerState.role === "Executioner");
+    const villagePlayers = assignments.filter(player => mafiaData.roles[player.gamePlayerState.role].team === "Village");
+    executioners.forEach(executioner => {
+      var ran = Math.floor(Math.random() * villagePlayers.length);
+      var target = villagePlayers[ran];
+      lobbyState.gameState.executionerTargets[executioner.id] = target.id;
+    });
 
     io.in(data.lobbyId).fetchSockets().then((response) => {
       response.forEach((socket) => {
@@ -208,7 +218,7 @@ io.on('connection', (socket) => {
   })
 
 
-  // ---------- Mafia-specific socket events and funtions ----------
+  // ---------- Mafia-specific socket events and functions ----------
   
   socket.on("mafia_request_data", (lobbyId) => {
     const data = {
@@ -248,11 +258,8 @@ io.on('connection', (socket) => {
       }
       // Check all mafia members have voted for the night's kill target
       const mafiaPlayers = players.filter(player => 
-        player.gamePlayerState.role == "Mafia" ||
-        player.gamePlayerState.role == "Distractor" ||
-        player.gamePlayerState.role == "Framer" ||
-        player.gamePlayerState.role == "Informant"
-      ); // This is such bad practice but it works
+        mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
+      );
       for (let i = 0; i < mafiaPlayers.length; i++) {
         if (mafiaPlayers[i].gamePlayerState.isAlive && !mafiaVotes.hasOwnProperty(mafiaPlayers[i].id)) {
           console.log(`${mafiaPlayers[i].nickname} (${mafiaPlayers[i].id}) has not submitted their mafia kill vote`);
@@ -279,17 +286,17 @@ io.on('connection', (socket) => {
           }
           // See who has most votes
           let mostVoted = Object.keys(mafiaVotesCount)[0];
-          let mostVotedTie = null;
-          for (let i = 1; i < mafiaVotesCount.length; i++) {
+          let mostVotedTie = false;
+          for (let i = 1; i < Object.keys(mafiaVotesCount).length; i++) {
             const contender = Object.keys(mafiaVotesCount)[i];
             if (mafiaVotesCount[contender] > mafiaVotesCount[mostVoted]) {
               mostVoted = contender;
-              mostVotedTie = null;
+              mostVotedTie = false;
             } else if (mafiaVotesCount[contender] === mafiaVotesCount[mostVoted]) {
-              mostVotedTie = contender;
+              mostVotedTie = true;
             }
           }
-          if (mostVotedTie !== null) {
+          if (mostVotedTie) {
             voteTie = true;
           }
           mafiaKill = mostVoted;
@@ -303,11 +310,14 @@ io.on('connection', (socket) => {
           );
 
           // Add the mafia kill to the abilitiesList as a kill
-          const mafiaKiller = Object.keys(mafiaPlayers)[0];
+          const mafiaKiller = Object.keys(mafiaVotes).find(voter => mafiaVotes[voter] === mafiaKill);
           abilitiesList.push({player: mafiaKiller, targets: mafiaKill === null ? [] : [mafiaKill], ability: "kill"});
 
           // Clear messages
           lobbyState.gameState.messages = {};
+
+          // Remove abilities that don't have a target
+          abilitiesList = abilitiesList.filter(a => !a.targets.includes(null));
 
           // ----- First, deal with the SWAP ability -----
           const swaps = abilitiesList.filter(a => a.ability === "swap");
@@ -333,10 +343,13 @@ io.on('connection', (socket) => {
 
           // ----- Second, deal with the BLOCK ability -----
           const blocks = abilitiesList.filter(a => a.ability === "block");
-          // Remove abilities that get blocked, unless the target is a blocking role (they can't be blocked)
-          abilitiesList.filter(a => {
-            a.ability == "block" && playerIdMap[a.targets[0]].gamePlayerState.role !== "Drunk" && playerIdMap[a.targets[0]].gamePlayerState.role !== "Distractor" 
-          })
+          // Remove abilities that get blocked, unless the ability is also a block
+          blocks.forEach(block => {
+            let blocked = abilitiesList.find(a => a.player === block.targets[0] && a.ability !== "block");
+            if (blocked !== undefined) {
+              abilitiesList.splice(abilitiesList.indexOf(blocked));
+            }
+          });
 
           // ----- Third, deal with KILLS, including BOMB and MAFIA KILL by marking targets for death
           let markedForDeath = [];
@@ -375,7 +388,7 @@ io.on('connection', (socket) => {
           // ----- Sixth, deal with the RESSURECT ability
           const ressurections = abilitiesList.filter(a => a.ability === "ressurect");
           ressurections.forEach(ressurect => {
-            playerIdMap[ressurect.targets[0]].isAlive = true;
+            playerIdMap[ressurect.targets[0]].gamePlayerState.isAlive = true;
           });
 
           // ----- Seventh, deal with the INVESTIGATE ability -----
@@ -384,7 +397,7 @@ io.on('connection', (socket) => {
             // TODO: Send alert message to the detective
             const targetRole = playerIdMap[investigation.targets[0]].gamePlayerState.role;
             let targetMafia = false;
-            if (targetRole == "Mafia" || targetRole == "Distractor" || targetRole == "Framer" || targetRole == "Informant") {
+            if (mafiaData.roles[targetRole].team == "Mafia" || framedTargets.includes(investigation.targets[0])) {
               targetMafia = true;
             }
             if (!lobbyState.gameState.messages.hasOwnProperty(investigation.player)) {
@@ -414,18 +427,18 @@ io.on('connection', (socket) => {
           });
 
           // CHECK WIN CONDITIONS
-          //checkMafiaWin(lobbyState);
+          const checkWin = checkMafiaWin(lobbyState, playerIdMap);
           
           // Initialize empty night summary string
           let nightSummary = ""
-          nightSummary += `Night ${lobbyState.gameState.phaseNum} has ended. You can turn around and face each other now.`;
+          nightSummary += `Night ${lobbyState.gameState.phaseNum} has ended. You can turn around and face each other now.\n`;
           // Add dead players' names to summary list
           markedForDeath.forEach(p => {
             nightSummary += `${playerIdMap[p].nickname} has died :(\n`
           });
           // Add ressurected players' names to summary list.
           ressurections.forEach(p => {
-            nightSummary += `${p.targets[0]} has been ressurected! :)\n`;
+            nightSummary += `${playerIdMap[p.targets[0]].nickname} has been ressurected! :)\n`;
           });
           // Set the message
           lobbyState.gameState.allPlayersMessage = nightSummary;
@@ -480,24 +493,26 @@ io.on('connection', (socket) => {
             votesCount[choice] = 1;
           }
         }
+
         // See who has most votes
         let mostVoted = Object.keys(votesCount)[0];
-        let mostVotedTie = null;
-        for (let i = 1; i < votesCount.length; i++) {
+        let mostVotedTie = false;
+        for (let i = 1; i < Object.keys(votesCount).length; i++) {
           const contender = Object.keys(votesCount)[i];
+          console.log("Contentder vs most voted: ", votesCount[contender], votesCount[mostVoted]);
           if (votesCount[contender] > votesCount[mostVoted]) {
             mostVoted = contender;
-            mostVotedTie = null;
+            mostVotedTie = false;
           } else if (votesCount[contender] === votesCount[mostVoted]) {
-            mostVotedTie = contender;
+            mostVotedTie = true;
           }
         }
 
-        if (mostVotedTie === null) {
+        if (!mostVotedTie) {
           // If no tie, update state
           lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote = mostVoted;
 
-          if (mostVoted !== null) {
+          if (mostVoted !== null && mostVoted !== "null") {
             playerIdMap[mostVoted].gamePlayerState.isAlive = false;
           }
 
@@ -505,13 +520,15 @@ io.on('connection', (socket) => {
           lobbyState.gameState.messages = {};
 
           // CHECK WIN CONDITIONS
-          //checkMafiaWin(lobbyState);
+          checkMafiaWin(lobbyState, playerIdMap);
 
           // Initialize empty day summary string
           let daySummary = ""
-          daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.`;
+          daySummary += `Day ${lobbyState.gameState.phaseNum} has ended. Turn around and face away from each other now.\n`;
           // Add voted player's name to summary list
-          daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.`;
+          if (mostVoted !== null && mostVoted !== "null") {
+            daySummary += `${playerIdMap[mostVoted].nickname} has been voted off.\n`;
+          }
           // Set the message
           lobbyState.gameState.allPlayersMessage = daySummary;
           // Set the next phase
@@ -535,7 +552,69 @@ io.on('connection', (socket) => {
     }
   });
 
-  // end of Mafia-specific socket events
+  function checkMafiaWin(lobbyState, playerIdMap) {
+    // Note that there can be multiple winners - Jester and Mafia can win at the same time
+    let someoneHasWon = false;
+
+    const mafiaPlayers = lobbyState.playerList.filter(player => 
+      mafiaData.roles[player.gamePlayerState.role].team === "Mafia"
+    );
+    const villagePlayers = lobbyState.playerList.filter(player =>
+      mafiaData.roles[player.gamePlayerState.role].team === "Village"
+    );
+    const aliveMafiaPlayers = mafiaPlayers.filter(player => player.gamePlayerState.isAlive);
+    const aliveVillagePlayers = villagePlayers.filter(player => player.gamePlayerState.isAlive);
+
+    const dayVote = lobbyState.gameState.history[lobbyState.gameState.phaseNum].dayVote;
+    if (dayVote !== null && dayVote !== "null") {
+      // Jester win
+      if (lobbyState.gameState.currentPhase === "day") {
+        if (playerIdMap[dayVote].gamePlayerState.role === "Jester") {
+          lobbyState.gameState.winningTeams.push("Jester");
+          lobbyState.gameState.winningPlayers.push(playerIdMap[dayVote]);
+          lobbyState.gameState.gameScreen = "EndGame";
+          someoneHasWon = true;
+        }
+      }
+
+      // Executioner win
+      if (lobbyState.gameState.currentPhase === "day") {
+        const executionerId = Object.keys(lobbyState.gameState.executionerTargets).find(t => lobbyState.gameState.executionerTargets[t] === dayVote);
+        if (executionerId) {
+          lobbyState.gameState.winningTeams.push("Executioner");
+          lobbyState.gameState.winningPlayers.push(playerIdMap[executionerId]);
+          lobbyState.gameState.gameScreen = "EndGame";
+          someoneHasWon = true;
+        }
+      }
+    }
+
+    // Village win
+    if (aliveMafiaPlayers.length == 0) {
+      lobbyState.gameState.winningTeams.push("Village");
+      lobbyState.gameState.winningPlayers = lobbyState.gameState.winningPlayers.concat(villagePlayers);
+      lobbyState.gameState.gameScreen = "EndGame";
+      someoneHasWon = true;
+    }
+  
+    // Mafia win
+    if (aliveMafiaPlayers.length > aliveVillagePlayers.length) {
+      lobbyState.gameState.winningTeams.push("Mafia");
+      lobbyState.gameState.winningPlayers = lobbyState.gameState.winningPlayers.concat(mafiaPlayers);
+      lobbyState.gameState.gameScreen = "EndGame";
+      someoneHasWon = true;
+    }
+
+    if (someoneHasWon) {
+      console.log("updated lobby state is ", lobbyState)
+      io.in(lobbyState.lobbyId).emit("receive_lobby_state", lobbyState)
+    }
+
+    return someoneHasWon;
+    
+  }
+
+  // end of Mafia-specific socket events and functions
 
 });
 
@@ -658,13 +737,16 @@ app.get("/api/lobby/create", (req, res) => {
       nightPhaseTimeLimit: 90,
       nightPhaseStarted: false, // flag
       nightPhaseEnded: false,   // flag
+      executionerTargets: {},
       allPlayersMessage: 'Do Nothing', // message to be shown to everyone in alerts screen
       history: {},
       messages: {},
       settings: {
         selectedRoles: ["Villager"]
       },
-      gameScreen: 'Settings'
+      gameScreen: 'Settings',
+      winningTeams: [],
+      winningPlayers: []
     }
   }
   curLobbyId++
